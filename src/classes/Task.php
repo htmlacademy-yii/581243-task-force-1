@@ -1,7 +1,7 @@
 <?php
 
 
-namespace Src\classes;
+namespace TaskForce\classes;
 
 
 class Task
@@ -9,27 +9,27 @@ class Task
     /**
      * Статусы
      */
-    CONST STATUS_NEW = 'Новое';
-    CONST STATUS_CANCEL = 'Отменено';
-    CONST STATUS_IN_WORK = 'На исполнении';
-    CONST STATUS_DONE = 'Завершено';
-    CONST STATUS_FAILED = 'Провалено';
+    CONST STATUS_NEW = 1;
+    CONST STATUS_CANCEL = 2;
+    CONST STATUS_IN_WORK = 3;
+    CONST STATUS_DONE = 4;
+    CONST STATUS_FAILED = 5;
 
     /**
      * Действия
      */
-    CONST ACTION_NEW = 'Добавление задания';
-    CONST ACTION_CANCEL = 'Отменить';
-    CONST ACTION_RESPOND = 'Откликнуться';
-    CONST ACTION_TAKE_IN_WORK = 'Принять';
-    CONST ACTION_DONE = 'Завершение задания';
-    CONST ACTION_REFUSE = 'Отказ от задания';
+    CONST ACTION_NEW = 6;
+    CONST ACTION_CANCEL = 7;
+    CONST ACTION_RESPOND = 8;
+    CONST ACTION_TAKE_IN_WORK = 9;
+    CONST ACTION_DONE = 10;
+    CONST ACTION_REFUSE = 11;
 
     /**
      * Роли
      */
-    CONST ROLE_CLIENT = 'Заказчик';
-    CONST ROLE_EXECUTOR = 'Исполнитель';
+    CONST ROLE_CLIENT = 12;
+    CONST ROLE_EXECUTOR = 13;
 
     protected $clientId;
     protected $executorId = null;
@@ -50,66 +50,99 @@ class Task
 
     /**
      * @param string $name
-     * @return |null
+     * @return mixed
+     * @throws \Exception
      */
     public function __get(string $name)
     {
-        if ($this->$name) {
-            return $this->$name;
+        $getter = 'get' . ucfirst($name);
+        if (method_exists($this, $getter)) {
+            return $this->$getter();
+        } elseif (method_exists($this, 'set' . ucfirst($name))) {
+            throw new \Exception('Getting write-only property: ' . get_class($this) . '::'. $name);
+        } else {
+            throw new \Exception('Getting unknown property: ' . get_class($this) . '::'. $name);
         }
-
-        return null;
     }
 
     /**
      * @param string $name
      * @param $value
-     * @return bool
+     * @return mixed
+     * @throws \Exception
      */
     public function __set(string $name, $value)
     {
-        return false;
+        $setter = 'set' . ucfirst($name);
+        if (method_exists($this, $setter)) {
+            return $this->$setter();
+
+        } elseif (method_exists($this, 'get' . ucfirst($name))) {
+            throw new \Exception('Setting read-only property: ' . get_class($this) . '::'. $name);
+        } else {
+            throw new \Exception('Setting unknown property: ' . get_class($this) . '::'. $name);
+        }
     }
 
     /**
-     * @return array
-     * @throws \ReflectionException
+     * @return int
      */
-    public static function getAllStatuses(): array
+    public function getClientId()
     {
-        return static::getAllConstants('STATUS');
+        return $this->clientId;
+    }
+
+    /**
+     * @return int
+     */
+    public function getExecutorId()
+    {
+        return $this->executorId;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCompletionDate()
+    {
+        return $this->completionDate;
+    }
+
+    /**
+     * @return int
+     */
+    public function getCurrentStatus()
+    {
+        return $this->currentStatus;
     }
 
     /**
      * @return array
-     * @throws \ReflectionException
+     */
+    public function getAllStatuses(): array
+    {
+        return [
+            self::STATUS_NEW => 'Новое',
+            self::STATUS_CANCEL => 'Отменено',
+            self::STATUS_IN_WORK => 'На исполнении',
+            self::STATUS_DONE => 'Завершено',
+            self::STATUS_FAILED => 'Провалено',
+        ];
+    }
+
+    /**
+     * @return array
      */
     public static function getAllActions(): array
     {
-        return static::getAllConstants('ACTION');
-    }
-
-    /**
-     * @param bool $prefix
-     * @return array
-     * @throws \ReflectionException
-     */
-    public static function getAllConstants($prefix = false): array
-    {
-        $reflectionClass = new \ReflectionClass(static::class);
-
-        if (!$prefix) {
-            return $reflectionClass->getConstants();
-        }
-
-        $constants = [];
-        foreach ($reflectionClass->getConstants() as $constantName => $constantValue) {
-            if (strripos($constantName, $prefix) !== false) {
-                $constants[$constantName] = $constantValue;
-            }
-        }
-
-        return $constants;
+        return [
+            self::ACTION_NEW => 'Добавление задания',
+            self::ACTION_CANCEL => 'Отменить',
+            self::ACTION_RESPOND => 'Откликнуться',
+            self::ACTION_TAKE_IN_WORK => 'Принять',
+            self::ACTION_DONE => 'Завершение задания',
+            self::ACTION_REFUSE => 'Отказ от задания',
+        ];
     }
 
     /**
@@ -122,21 +155,16 @@ class Task
         switch ($action) {
             case self::ACTION_CANCEL:
                 return self::STATUS_CANCEL;
-                break;
             case self::ACTION_RESPOND:
                 return null;
-                break;
             case self::ACTION_TAKE_IN_WORK:
                 return self::STATUS_IN_WORK;
-                break;
             case self::ACTION_DONE:
                 return self::STATUS_DONE;
-                break;
             case self::ACTION_REFUSE:
                 return self::STATUS_FAILED;
-                break;
             default:
-                throw new \Exception('action does not exist');
+                throw new \Exception('Action does not exist');
         }
     }
 }
