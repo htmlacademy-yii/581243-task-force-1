@@ -20,7 +20,7 @@ CREATE TABLE `task_force`.`users` (
   `biografy` TEXT NULL,
   `avatar_id` INT NULL,
   `views` INT NULL,
-  `created_at` DATETIME NULL,
+  `created_at` DATETIME NOT NULL,
   `updated_at` DATETIME NULL,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `index2` (`email` ASC, `password` ASC));
@@ -46,7 +46,7 @@ CREATE TABLE `task_force`.`tasks` (
   `description` TEXT NOT NULL,
   `category_id` INT NOT NULL,
   `location` VARCHAR(255) NULL,
-  `price` VARCHAR(45) NULL,
+  `price` INT UNSIGNED NULL,
   `task_term_at` DATETIME NULL,
   `client_id` INT NOT NULL,
   `executor_id` INT NULL,
@@ -58,9 +58,10 @@ CREATE TABLE `task_force`.`tasks` (
 CREATE TABLE `task_force`.`responses` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `task_id` INT NULL,
-  `price` VARCHAR(45) NULL,
+  `price` INT UNSIGNED NULL,
   `comment` TEXT NULL,
   `created_at` DATETIME NOT NULL,
+  `updated_at` DATETIME NULL,
   PRIMARY KEY (`id`));
 
 CREATE TABLE `task_force`.`task_file` (
@@ -74,8 +75,10 @@ CREATE TABLE `task_force`.`files` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `title` VARCHAR(255) NOT NULL,
   `type` VARCHAR(255) NOT NULL,
-  `autor_id` INT NOT NULL,
+  `path` VARCHAR(255) NOT NULL,
+  `user_id` INT NOT NULL,
   `created_at` DATETIME NOT NULL,
+  `updated_at` DATETIME NULL,
   PRIMARY KEY (`id`));
 
   CREATE TABLE `task_force`.`messages` (
@@ -84,6 +87,7 @@ CREATE TABLE `task_force`.`files` (
   `author_id` INT NOT NULL,
   `comment` TEXT NOT NULL,
   `created_at` DATETIME NOT NULL,
+  `updated_at` DATETIME NULL,
   PRIMARY KEY (`id`));
 
   CREATE TABLE `task_force`.`cities` (
@@ -98,7 +102,7 @@ CREATE TABLE `task_force`.`files` (
   PRIMARY KEY (`id`),
   UNIQUE INDEX `status_UNIQUE` (`status` ASC));
 
-  CREATE TABLE `task_force1`.`categories` (
+  CREATE TABLE `task_force`.`categories` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `category` VARCHAR(45) NULL,
   PRIMARY KEY (`id`),
@@ -111,6 +115,7 @@ CREATE TABLE `task_force`.`files` (
   `rating` TINYINT NOT NULL,
   `author_id` INT NOT NULL,
   `created_at` DATETIME NOT NULL,
+  `updated_at` DATETIME NULL,
   PRIMARY KEY (`id`));
 
   CREATE TABLE `task_force`.`favorirites` (
@@ -118,6 +123,7 @@ CREATE TABLE `task_force`.`files` (
   `user_id` INT NOT NULL,
   `favoririte_user_id` INT NOT NULL,
   `created_at` DATETIME NOT NULL,
+  `updated_at` DATETIME NULL,
   PRIMARY KEY (`id`),
   UNIQUE INDEX `index2` (`favoririte_user_id` ASC, `user_id` ASC));
 
@@ -137,6 +143,6 @@ CREATE TABLE `task_force`.`files` (
   `task_action` TINYINT NULL DEFAULT 1,
   `new_response` TINYINT NULL DEFAULT 1,
   `profile_access` TINYINT NULL DEFAULT 1,
-  `created_at` TINYINT NOT NULL,
-  `updated_at` TINYINT NOT NULL,
+  `created_at` DATETIME NOT NULL,
+  `updated_at` DATETIME NOT NULL,
   PRIMARY KEY (`id`));
