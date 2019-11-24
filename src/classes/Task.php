@@ -117,6 +117,17 @@ class Task
     }
 
     /**
+     * @param int $currentStatus
+     * @return bool
+     */
+    public function setCurrentStatus(int $currentStatus): bool
+    {
+        $this->currentStatus = $currentStatus;
+
+        return true;
+    }
+
+    /**
      * @return array
      */
     public function getAllStatuses(): array

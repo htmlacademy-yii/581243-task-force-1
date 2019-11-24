@@ -16,6 +16,10 @@ class TaskTest extends TestCase
         // проверка работы __get()
         $this->assertEquals($task->clientId, 1);
 
+        // Установить статус заданию
+        $task->setCurrentStatus(Task::STATUS_DONE);
+        $this->assertEquals(Task::STATUS_DONE, $task->getCurrentStatus());
+
         $this->assertEquals($task->getNextStatus(Task::ACTION_CANCEL), Task::STATUS_CANCEL);
         $this->assertEquals($task->getNextStatus(Task::ACTION_RESPOND), false);
         $this->assertEquals($task->getNextStatus(Task::ACTION_TAKE_IN_WORK), Task::STATUS_IN_WORK);
