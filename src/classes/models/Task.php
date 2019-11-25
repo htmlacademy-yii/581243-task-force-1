@@ -72,7 +72,12 @@ class Task extends Model
         return $this->currentStatus;
     }
 
-    public function setCurrentStatus(int $status)
+    /**
+     * @param int $status
+     * @return bool
+     * @throws \Exception
+     */
+    public function setCurrentStatus(int $status): bool
     {
         if (key_exists($status, $this->getAllStatuses())) {
             $this->currentStatus = $status;
