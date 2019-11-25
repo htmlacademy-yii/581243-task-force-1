@@ -34,5 +34,9 @@ class TaskTest extends TestCase
         $this->assertEquals($task->getNextStatus(TakeInWorkAction::class), Task::STATUS_IN_WORK);
         $this->assertEquals($task->getNextStatus(DoneAction::class), Task::STATUS_DONE);
         $this->assertEquals($task->getNextStatus(RefuseAction::class), Task::STATUS_FAILED);
+
+        // Установить статус заданию
+        $task->setCurrentStatus(Task::STATUS_DONE);
+        $this->assertEquals(Task::STATUS_DONE, $task->getCurrentStatus());
     }
 }
