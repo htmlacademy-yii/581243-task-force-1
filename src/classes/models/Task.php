@@ -10,7 +10,13 @@ use TaskForce\classes\actions\DoneAction;
 use TaskForce\classes\actions\RefuseAction;
 use TaskForce\classes\actions\RespondAction;
 use TaskForce\classes\actions\TakeInWorkAction;
+use TaskForce\classes\exceptions\ActionException;
+use TaskForce\classes\exceptions\StatusException;
 
+/**
+ * Class Task
+ * @package TaskForce\classes\models
+ */
 class Task extends Model
 {
     /**
@@ -43,7 +49,7 @@ class Task extends Model
     /**
      * @return int
      */
-    public function getClientId()
+    public function getClientId(): int
     {
         return $this->clientId;
     }
@@ -51,15 +57,15 @@ class Task extends Model
     /**
      * @return int
      */
-    public function getExecutorId()
+    public function getExecutorId(): int
     {
         return $this->executorId;
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getCompletionDate()
+    public function getCompletionDate(): string
     {
         return $this->completionDate;
     }
@@ -67,7 +73,7 @@ class Task extends Model
     /**
      * @return int
      */
-    public function getCurrentStatus()
+    public function getCurrentStatus(): int
     {
         return $this->currentStatus;
     }
@@ -85,7 +91,7 @@ class Task extends Model
             return true;
         }
 
-        throw new \Exception('Status doesn\'t exist.');
+        throw new StatusException('Status doesn\'t exist.');
     }
 
     /**
@@ -105,10 +111,10 @@ class Task extends Model
 
     /**
      * @param string $action
-     * @return string|null
-     * @throws \Exception
+     * @return int
+     * @throws ActionException
      */
-    public function getNextStatus(string $action)
+    public function getNextStatus(string $action): int
     {
         switch ($action) {
             case CancelAction::class:
@@ -122,7 +128,7 @@ class Task extends Model
             case RefuseAction::class:
                 return self::STATUS_FAILED;
             default:
-                throw new \Exception('Action does not exist');
+                throw new ActionException('Action does not exist');
         }
     }
 }

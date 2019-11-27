@@ -7,16 +7,18 @@ namespace TaskForce\classes\actions;
 use TaskForce\classes\models\User;
 use TaskForce\classes\models\Task;
 
+/**
+ * Class AbstractAction
+ * @package TaskForce\classes\actions
+ */
 abstract class AbstractAction
 {
     /**
-     * TODO Надо вернуть название действия, как оно будет выводиться на фронте?
      * @return string
      */
     abstract public static function getActionName(): string ;
 
     /**
-     * TODO Я не понял, зачем это надо. И скорее всего неверно реализовал
      * @return string
      */
     abstract public static function getInnerName(): string ;

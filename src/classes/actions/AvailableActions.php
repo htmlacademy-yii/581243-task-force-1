@@ -4,9 +4,14 @@
 namespace TaskForce\classes\actions;
 
 
+use TaskForce\classes\exceptions\ActionException;
 use TaskForce\classes\models\Task;
 use TaskForce\classes\models\User;
 
+/**
+ * Class AvailableActions
+ * @package TaskForce\classes\actions
+ */
 class AvailableActions
 {
     /**
@@ -46,7 +51,7 @@ class AvailableActions
         $actions = [];
         foreach (static::getAllActions() as $action) {
             if (!class_exists($action)) {
-                throw new \Exception('Action doesn\'t exist');
+                throw new ActionException('Action doesn\'t exist');
             }
 
             if ($action::checkRights($user, $task)) {
