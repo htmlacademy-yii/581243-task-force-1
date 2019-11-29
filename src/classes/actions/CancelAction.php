@@ -8,6 +8,10 @@ use TaskForce\classes\models\User;
 use TaskForce\classes\models\UserRoles;
 use TaskForce\classes\models\Task;
 
+/**
+ * Class CancelAction
+ * @package TaskForce\classes\actions
+ */
 class CancelAction extends AbstractAction
 {
     /**

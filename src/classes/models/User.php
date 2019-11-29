@@ -4,6 +4,10 @@
 namespace TaskForce\classes\models;
 
 
+/**
+ * Class User
+ * @package TaskForce\classes\models
+ */
 class User extends Model
 {
     protected $role;
@@ -34,6 +38,5 @@ class User extends Model
     public function setId(int $id)
     {
         $this->id = $id;
-
     }
 }

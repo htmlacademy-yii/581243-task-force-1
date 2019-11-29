@@ -4,6 +4,10 @@
 namespace TaskForce\classes\models;
 
 
+/**
+ * Class UserRoles
+ * @package TaskForce\classes\models
+ */
 class UserRoles
 {
     /**
@@ -28,7 +32,7 @@ class UserRoles
      * @param $role
      * @return bool
      */
-    static function isRoleExist($role): bool
+    static function isRoleExist(int $role): bool
     {
         if (in_array($role, static::getRoles())) {
             return true;
