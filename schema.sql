@@ -15,9 +15,9 @@ CREATE TABLE `task_force`.`users` (
   `phone` VARCHAR(11) NULL,
   `skype` VARCHAR(255) NULL,
   `messenger` VARCHAR(255) NULL,
-  `location` VARCHAR(255) CHARACTER SET 'utf8' COLLATE 'utf8_general_ci' NULL,
+  `address` VARCHAR(255) CHARACTER SET 'utf8' COLLATE 'utf8_general_ci' NULL,
   `last_activity_at` DATETIME NULL,
-  `biografy` TEXT NULL,
+  `about` TEXT NULL,
   `avatar_id` INT NULL,
   `views` INT NULL,
   `created_at` DATETIME NOT NULL,
@@ -42,12 +42,14 @@ CREATE TABLE `task_force`.`user_foto` (
 
 CREATE TABLE `task_force`.`tasks` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `title` VARCHAR(255) NOT NULL,
+  `name` VARCHAR(255) NOT NULL,
   `description` TEXT NOT NULL,
   `category_id` INT NOT NULL,
-  `location` VARCHAR(255) NULL,
-  `price` INT UNSIGNED NULL,
-  `task_term_at` DATETIME NULL,
+  `address` VARCHAR(255) NULL,
+  `lat` VARCHAR(255) NULL,
+  `long` VARCHAR(255) NULL,
+  `budget` INT UNSIGNED NULL,
+  `expire_at` DATETIME NULL,
   `client_id` INT NOT NULL,
   `executor_id` INT NULL,
   `task_status_id` INT NOT NULL,
@@ -55,7 +57,7 @@ CREATE TABLE `task_force`.`tasks` (
   `updated_at` DATETIME NULL,
   PRIMARY KEY (`id`));
 
-CREATE TABLE `task_force`.`responses` (
+CREATE TABLE `task_force`.`replies` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `task_id` INT NULL,
   `price` INT UNSIGNED NULL,
@@ -93,8 +95,10 @@ CREATE TABLE `task_force`.`files` (
   CREATE TABLE `task_force`.`cities` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `city` VARCHAR(255) NOT NULL,
+  `lat` VARCHAR(255) NOT NULL,
+  `long` VARCHAR(255) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE INDEX `city_UNIQUE` (`city` ASC));
+  UNIQUE INDEX `status_UNIQUE` (`city` ASC, `long` ASC, `lat` ASC));
 
   CREATE TABLE `task_force`.`statuses` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -104,15 +108,15 @@ CREATE TABLE `task_force`.`files` (
 
   CREATE TABLE `task_force`.`categories` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `category` VARCHAR(45) NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE INDEX `category_UNIQUE` (`category` ASC));
+  `name` VARCHAR(255) NULL,
+  `icon` VARCHAR(45) NULL,
+  PRIMARY KEY (`id`));
 
-  CREATE TABLE `task_force`.`reviews` (
+  CREATE TABLE `task_force`.`opinions` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `task_id` INT NOT NULL,
   `comment` TEXT NULL,
-  `rating` TINYINT NOT NULL,
+  `rate` TINYINT NOT NULL,
   `author_id` INT NOT NULL,
   `created_at` DATETIME NOT NULL,
   `updated_at` DATETIME NULL,

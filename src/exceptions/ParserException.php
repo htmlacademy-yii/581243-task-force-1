@@ -4,7 +4,7 @@
 namespace TaskForce\exceptions;
 
 
-class ModelException extends \Exception
+class ParserException extends \Exception
 {
 
 }

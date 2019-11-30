@@ -1,10 +1,29 @@
 <?php
 
 use TaskForce\classes\Task;
+use TaskForce\handlers\create_dumps\CsvDatasetParser;
+use TaskForce\handlers\create_dumps\SqlDumpBuilder;
 
 require_once '../vendor/autoload.php';
 
-$task = new Task(1);
+$data = CsvDatasetParser::parse(__DIR__ . '/data/cities.csv');
 
-var_dump($task->getAllStatuses());
-var_dump($task->getAllActions());
+$builder = new SqlDumpBuilder();
+$builder->setDatabase('task_force');
+
+$tables = [
+    'cities',
+    'categories',
+    'opinions',
+    'users',
+    'tasks',
+    'statuses',
+    'replies',
+    'opinions',
+];
+
+foreach ($tables as $table) {
+    $data = CsvDatasetParser::parse(__DIR__ . '/data/' . $table . '.csv');
+    $builder->setTableSettings($table, $data['columnNames']);
+    $builder->createDump($data['data']);
+}

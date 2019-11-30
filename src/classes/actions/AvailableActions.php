@@ -4,7 +4,7 @@
 namespace TaskForce\classes\actions;
 
 
-use TaskForce\classes\exceptions\ActionException;
+use TaskForce\exceptions\ActionException;
 use TaskForce\classes\models\Task;
 use TaskForce\classes\models\User;
 

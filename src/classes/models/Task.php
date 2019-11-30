@@ -10,8 +10,8 @@ use TaskForce\classes\actions\DoneAction;
 use TaskForce\classes\actions\RefuseAction;
 use TaskForce\classes\actions\RespondAction;
 use TaskForce\classes\actions\TakeInWorkAction;
-use TaskForce\classes\exceptions\ActionException;
-use TaskForce\classes\exceptions\StatusException;
+use TaskForce\exceptions\ActionException;
+use TaskForce\exceptions\StatusException;
 
 /**
  * Class Task

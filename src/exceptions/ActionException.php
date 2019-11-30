@@ -1,7 +1,7 @@
 <?php
 
 
-namespace TaskForce\classes\exceptions;
+namespace TaskForce\exceptions;
 
 
 class ActionException extends \Exception
