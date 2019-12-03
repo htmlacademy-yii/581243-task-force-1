@@ -4,7 +4,8 @@
 namespace TaskForce\exceptions;
 
 
-class ModelException extends \Exception
+
+class DumpBuilderException extends \Exception
 {
 
 }

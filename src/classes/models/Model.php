@@ -3,7 +3,7 @@
 
 namespace TaskForce\classes\models;
 
-use TaskForce\classes\exceptions\ModelException;
+use TaskForce\exceptions\ModelException;
 
 /**
  * Class Model
