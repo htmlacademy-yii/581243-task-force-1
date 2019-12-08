@@ -12,7 +12,7 @@ class SqlDumpTest extends TestCase
 {
     public function testDumpCreation()
     {
-        $file = __DIR__ . '/../public/data/cities.csv';
+        $file = __DIR__ . '/../frontend/web/data/cities.csv';
 
         $data = CsvDatasetParser::parse($file);
 
