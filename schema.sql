@@ -19,6 +19,7 @@ CREATE TABLE `task_force`.`users` (
   `last_activity_at` DATETIME NULL,
   `about` TEXT NULL,
   `avatar_id` INT NULL,
+  `settings_id` INT NULL,
   `views` INT NULL,
   `created_at` DATETIME NOT NULL,
   `updated_at` DATETIME NULL,
@@ -59,7 +60,8 @@ CREATE TABLE `task_force`.`tasks` (
 
 CREATE TABLE `task_force`.`replies` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  `task_id` INT NULL,
+  `task_id` INT NOT NULL,
+  `executor_id` INT NOT NULL,
   `price` INT UNSIGNED NULL,
   `comment` TEXT NULL,
   `created_at` DATETIME NOT NULL,
@@ -122,14 +124,14 @@ CREATE TABLE `task_force`.`files` (
   `updated_at` DATETIME NULL,
   PRIMARY KEY (`id`));
 
-  CREATE TABLE `task_force`.`favorirites` (
+  CREATE TABLE `task_force`.`favorites` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
   `user_id` INT NOT NULL,
-  `favoririte_user_id` INT NOT NULL,
+  `favorite_user_id` INT NOT NULL,
   `created_at` DATETIME NOT NULL,
   `updated_at` DATETIME NULL,
   PRIMARY KEY (`id`),
-  UNIQUE INDEX `index2` (`favoririte_user_id` ASC, `user_id` ASC));
+  UNIQUE INDEX `index2` (`favorite_user_id` ASC, `user_id` ASC));
 
   CREATE TABLE `task_force`.`events` (
   `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,

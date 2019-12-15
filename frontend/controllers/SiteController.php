@@ -2,6 +2,8 @@
 namespace frontend\controllers;
 
 use frontend\models\ResendVerificationEmailForm;
+use frontend\models\Task;
+use frontend\models\User;
 use frontend\models\VerifyEmailForm;
 use Yii;
 use yii\base\InvalidArgumentException;
@@ -74,7 +76,11 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        /**
+         * Выведем User для теста
+         */
+        $user = User::find(1)->one();
+        return $this->render('index', ['user' => $user]);
     }
 
     /**
