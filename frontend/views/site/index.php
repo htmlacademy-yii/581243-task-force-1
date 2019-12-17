@@ -4,5 +4,3 @@
 
 $this->title = 'My Yii Application';
 
-print_r($user);
-print_r($user->clientTasks);

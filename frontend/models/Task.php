@@ -81,6 +81,14 @@ class Task extends \yii\db\ActiveRecord
     }
 
     /**
+     * @return ActiveQuery
+     */
+    public function getCategory()
+    {
+        return $this->hasOne(Category::class, ['id' => 'category_id']);
+    }
+
+    /**
      * Исполнитель
      * @return ActiveQuery
      */
