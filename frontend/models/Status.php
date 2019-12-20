@@ -14,6 +14,16 @@ use yii\db\ActiveQuery;
 class Status extends \yii\db\ActiveRecord
 {
     /**
+     * Статусы
+     */
+    CONST STATUS_NEW = 1;               // новое задание
+    CONST STATUS_CANCEL = 2;            // исполнитель отменил
+    const STATUS_HAS_RESPONSES = 3;     // есть отклики
+    CONST STATUS_IN_WORK = 4;           // в работе
+    CONST STATUS_DONE = 5;              // заказчик принимает работу
+    CONST STATUS_FAILED = 6;            // исполнитель отказался
+
+    /**
      * {@inheritdoc}
      */
     public static function tableName()

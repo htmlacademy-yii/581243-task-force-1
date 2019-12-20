@@ -77,7 +77,7 @@ class SqlDumpBuilder implements DumpBuilder
         $output = trim($output, ', ');
         $output .= ';';
 
-        $fileName = __DIR__ . '/../../../public/data/sql/' . $this->table . '_INSERT_' . date('Y-m-d H:i:s', time()) . '.sql';
+        $fileName = __DIR__ . '/../../../frontend/web/data/sql/' . $this->table . '_INSERT_' . date('Y-m-d H:i:s', time()) . '.sql';
         $file = new \SplFileObject($fileName, 'w+');
 
         if ($file->fwrite($output)) {
