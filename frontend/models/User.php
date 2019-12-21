@@ -4,7 +4,9 @@ namespace frontend\models;
 
 use Yii;
 use yii\base\InvalidConfigException;
+use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
+use yii\db\BaseActiveRecord;
 
 /**
  * This is the model class for table "users".
@@ -33,6 +35,30 @@ use yii\db\ActiveQuery;
 class User extends \yii\db\ActiveRecord
 {
     /**
+     * @return array
+     */
+    public function behaviors()
+    {
+        return [
+            //Использование поведения TimestampBehavior ActiveRecord
+            'timestamp' => [
+                'class' => TimestampBehavior::className(),
+                'attributes' => [
+                    BaseActiveRecord::EVENT_BEFORE_INSERT => ['created_at'],
+                    BaseActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
+
+                ],
+                'value' => function(){
+                    return gmdate("Y-m-d H:i:s");
+                },
+
+
+            ],
+
+        ];
+    }
+
+    /**
      * {@inheritdoc}
      */
     public static function tableName()
@@ -46,15 +72,25 @@ class User extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'email', 'password', 'created_at'], 'required'],
+            [['name', 'email', 'password', 'city_id'], 'required'],
             [['age', 'city_id', 'user_status', 'avatar_id', 'views', 'settings_id'], 'integer'],
             [['birthday_at', 'last_activity_at', 'created_at', 'updated_at'], 'safe'],
             [['about'], 'string'],
+            ['email', 'email'],
+            ['city_id', 'validateCity'],
             [['last_name', 'name', 'email'], 'string', 'max' => 45],
-            [['password', 'skype', 'messenger', 'address'], 'string', 'max' => 255],
+            [['skype', 'messenger', 'address'], 'string', 'max' => 255],
             [['phone'], 'string', 'max' => 11],
+            [['password'], 'string', 'min' => 8],
             [['email', 'password'], 'unique', 'targetAttribute' => ['email', 'password']],
         ];
+    }
+
+    public function validateCity($attribute, $params)
+    {
+        if (is_null(City::findOne($this->$attribute))) {
+            $this->addError($attribute, 'Указанный город не доступен.');
+        }
     }
 
     /**
@@ -66,8 +102,8 @@ class User extends \yii\db\ActiveRecord
             'id' => 'ID',
             'last_name' => 'Last Name',
             'name' => 'Name',
-            'email' => 'Email',
-            'password' => 'Password',
+            'email' => 'Электронная почта',
+            'password' => 'Пароль',
             'age' => 'Age',
             'city_id' => 'City ID',
             'user_status' => 'User Status',
