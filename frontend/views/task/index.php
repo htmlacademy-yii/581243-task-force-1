@@ -60,16 +60,11 @@ use yii\helpers\Html;
                 ?>
                 <fieldset class="search-task__categories">
                     <legend><?= $taskFilter->attributeLabels()['categories']; ?></legend>
-                    <?php
-                    ActiveForm:
-                    ['enableAjaxValidation' => true];
-                    $field = new ActiveField([
-                        'model' => $taskFilter,
-                        'template' => "{input}{label}{error}",
-                        'attribute' => 'categories',
-                        'form' => $form,
-                    ]);
-                    echo $field->checkboxList(
+                    <?= $form->field(
+                        $taskFilter,
+                        'categories',
+                        ['template' => '{input}{label}{error}', 'options' => ['tag' => false]]
+                    )->checkboxList(
                         $categories,
                         ['item' =>  function ($index, $category, $name) use ($taskFilter) {
                             return Html::checkbox(
@@ -81,34 +76,28 @@ use yii\helpers\Html;
                                 ]) .
                                 Html::label($category->name, 'taskfilter-categories_' . $index);
                         }]
-                    );
-                    ?>
+                    ); ?>
                 </fieldset>
                 <fieldset class="search-task__categories">
                     <legend>Дополнительно</legend>
                     <?php
                     foreach (['my_city', 'no_executor', 'no_address'] as $attr) {
-                        $field = new ActiveField([
-                            'model' => $taskFilter, 'template' => "{input}{label}{error}",
-                            'attribute' => $attr,
-                            'form' => $form,
-                        ]);
-                        echo $field->input('checkbox', [
+                        echo $form->field(
+                            $taskFilter,
+                            $attr,
+                            ['template' => '{input}{label}{error}']
+                        )->input('checkbox', [
                             'class' => 'visually-hidden checkbox__input',
                             'checked' => $taskFilter->$attr,
                         ]);
                     }
                     ?>
                 </fieldset>
-                <?php
-                $field = new ActiveField([
-                    'model' => $taskFilter,
-                    'template' => "{label}<br>{input}{error}",
-                    'attribute' => 'date',
-                    'form' => $form,
-                    'options' => ['tag' => false],
-                ]);
-                echo $field->dropDownList([
+                <?= $form->field(
+                    $taskFilter,
+                    'date',
+                    ['template' => '{label}<br>{input}{error}', 'options' => ['tag' => false]]
+                )->dropDownList([
                     'day' => 'За день',
                     'week' => 'За неделю',
                     'month' => 'За месяц',
@@ -116,16 +105,13 @@ use yii\helpers\Html;
                 ], [
                     'class' => 'multiple-select input',
                     'size' => 1
-                ])->label('Период', ['class' => 'search-task__name']);
+                ])->label('Период', ['class' => 'search-task__name']); ?>
 
-                $field = new ActiveField([
-                    'model' => $taskFilter,
-                    'template' => "{label}<br>{input}{error}",
-                    'attribute' => 'title',
-                    'form' => $form,
-                    'options' => ['tag' => false],
-                ]);
-                echo $field->input(
+                <?= $form->field(
+                    $taskFilter,
+                    'title',
+                    ['template' => '{label}<br>{input}{error}', 'options' => ['tag' => false]]
+                )->input(
                     'search', [
                     'class' => 'input-middle input',
                 ])->label('ПОИСК ПО НАЗВАНИЮ', ['class' => 'search-task__name']);;

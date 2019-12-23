@@ -17,13 +17,17 @@ class TaskController extends \yii\web\Controller
 
         if (\Yii::$app->request->getIsPost()) {
             $taskFilter->load(\Yii::$app->request->post());
-            $taskBuilder = $taskFilter->filter($taskBuilder);
         } else {
             // если пользователь просто открыл страницу,
             // то применим начальные фильтры
             $taskFilter->date = 'year';
-            $taskBuilder = $taskFilter->filter($taskBuilder);
         }
+
+        if (!is_array($taskFilter->categories)) {
+            $taskFilter->categories = [];
+        }
+
+        $taskBuilder = Task::filter($taskBuilder, $taskFilter);
 
         return $this->render('index', [
             'tasks' => $taskBuilder->all(),
