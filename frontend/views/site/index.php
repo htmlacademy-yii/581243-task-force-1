@@ -1,6 +1,4 @@
-<?php
+<div class="container">
 
-/* @var $this yii\web\View */
-
-$this->title = 'My Yii Application';
+</div>
 
