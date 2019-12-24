@@ -4,6 +4,7 @@ namespace frontend\controllers;
 
 use frontend\models\File;
 use yii\console\Response;
+use Yii;
 
 class FileController extends \yii\web\Controller
 {
@@ -13,16 +14,15 @@ class FileController extends \yii\web\Controller
      */
     public function actionDownload($id)
     {
-        header("refresh: 5; url=" . \Yii::$app->request->referrer ?? \Yii::$app->homeUrl);
         $file = File::findOne($id);
 
-        if ($file && file_exists(\Yii::$app->basePath . '/..' . $file->path)) {
-            return \Yii::$app->response->sendFile(
-                \Yii::$app->basePath . '/..' . $file->path,
+        if ($file && file_exists(Yii::$app->basePath . '/..' . $file->path)) {
+            return Yii::$app->response->sendFile(
+                Yii::$app->basePath . '/..' . $file->path,
                 $file->title . '.' . $file->type
             );
+        } else {
+            return $this->redirect(Yii::$app->request->referrer, 404);
         }
-
-        return $this->render('error');
     }
 }
