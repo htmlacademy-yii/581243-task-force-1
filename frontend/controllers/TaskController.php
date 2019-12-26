@@ -9,6 +9,9 @@ use yii\widgets\ActiveForm;
 
 class TaskController extends \yii\web\Controller
 {
+    /**
+     * @return string
+     */
     public function actionIndex()
     {
         $taskFilter = new TaskFilter();
@@ -33,6 +36,23 @@ class TaskController extends \yii\web\Controller
             'tasks' => $taskBuilder->all(),
             'taskFilter' => $taskFilter,
             'categories' => $categories,
+        ]);
+    }
+
+    /**
+     * @param $id
+     * @return string
+     */
+    public function actionShow($id)
+    {
+        $task = Task::findOne($id);
+        $client = $task->client;
+        $replies = $task->replies;
+
+        return $this->render('view', [
+            'task' => $task,
+            'client' => $client,
+            'replies' => $replies,
         ]);
     }
 }

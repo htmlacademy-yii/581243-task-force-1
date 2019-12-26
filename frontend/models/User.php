@@ -5,6 +5,7 @@ namespace frontend\models;
 use Yii;
 use yii\base\InvalidConfigException;
 use yii\db\ActiveQuery;
+use yii\db\Query;
 
 /**
  * This is the model class for table "users".
@@ -113,11 +114,21 @@ class User extends \yii\db\ActiveRecord
     }
 
     /**
+     * Свои отзывы
      * @return ActiveQuery
      */
-    public function getOpinion() {
-        return $this->hasMany(Opinion::class, ['user_id' => 'id'])
-            ->inverseOf('user');
+    public function getSelfOpinions() {
+        return $this->hasMany(Opinion::class, ['author_id' => 'id'])
+            ->inverseOf('author');
+    }
+
+    /**
+     * Отзывы на данного пользователя
+     * @return ActiveQuery
+     */
+    public function getOpinions() {
+        return $this->hasMany(Opinion::class, ['evaluated_user_id' => 'id'])
+            ->inverseOf('author');
     }
 
     /**
@@ -125,7 +136,7 @@ class User extends \yii\db\ActiveRecord
      */
     public function getReplies() {
         return $this->hasMany(Reply::class, ['executor_id' => 'id'])
-            ->inverseOf('user');
+            ->inverseOf('evaluatedUser');
     }
 
     /**
@@ -187,5 +198,26 @@ class User extends \yii\db\ActiveRecord
     public function getUserSettings()
     {
         return $this->hasOne(UserSettings::class, ['id' => 'settings_id']);
+    }
+
+    /**
+     * @return float|int|string
+     */
+    public function getRating(): int
+    {
+        $rating = 0;
+        $opinions = $this->opinions;
+
+        if (empty($opinions)) {
+            return 0;
+        }
+
+        foreach ($opinions as $opinion) {
+            $rating += $opinion->rate;
+        }
+
+        $rating = round($rating/count($opinions));
+
+        return $rating;
     }
 }

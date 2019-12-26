@@ -13,7 +13,7 @@ use yii\helpers\Html;
                 <?php foreach ($tasks as $task): ?>
                     <div class="new-task__card">
                         <div class="new-task__title">
-                            <a href="#" class="link-regular">
+                            <a href="/task/view/<?= $task->id; ?>" class="link-regular">
                                 <h2><?= $task['name']; ?></h2>
                             </a>
                             <a  class="new-task__type link-regular" href="#">

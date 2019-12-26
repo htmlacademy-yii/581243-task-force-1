@@ -41,6 +41,8 @@ return [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+                'task/view/<id:\d+>' => 'task/show',
+                'file/download/<id:\d+>' => 'file/download',
             ],
         ],
 
