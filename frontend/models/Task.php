@@ -139,4 +139,48 @@ class Task extends \yii\db\ActiveRecord
         return $this->hasMany(File::class, ['id' => 'file_id'])
             ->viaTable('task_file', ['task_id' => 'id']);
     }
+
+    public static function filter(ActiveQuery $taskBuilder, TaskFilter $taskFilter): ActiveQuery
+    {
+        if (!empty($ids = $taskFilter->categories)) {
+            $taskBuilder = $taskBuilder->andWhere(['in', 'category_id', $ids]);
+        }
+
+        if ($taskFilter->my_city) {
+            // нужна аутентификация пользователя
+        }
+
+        if ($taskFilter->no_executor) {
+            $taskBuilder->andWhere(['executor_id' => NULL]);
+        }
+        if ($taskFilter->no_address) {
+            $taskBuilder->andWhere(['address' => NULL]);
+        }
+
+        $date = null;
+        switch ($taskFilter->date) {
+            case 'day':
+                $date = date('Y-m-d 00:00:00', strtotime('now - 24 hours'));
+                break;
+            case 'week':
+                $date = date('Y-m-d 00:00:00', strtotime('now - 1 week'));
+                break;
+            case 'month':
+                $date = date('Y-m-d 00:00:00', strtotime('now - 1 month'));
+                break;
+            case 'year':
+                $date = date('Y-m-d 00:00:00', strtotime('now - 1 year'));
+                break;
+        }
+
+        if ($date) {
+            $taskBuilder = $taskBuilder->andWhere(['>=', 'created_at', $date]);
+        }
+
+        if (trim($taskFilter->title)) {
+            $taskBuilder = $taskBuilder->andWhere(['like', 'name', $taskFilter->title]);
+        }
+
+        return $taskBuilder;
+    }
 }
