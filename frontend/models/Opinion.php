@@ -33,7 +33,7 @@ class Opinion extends \yii\db\ActiveRecord
     {
         return [
             [['task_id', 'rate', 'author_id', 'created_at'], 'required'],
-            [['task_id', 'rate', 'author_id'], 'integer'],
+            [['task_id', 'rate', 'author_id', 'evaluated_user_id'], 'integer'],
             [['comment'], 'string'],
             [['created_at', 'updated_at'], 'safe'],
         ];
@@ -52,6 +52,7 @@ class Opinion extends \yii\db\ActiveRecord
             'author_id' => 'Author ID',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
+            'evaluated_user_id' => 'Evaluated User',
         ];
     }
 
@@ -66,8 +67,16 @@ class Opinion extends \yii\db\ActiveRecord
     /**
      * @return ActiveQuery
      */
-    public function getUser()
+    public function getAuthor()
     {
-        return $this->hasOne(User::class, ['id' => 'user_id']);
+        return $this->hasOne(User::class, ['id' => 'author_id']);
+    }
+
+    /**
+     * @return ActiveQuery
+     */
+    public function getEvaluatedUser()
+    {
+        return $this->hasOne(User::class, ['id' => 'evaluated_user_id']);
     }
 }

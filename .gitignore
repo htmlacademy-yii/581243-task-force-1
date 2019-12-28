@@ -43,6 +43,7 @@ phpunit.phar
 /backend/web/robots.txt
 
 /frontend/runtime
+/files
 
 *.ai
 *.log
