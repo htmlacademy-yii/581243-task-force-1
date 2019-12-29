@@ -83,7 +83,7 @@ class User extends \yii\db\ActiveRecord
             [['skype', 'messenger', 'address'], 'string', 'max' => 255],
             [['phone'], 'string', 'max' => 11],
             [['password'], 'string', 'min' => 8],
-            [['email', 'password'], 'unique', 'targetAttribute' => ['email', 'password']],
+            [['email'], 'unique'],
         ];
     }
 

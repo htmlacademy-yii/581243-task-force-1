@@ -24,7 +24,7 @@ CREATE TABLE `task_force`.`users` (
   `created_at` DATETIME NOT NULL,
   `updated_at` DATETIME NULL,
   PRIMARY KEY (`id`),
-  UNIQUE INDEX `index2` (`email` ASC, `password` ASC));
+  UNIQUE INDEX `index2` (`email` ASC));
 
 
 CREATE TABLE `task_force`.`user_category` (

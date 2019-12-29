@@ -11,24 +11,25 @@ use yii\web\YiiAsset;
 
                 <?php
                 $form = ActiveForm::begin([
-                    //'enableAjaxValidation' => true,
+                    'enableClientValidation' => false,
                     'id' => $user->formName(),
                     'options' => [
                         'class' => 'registration__user-form form-create',
                     ],
                 ]);
-                echo $form->errorSummary($user);
                 ?>
                 <?= $form->field(
                     $user,
                     'email',
-                    ['template' => '{label}{input}', 'options' => ['tag' => false]]
+                    ['template' => '{label}{input}{error}', 'options' => ['tag' => false]]
                     )
-                    ->textarea([
+                    ->input('email', [
                         'class' => 'input textarea',
                         'rows' => 1,
                         'placeholder' => 'email'
-                    ]);?>
+                    ])
+                    ->label(null, ['class' => !isset($errors['email']) ?: 'input-danger'])
+                    ->error(['tag' => 'span']); ?>
                     <span>Введите валидный адрес электронной почты</span>
 
                 <?= $form->field(
@@ -40,7 +41,9 @@ use yii\web\YiiAsset;
                         'class' => 'input textarea',
                         'rows' => 1,
                         'placeholder' => 'Мамедов Кумар',
-                    ])->label('Ваше имя');?>
+                    ])
+                    ->label('Ваше имя', ['class' => !isset($errors['name']) ?: 'textarea-danger'])
+                    ->error(['tag' => 'span']); ?>
                     <span>Введите ваше имя и фамилию</span>
 
                 <?= $form->field(
@@ -51,7 +54,9 @@ use yii\web\YiiAsset;
                     ->dropDownList($cities, [
                         'class' => 'multiple-select input town-select registration-town',
                         'size' => 1
-                    ])->label('Город проживания');?>
+                    ])
+                    ->label('Город проживания')
+                    ->error(['tag' => 'span']); ?>
                     <span>Укажите город, чтобы находить подходящие задачи</span>
 
                 <?= $form->field(
@@ -62,7 +67,9 @@ use yii\web\YiiAsset;
                     ->input('password', [
                         'class' => 'input textarea',
                         'rows' => 1,
-                    ]);?>
+                    ])
+                    ->label('Ваше имя', ['class' => !isset($errors['password']) ?: 'input-danger'])
+                    ->error(['tag' => 'span']); ?>
                 <span>Длина пароля от 8 символов</span>
 
                 <?= Html::submitButton('Cоздать аккаунт', ['class' => 'button button__registration']); ?>

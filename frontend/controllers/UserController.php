@@ -21,17 +21,17 @@ class UserController extends \yii\web\Controller
         if (Yii::$app->request->getIsPost()) {
             $user->load(Yii::$app->request->post());
 
-            if ($user->validate()) {
-                $user->save();
+            if ($user->validate() && $user->save()) {
                 return $this->redirect('/task/');
             } else {
-                $user->getErrors();
+                $errors = $user->getErrors();
             }
         }
 
         return $this->render('signup', [
             'user' => $user,
             'cities' => $cities,
+            'errors' => $errors ?? [],
         ]);
     }
 
