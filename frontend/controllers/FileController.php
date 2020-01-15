@@ -6,7 +6,7 @@ use frontend\models\File;
 use yii\console\Response;
 use Yii;
 
-class FileController extends \yii\web\Controller
+class FileController extends SecuredController
 {
     /**
      * @param $id
