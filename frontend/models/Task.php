@@ -2,9 +2,10 @@
 
 namespace frontend\models;
 
-use Yii;
 use yii\base\InvalidConfigException;
+use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
+use yii\db\BaseActiveRecord;
 
 /**
  * This is the model class for table "tasks".
@@ -27,6 +28,25 @@ use yii\db\ActiveQuery;
 class Task extends \yii\db\ActiveRecord
 {
     /**
+     * @return array
+     */
+    public function behaviors()
+    {
+        return [
+            'timestamp' => [
+                'class' => TimestampBehavior::className(),
+                'attributes' => [
+                    BaseActiveRecord::EVENT_BEFORE_INSERT => ['created_at'],
+                    BaseActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
+                ],
+                'value' => function(){
+                    return gmdate("Y-m-d H:i:s");
+                },
+            ],
+        ];
+    }
+
+    /**
      * {@inheritdoc}
      */
     public static function tableName()
@@ -40,11 +60,12 @@ class Task extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'description', 'category_id', 'client_id', 'task_status_id', 'created_at'], 'required'],
+            [['name', 'description', 'category_id', 'client_id', 'task_status_id'], 'required'],
             [['description'], 'string'],
             [['category_id', 'budget', 'client_id', 'executor_id', 'task_status_id'], 'integer'],
             [['expire_at', 'created_at', 'updated_at'], 'safe'],
             [['name', 'address', 'lat', 'long'], 'string', 'max' => 255],
+            [['expire_at'], 'date', 'format' => 'php:Y-m-d'],
         ];
     }
 
