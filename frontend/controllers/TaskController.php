@@ -7,7 +7,7 @@ use frontend\models\Task;
 use frontend\models\TaskFilter;
 use yii\widgets\ActiveForm;
 
-class TaskController extends \yii\web\Controller
+class TaskController extends SecuredController
 {
     /**
      * @return string

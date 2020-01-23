@@ -68,7 +68,7 @@ use yii\web\YiiAsset;
                         'class' => 'input textarea',
                         'rows' => 1,
                     ])
-                    ->label('Ваше имя', ['class' => !isset($errors['password']) ?: 'input-danger'])
+                    ->label(null, ['class' => !isset($errors['password']) ?: 'input-danger'])
                     ->error(['tag' => 'span']); ?>
                 <span>Длина пароля от 8 символов</span>
 
