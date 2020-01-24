@@ -127,9 +127,9 @@ AppAsset::register($this);
         ?>
         <p>
             <?= $form->field(
-                $loginForm,
-                'email'
-            )
+                    $loginForm,
+                    'email'
+                )
                 ->input('email', [
                     'class' => 'enter-form-email input input-middle',
                 ])
@@ -137,9 +137,9 @@ AppAsset::register($this);
         </p>
         <p>
             <?= $form->field(
-                $loginForm,
-                'password'
-            )
+                    $loginForm,
+                    'password'
+                )
                 ->input('password', [
                     'class' => 'enter-form-email input input-middle',
                 ])

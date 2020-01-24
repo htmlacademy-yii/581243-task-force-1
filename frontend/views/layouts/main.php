@@ -64,7 +64,7 @@ AppAsset::register($this);
                         <a href="#">Исполнители</a>
                     </li>
                     <li class="site-list__item">
-                        <a href="#">Создать задание</a>
+                        <a href="/task/create">Создать задание</a>
                     </li>
                     <li class="site-list__item site-list__item--active">
                         <a>Мой профиль</a>
@@ -139,7 +139,7 @@ AppAsset::register($this);
         <div class="page-footer__links">
             <ul class="links__list">
                 <li class="links__item">
-                    <a href="">Задания</a>
+                    <a href="/task/">Задания</a>
                 </li>
                 <li class="links__item">
                     <a href="">Мой профиль</a>
@@ -151,7 +151,7 @@ AppAsset::register($this);
                     <a href="">Регистрация</a>
                 </li>
                 <li class="links__item">
-                    <a href="">Создать задание</a>
+                    <a href="/task/create">Создать задание</a>
                 </li>
                 <li class="links__item">
                     <a href="">Справка</a>

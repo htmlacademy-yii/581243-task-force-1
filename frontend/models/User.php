@@ -36,27 +36,25 @@ use yii\web\IdentityInterface;
  */
 class User extends \yii\db\ActiveRecord implements IdentityInterface
 {
+    const author = 0;
+    const executor = 1;
+
     /**
      * @return array
      */
     public function behaviors()
     {
         return [
-            //Использование поведения TimestampBehavior ActiveRecord
             'timestamp' => [
                 'class' => TimestampBehavior::className(),
                 'attributes' => [
                     BaseActiveRecord::EVENT_BEFORE_INSERT => ['created_at'],
                     BaseActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
-
                 ],
                 'value' => function(){
                     return gmdate("Y-m-d H:i:s");
                 },
-
-
             ],
-
         ];
     }
 
