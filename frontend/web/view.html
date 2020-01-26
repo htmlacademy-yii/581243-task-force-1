@@ -81,7 +81,7 @@
             </div>
             <div class="header__account">
                 <a class="header__account-photo">
-                    <img src="img/user-photo.png"
+                    <img src="./img/user-photo.png"
                          width="43" height="44"
                          alt="Аватар пользователя">
                 </a>
@@ -138,7 +138,7 @@
                             <h3 class="content-view__h3">Расположение</h3>
                             <div class="content-view__location-wrapper">
                                 <div class="content-view__map">
-                                    <a href="#"><img src="img/map.jpg" width="361" height="292"
+                                    <a href="#"><img src="./img/map.jpg" width="361" height="292"
                                                      alt="Москва, Новый арбат, 23 к. 1"></a>
                                 </div>
                                 <div class="content-view__address">
@@ -150,12 +150,12 @@
                         </div>
                     </div>
                     <div class="content-view__action-buttons">
-                            <button class=" button button__big-color response-button"
-                                    type="button">Откликнуться</button>
-                            <button class="button button__big-color refusal-button"
-                                    type="button">Отказаться</button>
-                            <button class="button button__big-color connection-button"
-                                    type="button">Написать сообщение</button>
+                            <button class=" button button__big-color response-button open-modal"
+                                    type="button" data-for="response-form">Откликнуться</button>
+                            <button class="button button__big-color refusal-button open-modal"
+                                    type="button" data-for="refuse-form">Отказаться</button>
+                      <button class="button button__big-color request-button open-modal"
+                              type="button" data-for="complete-form">Завершить</button>
                     </div>
                 </div>
                 <div class="content-view__feedback">
@@ -163,7 +163,7 @@
                     <div class="content-view__feedback-wrapper">
                         <div class="content-view__feedback-card">
                             <div class="feedback-card__top">
-                                <a href="#"><img src="img/man-glasses.jpg" width="55" height="55"></a>
+                                <a href="#"><img src="./img/man-glasses.jpg" width="55" height="55"></a>
                                 <div class="feedback-card__top--name">
                                     <p><a href="#" class="link-regular">Астахов Павел</a></p>
                                     <span></span><span></span><span></span><span></span><span class="star-disabled"></span>
@@ -178,17 +178,15 @@
                                 <span>1500 ₽</span>
                             </div>
                             <div class="feedback-card__actions">
-                                <button class="button__small-color response-button button"
-                                        type="button">Откликнуться</button>
-                                <button class="button__small-color refusal-button button"
-                                        type="button">Отказаться</button>
-                                <button class="button__chat button"
-                                        type="button"></button>
+                                <a class="button__small-color request-button button"
+                                        type="button">Подтвердить</a>
+                                <a class="button__small-color refusal-button button"
+                                        type="button">Отказать</a>
                             </div>
                         </div>
                         <div class="content-view__feedback-card">
                             <div class="feedback-card__top">
-                                <a href="#"><img src="img/man-blond.jpg" width="55" height="55"></a>
+                                <a href="#"><img src="./img/man-blond.jpg" width="55" height="55"></a>
                                 <div class="feedback-card__top--name">
                                     <p class="link-name"><a href="#" class="link-regular">Богатырев Дмитрий</a></p>
                                     <span></span><span></span><span></span><span></span><span class="star-disabled"></span>
@@ -203,12 +201,10 @@
                                 <span>1500 ₽</span>
                             </div>
                             <div class="feedback-card__actions">
-                                <button class="button__small-color response-button button"
-                                        type="button">Откликнуться</button>
-                                <button class="button__small-color refusal-button button"
-                                        type="button">Отказаться</button>
-                                <button class="button__chat button"
-                                        type="button"></button>
+                              <a class="button__small-color request-button button"
+                                      type="button">Подтвердить</a>
+                              <a class="button__small-color refusal-button button"
+                                      type="button">Отказать</a>
                             </div>
                         </div>
                     </div>
@@ -219,14 +215,12 @@
                     <div class="profile-mini__wrapper">
                         <h3>Заказчик</h3>
                         <div class="profile-mini__top">
-                            <img src="img/man-brune.jpg" width="62" height="62" alt="Аватар заказчика">
+                            <img src="./img/man-brune.jpg" width="62" height="62" alt="Аватар заказчика">
                             <div class="profile-mini__name five-stars__rate">
                                 <p>Николай Демченко</p>
-                                <span></span><span></span><span></span><span></span><span class="star-disabled"></span>
-                                <b>4.25</b>
                             </div>
                         </div>
-                        <p class="info-customer"><span>15 отзывов</span><span class="last-">28 заказов</span></p>
+                        <p class="info-customer"><span>12 заданий</span><span class="last-">2 года на сайте</span></p>
                         <a href="#" class="link-regular">Смотреть профиль</a>
                     </div>
                 </div>
@@ -294,14 +288,14 @@
             <div class="page-footer__copyright">
                 <a>
                     <img class="copyright-logo"
-                         src="img/academy-logo.png"
+                         src="./img/academy-logo.png"
                          width="185" height="63"
                          alt="Логотип HTML Academy">
                 </a>
             </div>
         </div>
     </footer>
-    <section class="modal response-form form-modal">
+    <section class="modal response-form form-modal" id="response-form">
     <h2>Отклик на задание</h2>
         <form action="#" method="post">
             <p>
@@ -316,7 +310,7 @@
         </form>
         <button class="form-modal-close" type="button">Закрыть</button>
     </section>
-    <section class="modal completion-form form-modal">
+    <section class="modal completion-form form-modal" id="complete-form">
     <h2>Завершение задания</h2>
         <p class="form-modal-description">Задание выполнено?</p>
         <form action="#" method="post">
@@ -331,25 +325,26 @@
         <p class="form-modal-description">
             Оценка
             <div class="feedback-card__top--name completion-form-star">
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
+                <span class="star-disabled"></span>
+                <span class="star-disabled"></span>
+                <span class="star-disabled"></span>
+                <span class="star-disabled"></span>
                 <span class="star-disabled"></span>
             </div>
         </p>
+          <input type="hidden" name="rating" id="rating">
             <button class="button modal-button" type="submit">Отправить</button>
         </form>
         <button class="form-modal-close" type="button">Закрыть</button>
     </section>
-    <section class="modal form-modal refusal-form">
+    <section class="modal form-modal refusal-form" id="refuse-form">
     <h2>Отказ от задания</h2>
         <p>
             Вы собираетесь отказаться от выполнения задания.
             Это действие приведёт к снижению вашего рейтинга.
             Вы уверены?
         </p>
-        <button class="button__form-modal button"
+        <button class="button__form-modal button" id="close-modal"
                 type="button">Отмена</button>
         <button class="button__form-modal refusal-button button"
                 type="button">Отказаться</button>
@@ -357,5 +352,7 @@
     </section>
 </div>
 <div class="overlay"></div>
+<script src="js/main.js"></script>
+
 </body>
 </html>

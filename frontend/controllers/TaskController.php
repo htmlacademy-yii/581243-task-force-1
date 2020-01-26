@@ -2,16 +2,26 @@
 
 namespace frontend\controllers;
 
+use Exception;
 use frontend\models\Category;
+use frontend\models\DoneTaskForm;
 use frontend\models\NewTaskForm;
+use frontend\models\Opinion;
+use frontend\models\RefuseTaskForm;
+use frontend\models\Reply;
 use frontend\models\Status;
 use frontend\models\Task;
 use frontend\models\TaskFilter;
 use frontend\models\User;
+use TaskForce\classes\actions\AvailableActions;
+use TaskForce\classes\actions\DoneAction;
+use TaskForce\classes\actions\GetProblemAction;
+use TaskForce\classes\actions\RefuseAction;
+use TaskForce\exceptions\ActionException;
+use TaskForce\exceptions\StatusException;
 use Yii;
 use yii\web\Response;
 use yii\web\UploadedFile;
-use yii\widgets\ActiveForm;
 
 class TaskController extends SecuredController
 {
@@ -21,7 +31,7 @@ class TaskController extends SecuredController
     public function actionIndex()
     {
         $taskFilter = new TaskFilter();
-        $taskBuilder = Task::find()->where(['task_status_id' => 1]);
+        $taskBuilder = Task::find()->where(['task_status_id' => [1, 3]]);
         $categories = Category::find()->all();
 
         if (\Yii::$app->request->getIsPost()) {
@@ -48,24 +58,39 @@ class TaskController extends SecuredController
     /**
      * @param $id
      * @return string
+     * @throws Exception
      */
     public function actionShow($id)
     {
         $task = Task::findOne($id);
         $client = $task->client;
         $replies = $task->replies;
+        $user = User::getUser(Yii::$app->user->getId());
+        $actions = AvailableActions::getNextAction($user, $task);
+        $replyForm = new Reply();
+        $doneTaskForm = new DoneTaskForm();
+        $refuseTaskForm = new RefuseTaskForm();
 
         return $this->render('view', [
             'task' => $task,
             'client' => $client,
             'replies' => $replies,
+            'user' => $user,
+            'actions' => $actions,
+            'replyForm' => $replyForm,
+            'doneTaskForm' => $doneTaskForm,
+            'refuseTaskForm' => $refuseTaskForm,
         ]);
     }
 
+    /**
+     * @return string|Response
+     * @throws StatusException
+     */
     public function actionCreate()
     {
-        $user = User::findOne(\Yii::$app->user->getId()) ?? new User();
-        if ($user->user_status !== User::author) {
+        $user = User::getUser(Yii::$app->user->getId());
+        if ($user->user_status !== User::CLIENT) {
             return $this->redirect('/task/');
         }
 
@@ -75,7 +100,6 @@ class TaskController extends SecuredController
 
         if (Yii::$app->request->getIsPost()) {
             $taskForm->load(Yii::$app->request->post());
-            //$taskForm->expire_at = date('Y-m-d H:i:s', strtotime($taskForm->expire_at));
 
             if ($taskForm->validate()) {
                 $taskForm->files = UploadedFile::getInstances($taskForm, 'files');
@@ -83,9 +107,11 @@ class TaskController extends SecuredController
                 $task = new Task();
                 $task->attributes = $taskForm->attributes;
                 $task->client_id = $user->id;
-                $task->task_status_id = Status::STATUS_NEW;
+                $task->setCurrentStatus(Status::STATUS_NEW);
 
                 $files = $taskForm->upload();
+
+                $task->expire_at = date('Y-m-d H:i:s', strtotime($task->expire_at));
 
                 if ($task->validate() && is_array($files) && $task->save()) {
 
@@ -105,5 +131,65 @@ class TaskController extends SecuredController
             'categories' => $categories,
             'errors' => $errors,
         ]);
+    }
+
+    /**
+     * @return Response
+     * @throws StatusException
+     * @throws ActionException
+     */
+    public function actionDone()
+    {
+        $user = User::getUser(Yii::$app->user->getId());
+
+        $doneTaskForm = new DoneTaskForm();
+
+        if (Yii::$app->request->getIsPost()) {
+            $doneTaskForm->load(Yii::$app->request->post());
+            $task = Task::findOne($doneTaskForm->task_id);
+
+            if ($task && $doneTaskForm->validate()) {
+                $opinion = new Opinion();
+                $opinion->attributes = $doneTaskForm->attributes;
+                $opinion->author_id = $user->id;
+                $opinion->evaluated_user_id = $task->executor_id;
+
+                if ($opinion->validate() &&
+                    DoneAction::checkRights($user, $task) &&
+                    GetProblemAction::checkRights($user, $task)) {
+                    $opinion->save();
+
+                    $action = $doneTaskForm->done === 'yes' ? DoneAction::getInnerName() : GetProblemAction::getInnerName();
+                    $nextStatus = $task->getNextStatus($action);
+                    $task->setCurrentStatus($nextStatus);
+                }
+            }
+        }
+
+        return $this->redirect(Yii::$app->request->referrer ?? '/task/');
+    }
+
+    /**
+     * @return Response
+     * @throws ActionException
+     * @throws StatusException
+     */
+    public function actionRefuse()
+    {
+        $user = User::getUser(Yii::$app->user->getId());
+
+        $refuseTaskForm = new RefuseTaskForm();
+
+        if (Yii::$app->request->getIsPost()) {
+            $refuseTaskForm->load(Yii::$app->request->post());
+            $task = Task::findOne($refuseTaskForm->task_id);
+
+            if ($task && $refuseTaskForm->validate() && RefuseAction::checkRights($user, $task)) {
+                $nextStatus = $task->getNextStatus(RefuseAction::getInnerName());
+                $task->setCurrentStatus($nextStatus);
+            }
+        }
+
+        return $this->redirect(Yii::$app->request->referrer ?? '/task/');
     }
 }

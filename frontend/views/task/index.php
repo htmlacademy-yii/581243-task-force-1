@@ -2,7 +2,6 @@
 /* @var $model User */
 
 use yii\widgets\ActiveForm;
-use yii\widgets\ActiveField;
 use yii\helpers\Html;
 ?>
 <main class="page-main">
@@ -51,7 +50,6 @@ use yii\helpers\Html;
                 <?php
                 $form = ActiveForm::begin([
                     'id' => 'search-task__form',
-                    //'enableAjaxValidation' => true, // for ajax
                     'options' => [
                         'class' => 'search-task__form',
                         'name' => 'test',

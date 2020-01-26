@@ -1,3 +1,9 @@
+<?php
+use TaskForce\classes\actions\AvailableActions;
+use yii\helpers\Html;
+use yii\widgets\ActiveForm;
+use TaskForce\classes\actions\RejectAction;
+?>
 <div class="table-layout">
     <main class="page-main">
         <div class="main-container page-container">
@@ -42,55 +48,64 @@
                         </div>
                     </div>
                     <div class="content-view__action-buttons">
-                        <button class=" button button__big-color response-button"
-                                type="button">Откликнуться</button>
-                        <button class="button button__big-color refusal-button"
-                                type="button">Отказаться</button>
-                        <button class="button button__big-color connection-button"
-                                type="button">Написать сообщение</button>
+                        <?php if (in_array(AvailableActions::ACTION_RESPOND, $actions)): ?>
+                            <button class=" button button__big-color response-button open-modal"
+                                    type="button" data-for="response-form">Откликнуться</button>
+                        <?php endif; ?>
+
+                        <?php if (in_array(AvailableActions::ACTION_REFUSE, $actions)): ?>
+                            <button class="button button__big-color refusal-button open-modal"
+                                    type="button" data-for="refuse-form">Отказаться</button>
+                        <?php endif; ?>
+                        <?php if (in_array(AvailableActions::ACTION_DONE, $actions)): ?>
+                            <button class="button button__big-color request-button open-modal"
+                                    type="button" data-for="complete-form">Завершить</button>
+                        <?php endif; ?>
                     </div>
                 </div>
                 <div class="content-view__feedback">
-                    <h2>Отклики <span><?= $task->getReplies()->count(); ?></span></h2>
+                    <h2>Отклики <span><?= ($task->client_id !== $user->id) ? '' : $task->getReplies()->count(); ?></span></h2>
                     <div class="content-view__feedback-wrapper">
-
                         <?php foreach ($replies as $reply): ?>
-
-                        <div class="content-view__feedback-card">
-                            <div class="feedback-card__top">
-                                <a href="/user/view/<?= $reply->executor->id; ?>">
-                                    <img src="<?= $reply->executor->avatar->path ?? '/img/user-man.jpg' ?>"
-                                         width="55" height="55">
-                                </a>
-                                <div class="feedback-card__top--name">
-                                    <p>
-                                        <a href="/user/view/<?= $reply->executor->id; ?>" class="link-regular">
-                                            <?= $reply->executor->last_name; ?> <?= $reply->executor->name; ?>
+                            <?php if (in_array($user->id, [$task->client_id, $reply->executor_id])): ?>
+                                <div class="content-view__feedback-card">
+                                    <div class="feedback-card__top">
+                                        <a href="/user/view/<?= $reply->executor->id; ?>">
+                                            <img src="<?= $reply->executor->avatar->path ?? '/img/user-man.jpg' ?>"
+                                                 width="55" height="55">
                                         </a>
-                                    </p>
-                                    <?php $rating = $client->getRating(); ?>
-                                        <?php for($i = 1; $i <= 5; $i++): ?>
-                                            <span class="<?= $i <= $rating ? : 'star-disabled'; ?>"></span>
-                                        <?php endfor; ?>
-                                    <b><?= $reply->executor->getRating(); ?></b>
+                                        <div class="feedback-card__top--name">
+                                            <p>
+                                                <a href="/user/view/<?= $reply->executor->id; ?>" class="link-regular">
+                                                    <?= $reply->executor->last_name; ?> <?= $reply->executor->name; ?>
+                                                </a>
+                                            </p>
+                                            <?php $rating = $client->getRating(); ?>
+                                                <?php for($i = 1; $i <= 5; $i++): ?>
+                                                    <span class="<?= $i <= $rating ? : 'star-disabled'; ?>"></span>
+                                                <?php endfor; ?>
+                                            <b><?= $reply->executor->getRating(); ?></b>
+                                        </div>
+                                        <span class="new-task__time"><?= \Yii::$app->formatter->asRelativeTime(strtotime($reply->created_at)); ?></span>
+                                    </div>
+                                    <div class="feedback-card__content">
+                                        <p>
+                                            <?= $reply->comment; ?>
+                                        </p>
+                                        <span><?= $reply->price; ?> ₽</span>
+                                    </div>
+                                    <div class="feedback-card__actions">
+                                        <?php if (in_array(AvailableActions::ACTION_TAKE_IN_WORK, $actions)): ?>
+                                            <a href="/reply/take-in-work/<?= $task->id; ?>/<?= $reply->id; ?>" class="button__small-color request-button button"
+                                               type="button">Подтвердить</a>
+                                            <?php if (RejectAction::checkRights($user, $task, $reply)): ?>
+                                                <a href="/reply/reject/<?= $task->id; ?>/<?= $reply->id; ?>" class="button__small-color refusal-button button"
+                                                   type="button">Отказать</a>
+                                            <?php endif; ?>
+                                        <?php endif; ?>
+                                    </div>
                                 </div>
-                                <span class="new-task__time"><?= \Yii::$app->formatter->asRelativeTime(strtotime($reply->created_at)); ?></span>
-                            </div>
-                            <div class="feedback-card__content">
-                                <p>
-                                    <?= $reply->comment; ?>
-                                </p>
-                                <span><?= $reply->price; ?> ₽</span>
-                            </div>
-                            <div class="feedback-card__actions">
-                                <button class="button__small-color response-button button"
-                                        type="button">Откликнуться</button>
-                                <button class="button__small-color refusal-button button"
-                                        type="button">Отказаться</button>
-                                <button class="button__chat button"
-                                        type="button"></button>
-                            </div>
-                        </div>
+                            <?php endif; ?>
                         <?php endforeach; ?>
 
                     </div>
@@ -120,11 +135,7 @@
                                 ); ?>
                             </span>
                             <span class="last-">
-                                <?= \Yii::t(
-                                    'app',
-                                    '{n, plural, one{# заказ} few{# заказа} many{# заказов} other{# заказов}}',
-                                    ['n' => $client->getClientTasks()->count()]
-                                ); ?>
+                                <?= explode(',', \Yii::$app->formatter->asDuration(time() - strtotime($client->created_at)))[0]; ?> на сайте
                             </span>
                         </p>
                         <a href="/user/view/<?= $client->id; ?>"" class="link-regular">Смотреть профиль</a>
@@ -157,59 +168,185 @@
             </section>
         </div>
     </main>
-    <section class="modal response-form form-modal">
+    <section class="modal response-form form-modal" id="response-form">
         <h2>Отклик на задание</h2>
-        <form action="#" method="post">
-            <p>
-                <label class="form-modal-description" for="response-payment">Ваша цена</label>
-                <input class="response-form-payment input input-middle input-money" type="text" name="response-payment" id="response-payment">
-            </p>
-            <p>
-                <label class="form-modal-description" for="response-comment">Комментарий</label>
-                <textarea class="input textarea" rows="4" id="response-comment" name="response-comment" placeholder="Place your text"></textarea>
-            </p>
-            <button class="button modal-button" type="submit">Отправить</button>
-        </form>
+        <?php
+        $form = ActiveForm::begin([
+            'id' => $replyForm->formName(),
+            'action' => '/reply/create',
+        ]);
+        ?>
+
+        <?= $form->field(
+            $replyForm,
+            'price',
+            [
+                'template' => '{label}{input}{error}',
+                'options' => ['class' => 'create__task-form form-create'],
+            ]
+        )
+            ->input('text', [
+                'class' => 'response-form-payment input input-middle input-money',
+                'id' => 'response-payment',
+            ])
+            ->label('Ваша Цена', ['class' => 'form-modal-description']); ?>
+
+        <?= $form->field(
+            $replyForm,
+            'comment',
+            [
+                'template' => '{label}{input}{error}',
+                'options' => ['class' => 'create__task-form form-create'],
+            ]
+        )
+            ->textarea([
+                'class' => 'input textarea',
+                'rows' => 4,
+                'placeholder' => 'Place your text',
+                'id' => 'response-comment',
+            ])
+            ->label('Комментарий', ['class' => 'form-modal-description']); ?>
+
+        <?= $form->field(
+            $replyForm,
+            'task_id',
+            [
+                'template' => '{input}',
+                'options' => ['class' => 'create__task-form form-create'],
+            ]
+        )
+            ->hiddenInput([
+                'value' => $task->id,
+            ]); ?>
+
+        <?= Html::submitButton('Отправить', ['class' => 'button modal-button']); ?>
+        <?php ActiveForm::end(); ?>
         <button class="form-modal-close" type="button">Закрыть</button>
     </section>
-    <section class="modal completion-form form-modal">
+    <section class="modal completion-form form-modal" id="complete-form">
         <h2>Завершение задания</h2>
+        <?php
+        $form = ActiveForm::begin([
+            'id' => $doneTaskForm->formName(),
+            'action' => '/task/done',
+        ]);
+        ?>
         <p class="form-modal-description">Задание выполнено?</p>
-        <form action="#" method="post">
-            <input class="visually-hidden completion-input completion-input--yes" type="radio" id="completion-radio--yes" name="completion" value="yes">
-            <label class="completion-label completion-label--yes" for="completion-radio--yes">Да</label>
-            <input class="visually-hidden completion-input completion-input--difficult" type="radio" id="completion-radio--yet" name="completion" value="difficulties">
-            <label  class="completion-label completion-label--difficult" for="completion-radio--yet">Возникли проблемы</label>
+        <?= $form->field(
+            $doneTaskForm,
+            'done',
+            [
+                'template' => '{input}{error}',
+            ]
+        )
+            ->radioList([
+                'yes' => 'Да',
+                'difficult' => 'Возникли проблемы'
+            ], [
+                'item' => function ($index, $label, $name, $checked, $value) {
+                    return Html::radio(
+                            $name,
+                            $value === 'yes',
+                            [
+                                'value' => $value,
+                                'id' => 'completion-radio--' . ($value === 'yes' ? 'yes' : 'yet'),
+                                'class' => 'visually-hidden completion-input completion-input--' . $value,
+                                'name' => $name,
+                            ]
+                        ) .
+                        Html::label(
+                            $label,
+                            'completion-radio--' . ($value === 'yes' ? 'yes' : 'yet'),
+                            [
+                                'class' => 'completion-label completion-label--' . $value,
+                            ]
+                        );
+                },
+                'tag' => false,
+            ]);
+        ?>
             <p>
-                <label class="form-modal-description" for="completion-comment">Комментарий</label>
-                <textarea class="input textarea" rows="4" id="completion-comment" name="completion-comment" placeholder="Place your text"></textarea>
+                <?= $form->field(
+                    $doneTaskForm,
+                    'comment',
+                    [
+                        'template' => '{label}<br>{input}{error}',
+                        'options' => [
+                            'tag' => false,
+                        ],
+                    ]
+                )
+                    ->textarea([
+                        'class' => 'input textarea',
+                        'rows' => 4,
+                        'placeholder' => 'Place your text',
+                        'id' => 'response-comment',
+                        'tag' => false,
+                    ])
+                    ->label(null, ['class' => 'form-modal-description']); ?>
             </p>
             <p class="form-modal-description">
                 Оценка
             <div class="feedback-card__top--name completion-form-star">
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
+                <span class="star-disabled"></span>
+                <span class="star-disabled"></span>
+                <span class="star-disabled"></span>
+                <span class="star-disabled"></span>
                 <span class="star-disabled"></span>
             </div>
             </p>
-            <button class="button modal-button" type="submit">Отправить</button>
-        </form>
+        <?= $form->field(
+            $doneTaskForm,
+            'rate',
+            [
+                'template' => '{input}',
+            ]
+        )
+            ->hiddenInput([
+                'id' => 'rating',
+            ]); ?>
+        <?= $form->field(
+            $doneTaskForm,
+            'task_id',
+            [
+                'template' => '{input}',
+            ]
+        )
+            ->hiddenInput([
+                'value' => $task->id,
+            ]); ?>
+        <?= Html::submitButton('Отправить', ['class' => 'button modal-button']); ?>
+        <?php ActiveForm::end(); ?>
         <button class="form-modal-close" type="button">Закрыть</button>
     </section>
-    <section class="modal form-modal refusal-form">
+    <section class="modal form-modal refusal-form" id="refuse-form">
+        <?php
+        $form = ActiveForm::begin([
+            'id' => $refuseTaskForm->formName(),
+            'action' => '/task/refuse',
+        ]);
+        ?>
         <h2>Отказ от задания</h2>
         <p>
             Вы собираетесь отказаться от выполнения задания.
             Это действие приведёт к снижению вашего рейтинга.
             Вы уверены?
         </p>
-        <button class="button__form-modal button"
+        <?= $form->field(
+            $refuseTaskForm,
+            'task_id',
+            [
+                'template' => '{input}',
+            ]
+        )
+            ->hiddenInput([
+                'value' => $task->id,
+            ]); ?>
+        <button class="button__form-modal button" id="close-modal"
                 type="button">Отмена</button>
-        <button class="button__form-modal refusal-button button"
-                type="button">Отказаться</button>
+        <?= Html::submitButton('Отказаться', ['class' => 'button__form-modal refusal-button button']); ?>
         <button class="form-modal-close" type="button">Закрыть</button>
+        <?php ActiveForm::end(); ?>
     </section>
 </div>
 <div class="overlay"></div>

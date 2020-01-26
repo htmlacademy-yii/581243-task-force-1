@@ -1,3 +1,6 @@
+<?php
+use yii\helpers\StringHelper;
+?>
 <main>
     <div class="landing-container">
         <div class="landing-top">
@@ -95,8 +98,8 @@
                 <div class="landing-task">
                     <div class="landing-task-top task-<?= $task->category->icon;?>"></div>
                     <div class="landing-task-description" style="ove rflow: hidden;">
-                        <h3><a href="#" class="link-regular"><?= \yii\helpers\StringHelper::truncate($task->name, 30, '...'); ?></a></h3>
-                        <p><?= \yii\helpers\StringHelper::truncate($task->description, 70, '...'); ?></p>
+                        <h3><a href="#" class="link-regular"><?= StringHelper::truncate($task->name, 30, '...'); ?></a></h3>
+                        <p><?= StringHelper::truncate($task->description, 70, '...'); ?></p>
                     </div>
                     <div class="landing-task-info">
                         <div class="task-info-left">

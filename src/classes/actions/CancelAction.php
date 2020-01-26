@@ -4,9 +4,9 @@
 namespace TaskForce\classes\actions;
 
 
-use TaskForce\classes\models\User;
-use TaskForce\classes\models\UserRoles;
-use TaskForce\classes\models\Task;
+use frontend\models\Status;
+use frontend\models\Task;
+use frontend\models\User;
 
 /**
  * Class CancelAction
@@ -27,7 +27,7 @@ class CancelAction extends AbstractAction
      */
     public static function getInnerName(): string
     {
-        AvailableActions::ACTION_CANCEL;
+        return AvailableActions::ACTION_CANCEL;
     }
 
     /**
@@ -37,12 +37,12 @@ class CancelAction extends AbstractAction
      */
     public static function checkRights(User $user, Task $task): bool
     {
-        if ($user->role !== UserRoles::ROLE_CLIENT) {
+        if ($user->id !== $task->client_id) {
             return false;
         }
 
-        if ($task->currentStatus === Task::STATUS_NEW ||
-            $task->currentStatus === Task::STATUS_HAS_RESPONSES) {
+        if ($task->task_status_id === Status::STATUS_NEW ||
+            $task->task_status_id === Status::STATUS_HAS_RESPONSES) {
             return true;
         }
 

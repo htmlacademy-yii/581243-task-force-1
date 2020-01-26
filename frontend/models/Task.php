@@ -2,6 +2,15 @@
 
 namespace frontend\models;
 
+use TaskForce\classes\actions\CancelAction;
+use TaskForce\classes\actions\DoneAction;
+use TaskForce\classes\actions\GetProblemAction;
+use TaskForce\classes\actions\RefuseAction;
+use TaskForce\classes\actions\RejectAction;
+use TaskForce\classes\actions\RespondAction;
+use TaskForce\classes\actions\TakeInWorkAction;
+use TaskForce\exceptions\ActionException;
+use TaskForce\exceptions\StatusException;
 use yii\base\InvalidConfigException;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
@@ -65,7 +74,7 @@ class Task extends \yii\db\ActiveRecord
             [['category_id', 'budget', 'client_id', 'executor_id', 'task_status_id'], 'integer'],
             [['expire_at', 'created_at', 'updated_at'], 'safe'],
             [['name', 'address', 'lat', 'long'], 'string', 'max' => 255],
-            [['expire_at'], 'date', 'format' => 'php:Y-m-d'],
+            [['expire_at'], 'date', 'format' => 'php:Y-m-d H:i:s'],
         ];
     }
 
@@ -203,5 +212,42 @@ class Task extends \yii\db\ActiveRecord
         }
 
         return $taskBuilder;
+    }
+
+    public function setCurrentStatus(int $status): bool
+    {
+        if (key_exists($status, Status::getAllStatuses())) {
+            $this->task_status_id = (int)$status;
+            $this->save();
+
+            return true;
+        }
+
+        throw new StatusException('Status doesn\'t exist.');
+    }
+
+    /**
+     * @param string $action
+     * @return int
+     * @throws ActionException
+     */
+    public function getNextStatus(string $action): int
+    {
+        switch ($action) {
+            case CancelAction::getInnerName():
+                return Status::STATUS_CANCEL;
+            case RespondAction::getInnerName():
+            case RejectAction::getInnerName():
+                return Status::STATUS_HAS_RESPONSES;
+            case TakeInWorkAction::getInnerName():
+                return Status::STATUS_IN_WORK;
+            case DoneAction::getInnerName():
+                return Status::STATUS_DONE;
+            case GetProblemAction::getInnerName():
+            case RefuseAction::getInnerName():
+                return Status::STATUS_FAILED;
+            default:
+                throw new ActionException('Action does not exist');
+        }
     }
 }

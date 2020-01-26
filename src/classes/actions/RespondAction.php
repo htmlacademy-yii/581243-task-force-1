@@ -4,9 +4,9 @@
 namespace TaskForce\classes\actions;
 
 
-use TaskForce\classes\models\User;
-use TaskForce\classes\models\UserRoles;
-use TaskForce\classes\models\Task;
+use frontend\models\Status;
+use frontend\models\Task;
+use frontend\models\User;
 
 /**
  * Class RespondAction
@@ -27,7 +27,7 @@ class RespondAction extends AbstractAction
      */
     public static function getInnerName(): string
     {
-        AvailableActions::ACTION_RESPOND;
+        return AvailableActions::ACTION_RESPOND;
     }
 
     /**
@@ -37,12 +37,16 @@ class RespondAction extends AbstractAction
      */
     public static function checkRights(User $user, Task $task): bool
     {
-        if ($user->role !== UserRoles::ROLE_EXECUTOR) {
+        if ($user->user_status !== User::EXECUTOR) {
             return false;
         }
 
-        if ($task->currentStatus === Task::STATUS_NEW ||
-            $task->currentStatus === Task::STATUS_HAS_RESPONSES) {
+        if ($user->getReplies()->where(['task_id' => $task->id])->one()) {
+            return false;
+        }
+
+        if ($task->task_status_id === Status::STATUS_NEW ||
+            $task->task_status_id === Status::STATUS_HAS_RESPONSES) {
             return true;
         }
 

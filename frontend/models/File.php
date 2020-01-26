@@ -60,7 +60,15 @@ class File extends \yii\db\ActiveRecord
             [['user_id'], 'integer'],
             [['created_at', 'updated_at'], 'safe'],
             [['title', 'type', 'path'], 'string', 'max' => 255],
+            ['type', 'ValidateType'],
         ];
+    }
+
+    public function ValidateType($attribute)
+    {
+        if (!in_array($this->$attribute, Yii::$app->params['allowed_files'])) {
+            $this->addError($attribute, 'Файлы должены иметь расширения: ' . join(', ', Yii::$app->params['allowed_files']));
+        }
     }
 
     /**
@@ -93,7 +101,7 @@ class File extends \yii\db\ActiveRecord
 
     public function upload(UploadedFile $attach, string $dir = self::DEFAULT_DIR): ?self
     {
-        $path = static::getPath($dir);
+        $path = Yii::$app->basePath . '/../' . $dir;
 
         if (!is_dir($path)) {
             mkdir($path);
@@ -102,12 +110,10 @@ class File extends \yii\db\ActiveRecord
         $this->title = $attach->baseName;
         $this->type = $attach->extension;
         $this->path = $path . '/' . time() . '-' . $attach->name;
-        $this->user_id = \Yii::$app->user->getId();
+        $this->user_id = Yii::$app->user->getId();
 
-        foreach (static::BLOCK as $item) {
-            if (preg_match("/$item\$/i", $attach->name)) {
-                return null;
-            };
+        if (!in_array(explode('.', $attach->name)[1], Yii::$app->params['allowed_files'])) {
+            return null;
         }
 
         if ($this->validate() && $this->save()) {
@@ -117,10 +123,5 @@ class File extends \yii\db\ActiveRecord
         }
 
         return null;
-    }
-
-    public static function getPath(string $dir): string
-    {
-        return Yii::$app->basePath . '/../' . $dir;
     }
 }

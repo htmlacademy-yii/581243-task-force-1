@@ -3,7 +3,9 @@
 namespace frontend\models;
 
 use Yii;
+use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
+use yii\db\BaseActiveRecord;
 
 /**
  * This is the model class for table "replies".
@@ -19,6 +21,25 @@ use yii\db\ActiveQuery;
 class Reply extends \yii\db\ActiveRecord
 {
     /**
+     * @return array
+     */
+    public function behaviors()
+    {
+        return [
+            'timestamp' => [
+                'class' => TimestampBehavior::className(),
+                'attributes' => [
+                    BaseActiveRecord::EVENT_BEFORE_INSERT => ['created_at'],
+                    BaseActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
+                ],
+                'value' => function(){
+                    return gmdate("Y-m-d H:i:s");
+                },
+            ],
+        ];
+    }
+
+    /**
      * {@inheritdoc}
      */
     public static function tableName()
@@ -32,8 +53,9 @@ class Reply extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['task_id', 'created_at', 'executor_id'], 'required'],
+            [['task_id', 'executor_id'], 'required'],
             [['task_id', 'price', 'executor_id'], 'integer'],
+            [['rejected'], 'boolean'],
             [['comment'], 'string'],
             [['created_at', 'updated_at'], 'safe'],
         ];
@@ -52,6 +74,7 @@ class Reply extends \yii\db\ActiveRecord
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
             'executor_id' => 'Executor ID',
+            'rejected' => 'Rejected',
         ];
     }
 
