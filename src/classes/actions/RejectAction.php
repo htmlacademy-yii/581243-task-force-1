@@ -4,6 +4,7 @@
 namespace TaskForce\classes\actions;
 
 
+use frontend\models\Reply;
 use frontend\models\Status;
 use frontend\models\Task;
 use frontend\models\User;
@@ -12,14 +13,14 @@ use frontend\models\User;
  * Class RefuseAction
  * @package TaskForce\classes\actions
  */
-class RefuseAction extends AbstractAction
+class RejectAction extends AbstractAction
 {
     /**
      * @return string
      */
     public static function getActionName(): string
     {
-        return 'Отказаться';
+        return 'Отклонить исполнителя';
     }
 
     /**
@@ -27,16 +28,19 @@ class RefuseAction extends AbstractAction
      */
     public static function getInnerName(): string
     {
-        return AvailableActions::ACTION_REFUSE;
+        return AvailableActions::ACTION_REJECT;
     }
 
     /**
      * @param User $user
      * @param Task $task
+     * @param Reply|null $reply
      * @return bool
      */
-    public static function checkRights(User $user, Task $task): bool
+    public static function checkRights(User $user, Task $task, Reply $reply = null): bool
     {
-        return ($user->id === $task->executor_id) && ($task->task_status_id === Status::STATUS_IN_WORK);
+        return $reply && ($user->id === $task->client_id) &&
+            ($task->task_status_id === Status::STATUS_HAS_RESPONSES) &&
+            (!$reply->rejected);
     }
 }

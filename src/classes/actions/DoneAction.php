@@ -4,9 +4,9 @@
 namespace TaskForce\classes\actions;
 
 
-use TaskForce\classes\models\User;
-use TaskForce\classes\models\UserRoles;
-use TaskForce\classes\models\Task;
+use frontend\models\Status;
+use frontend\models\Task;
+use frontend\models\User;
 
 /**
  * Class DoneAction
@@ -27,7 +27,7 @@ class DoneAction extends AbstractAction
      */
     public static function getInnerName(): string
     {
-        AvailableActions::ACTION_DONE;
+        return AvailableActions::ACTION_DONE;
     }
 
     /**
@@ -37,6 +37,6 @@ class DoneAction extends AbstractAction
      */
     public static function checkRights(User $user, Task $task): bool
     {
-        return ($user->role === UserRoles::ROLE_CLIENT) && ($task->currentStatus === Task::STATUS_IN_WORK);
+        return ($user->id === $task->client_id) && ($task->task_status_id === Status::STATUS_IN_WORK);
     }
 }

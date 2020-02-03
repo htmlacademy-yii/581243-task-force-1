@@ -92,7 +92,8 @@ use yii\helpers\Html;
                         <?= $form->field(
                             $taskForm,
                             'budget',
-                            ['template' => '{label}{input}<span>Не заполняйте для оценки исполнителем{error}</span>',
+                            [
+                                'template' => '{label}{input}<span>Не заполняйте для оценки исполнителем{error}</span>',
                                 'options' => ['class' => 'create__price-time--wrapper'],
                             ]
                         )
@@ -104,7 +105,8 @@ use yii\helpers\Html;
                         <?= $form->field(
                             $taskForm,
                             'expire_at',
-                            ['template' => '{label}{input}<span>Укажите крайний срок исполнения</span>{error}',
+                            [
+                                'template' => '{label}{input}<span>Укажите крайний срок исполнения</span>{error}',
                                 'options' => ['class' => 'create__price-time--wrapper'],
                             ]
                         )

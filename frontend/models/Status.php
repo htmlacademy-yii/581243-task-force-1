@@ -2,7 +2,6 @@
 
 namespace frontend\models;
 
-use Yii;
 use yii\db\ActiveQuery;
 
 /**
@@ -17,11 +16,11 @@ class Status extends \yii\db\ActiveRecord
      * Статусы
      */
     CONST STATUS_NEW = 1;               // новое задание
-    CONST STATUS_CANCEL = 2;            // исполнитель отменил
+    CONST STATUS_CANCEL = 2;            // заказчик отменил
     const STATUS_HAS_RESPONSES = 3;     // есть отклики
     CONST STATUS_IN_WORK = 4;           // в работе
     CONST STATUS_DONE = 5;              // заказчик принимает работу
-    CONST STATUS_FAILED = 6;            // исполнитель отказался
+    CONST STATUS_FAILED = 6;            // исполнитель отказался / заказчик принял с проблемами
 
     /**
      * {@inheritdoc}
@@ -59,5 +58,20 @@ class Status extends \yii\db\ActiveRecord
     public function getTasks() {
         return $this->hasMany(Task::class, ['task_status_id' => 'id'])
             ->inverseOf('status');
+    }
+
+    /**
+     * @return array
+     */
+    public static function getAllStatuses(): array
+    {
+        return [
+            self::STATUS_NEW => 'Новое задание',
+            self::STATUS_CANCEL => 'Заказчик отменил',
+            self::STATUS_HAS_RESPONSES => 'Есть отклики',
+            self::STATUS_IN_WORK => 'В работе',
+            self::STATUS_DONE => 'Заказчик приимает работу',
+            self::STATUS_FAILED => 'Исполнитель отказался',
+        ];
     }
 }

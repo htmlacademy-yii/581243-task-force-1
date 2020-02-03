@@ -7,7 +7,6 @@ use yii\base\InvalidConfigException;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
 use yii\db\BaseActiveRecord;
-use yii\db\Query;
 use yii\web\IdentityInterface;
 
 /**
@@ -36,8 +35,8 @@ use yii\web\IdentityInterface;
  */
 class User extends \yii\db\ActiveRecord implements IdentityInterface
 {
-    const author = 0;
-    const executor = 1;
+    const CLIENT = 0;
+    const EXECUTOR = 1;
 
     /**
      * @return array
@@ -167,7 +166,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
 
     public function validatePassword($password)
     {
-        return \Yii::$app->security->validatePassword($password, $this->password);
+        return Yii::$app->security->validatePassword($password, $this->password);
     }
 
     /**
@@ -244,11 +243,12 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     }
 
     /**
+     * Отклики пользователя
      * @return ActiveQuery
      */
     public function getReplies() {
         return $this->hasMany(Reply::class, ['executor_id' => 'id'])
-            ->inverseOf('evaluatedUser');
+            ->inverseOf('executor');
     }
 
     /**
@@ -318,7 +318,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     public function getRating(): int
     {
         $rating = 0;
-        $opinions = $this->opinions;
+        $opinions = $this->getOpinions()->where(['not', ['rate' => null]])->all();
 
         if (empty($opinions)) {
             return 0;
@@ -331,5 +331,14 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
         $rating = round($rating/count($opinions));
 
         return $rating;
+    }
+
+    /**
+     * @param $id
+     * @return User
+     */
+    public static function getUser($id): self
+    {
+        return static::findOne(Yii::$app->user->getId()) ?? new static();
     }
 }

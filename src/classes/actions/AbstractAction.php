@@ -4,8 +4,8 @@
 namespace TaskForce\classes\actions;
 
 
-use TaskForce\classes\models\User;
-use TaskForce\classes\models\Task;
+use frontend\models\Task;
+use frontend\models\User;
 
 /**
  * Class AbstractAction

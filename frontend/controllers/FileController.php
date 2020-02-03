@@ -16,9 +16,9 @@ class FileController extends SecuredController
     {
         $file = File::findOne($id);
 
-        if ($file && file_exists(Yii::$app->basePath . '/..' . $file->path)) {
+        if ($file && file_exists($file->path)) {
             return Yii::$app->response->sendFile(
-                Yii::$app->basePath . '/..' . $file->path,
+                $file->path,
                 $file->title . '.' . $file->type
             );
         } else {

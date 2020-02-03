@@ -4,9 +4,9 @@
 namespace TaskForce\classes\actions;
 
 
+use frontend\models\Task;
+use frontend\models\User;
 use TaskForce\exceptions\ActionException;
-use TaskForce\classes\models\Task;
-use TaskForce\classes\models\User;
 
 /**
  * Class AvailableActions
@@ -20,9 +20,11 @@ class AvailableActions
     CONST ACTION_ADD_NEW = 1;
     CONST ACTION_CANCEL = 2;
     CONST ACTION_RESPOND = 3;
+    CONST ACTION_REJECT = 7;
     CONST ACTION_TAKE_IN_WORK = 4;
     CONST ACTION_DONE = 5;
     CONST ACTION_REFUSE = 6;
+    CONST ACTION_GET_PROBLEM = 8;
 
     protected $actions = [];
 
@@ -34,9 +36,11 @@ class AvailableActions
         return [
             static::ACTION_RESPOND => RespondAction::class,
             static::ACTION_CANCEL => CancelAction::class,
+            static::ACTION_REJECT => RejectAction::class,
             static::ACTION_TAKE_IN_WORK => TakeInWorkAction::class,
             static::ACTION_DONE => DoneAction::class,
             static::ACTION_REFUSE => RefuseAction::class,
+            static::ACTION_GET_PROBLEM => GetProblemAction::class,
         ];
     }
 
@@ -55,7 +59,7 @@ class AvailableActions
             }
 
             if ($action::checkRights($user, $task)) {
-                $actions[] = $action;
+                $actions[] = $action::getInnerName();
             }
         }
 

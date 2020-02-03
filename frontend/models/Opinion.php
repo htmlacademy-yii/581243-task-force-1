@@ -2,8 +2,9 @@
 
 namespace frontend\models;
 
-use Yii;
+use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
+use yii\db\BaseActiveRecord;
 
 /**
  * This is the model class for table "opinions".
@@ -19,6 +20,25 @@ use yii\db\ActiveQuery;
 class Opinion extends \yii\db\ActiveRecord
 {
     /**
+     * @return array
+     */
+    public function behaviors()
+    {
+        return [
+            'timestamp' => [
+                'class' => TimestampBehavior::className(),
+                'attributes' => [
+                    BaseActiveRecord::EVENT_BEFORE_INSERT => ['created_at'],
+                    BaseActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
+                ],
+                'value' => function(){
+                    return gmdate("Y-m-d H:i:s");
+                },
+            ],
+        ];
+    }
+
+    /**
      * {@inheritdoc}
      */
     public static function tableName()
@@ -32,7 +52,7 @@ class Opinion extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['task_id', 'rate', 'author_id', 'created_at'], 'required'],
+            [['task_id', 'author_id'], 'required'],
             [['task_id', 'rate', 'author_id', 'evaluated_user_id'], 'integer'],
             [['comment'], 'string'],
             [['created_at', 'updated_at'], 'safe'],
