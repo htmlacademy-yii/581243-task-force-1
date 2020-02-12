@@ -1,7 +1,7 @@
 <?php
 
 
-namespace TaskForce\classes\actions;
+namespace TaskForce\actions;
 
 
 use frontend\models\Reply;
@@ -11,7 +11,7 @@ use frontend\models\User;
 
 /**
  * Class RefuseAction
- * @package TaskForce\classes\actions
+ * @package TaskForce\actions
  */
 class RejectAction extends AbstractAction
 {

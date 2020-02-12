@@ -2,13 +2,13 @@
 
 namespace frontend\models;
 
-use TaskForce\classes\actions\CancelAction;
-use TaskForce\classes\actions\DoneAction;
-use TaskForce\classes\actions\GetProblemAction;
-use TaskForce\classes\actions\RefuseAction;
-use TaskForce\classes\actions\RejectAction;
-use TaskForce\classes\actions\RespondAction;
-use TaskForce\classes\actions\TakeInWorkAction;
+use TaskForce\actions\CancelAction;
+use TaskForce\actions\DoneAction;
+use TaskForce\actions\GetProblemAction;
+use TaskForce\actions\RefuseAction;
+use TaskForce\actions\RejectAction;
+use TaskForce\actions\RespondAction;
+use TaskForce\actions\TakeInWorkAction;
 use TaskForce\exceptions\ActionException;
 use TaskForce\exceptions\StatusException;
 use yii\base\InvalidConfigException;
@@ -218,7 +218,6 @@ class Task extends \yii\db\ActiveRecord
     {
         if (key_exists($status, Status::getAllStatuses())) {
             $this->task_status_id = (int)$status;
-            $this->save();
 
             return true;
         }

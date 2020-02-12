@@ -47,6 +47,7 @@ return [
                 'file/download/<id:\d+>' => 'file/download',
                 'reply/reject/<taskId:\d+>/<replyId:\d+>' => 'reply/reject',
                 'reply/take-in-work/<taskId:\d+>/<replyId:\d+>' => 'reply/take-in-work',
+                'address/<query:.+>' => 'address/',
             ],
         ],
 

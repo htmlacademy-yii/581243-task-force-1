@@ -1,7 +1,7 @@
 <?php
 
 
-namespace TaskForce\classes\actions;
+namespace TaskForce\actions;
 
 
 use frontend\models\Task;
@@ -10,7 +10,7 @@ use TaskForce\exceptions\ActionException;
 
 /**
  * Class AvailableActions
- * @package TaskForce\classes\actions
+ * @package TaskForce\actions
  */
 class AvailableActions
 {

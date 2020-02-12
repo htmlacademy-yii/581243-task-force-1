@@ -1,8 +1,8 @@
 <?php
-use TaskForce\classes\actions\AvailableActions;
+use TaskForce\actions\AvailableActions;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
-use TaskForce\classes\actions\RejectAction;
+use TaskForce\actions\RejectAction;
 ?>
 <div class="table-layout">
     <main class="page-main">
@@ -35,14 +35,15 @@ use TaskForce\classes\actions\RejectAction;
                         <div class="content-view__location">
                             <h3 class="content-view__h3">Расположение</h3>
                             <div class="content-view__location-wrapper">
-                                <div class="content-view__map">
-                                    <a href="#"><img src="/img/map.jpg" width="361" height="292"
-                                                     alt="Москва, Новый арбат, 23 к. 1"></a>
-                                </div>
+                                <div id="map"
+                                     style="width: 361px;
+                                 height: 292px"
+                                     data-lat="<?= $task->lat; ?>"
+                                     data-long="<?= $task->long; ?>"></div>
                                 <div class="content-view__address">
-                                    <span class="address__town">Москва</span><br>
-                                    <span>Новый арбат, 23 к. 1</span>
-                                    <p>Вход под арку, код домофона 1122</p>
+                                    <span class="address__town">
+                                        <?= $task->address; ?>
+                                    </span>
                                 </div>
                             </div>
                         </div>
@@ -350,3 +351,4 @@ use TaskForce\classes\actions\RejectAction;
     </section>
 </div>
 <div class="overlay"></div>
+<script src="https://api-maps.yandex.ru/2.1/?apikey=<?= \Yii::$app->params['apiKey']; ?>&lang=ru_RU" type="text/javascript"></script>

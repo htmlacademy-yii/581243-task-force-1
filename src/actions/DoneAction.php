@@ -1,7 +1,7 @@
 <?php
 
 
-namespace TaskForce\classes\actions;
+namespace TaskForce\actions;
 
 
 use frontend\models\Status;
@@ -10,16 +10,16 @@ use frontend\models\User;
 
 /**
  * Class DoneAction
- * @package TaskForce\classes\actions
+ * @package TaskForce\actions
  */
-class GetProblemAction extends AbstractAction
+class DoneAction extends AbstractAction
 {
     /**
      * @return string
      */
     public static function getActionName(): string
     {
-        return 'Принять с проблемами';
+        return 'Принять';
     }
 
     /**
@@ -27,7 +27,7 @@ class GetProblemAction extends AbstractAction
      */
     public static function getInnerName(): string
     {
-        return AvailableActions::ACTION_GET_PROBLEM;
+        return AvailableActions::ACTION_DONE;
     }
 
     /**
