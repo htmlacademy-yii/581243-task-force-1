@@ -56,3 +56,17 @@ if (starRating.length) {
     inputField.value = rating;
   });
 }
+
+ymaps.ready(init);
+function init(){
+  var map = document.getElementById("map");
+  var myMap = new ymaps.Map("map", {
+    center: [map.dataset.lat, map.dataset.long],
+    zoom: 14
+  });
+
+  myMap.geoObjects
+    .add(new ymaps.Placemark([map.dataset.lat, map.dataset.long], {
+      balloonContent: 'цвет <strong>воды пляжа бонди</strong>'
+    }));
+}

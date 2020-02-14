@@ -14,13 +14,15 @@ class NewTaskForm extends Model
     public $address;
     public $budget;
     public $expire_at;
+    public $lat;
+    public $long;
 
     public function rules()
     {
         return [
             [['name', 'description', 'category_id'], 'required'],
             [['name', 'address'], 'string', 'max' => 255],
-            [['description'], 'string'],
+            [['description', 'lat', 'long'], 'string'],
             [['files'], 'file', 'maxFiles' => 10],
             [['category_id', 'budget'], 'integer'],
             [['expire_at'], 'safe'],

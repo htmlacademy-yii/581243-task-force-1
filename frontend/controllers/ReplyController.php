@@ -5,9 +5,9 @@ namespace frontend\controllers;
 use frontend\models\Reply;
 use frontend\models\Task;
 use frontend\models\User;
-use TaskForce\classes\actions\RejectAction;
-use TaskForce\classes\actions\RespondAction;
-use TaskForce\classes\actions\TakeInWorkAction;
+use TaskForce\actions\RejectAction;
+use TaskForce\actions\RespondAction;
+use TaskForce\actions\TakeInWorkAction;
 use TaskForce\exceptions\ActionException;
 use TaskForce\exceptions\StatusException;
 use Yii;
@@ -22,7 +22,7 @@ class ReplyController extends SecuredController
      */
     public function actionCreate()
     {
-        $user = User::getUser(Yii::$app->user->getId());
+        $user = Yii::$app->user->identity;
         $replyForm = new Reply();
 
         if (Yii::$app->request->getIsPost()) {
@@ -36,6 +36,7 @@ class ReplyController extends SecuredController
                 $replyForm->save()) {
                 $nextStatus = $task->getNextStatus(RespondAction::getInnerName());
                 $task->setCurrentStatus($nextStatus);
+                $task->save();
             }
         }
 
@@ -44,7 +45,7 @@ class ReplyController extends SecuredController
 
     public function actionReject($taskId, $replyId)
     {
-        $user = User::getUser(Yii::$app->user->getId());
+        $user = Yii::$app->user->identity;
         $task = Task::findOne($taskId);
         $reply = Reply::findOne($replyId);
 
@@ -53,6 +54,7 @@ class ReplyController extends SecuredController
             $reply->save();
             $nextStatus = $task->getNextStatus(RejectAction::getInnerName());
             $task->setCurrentStatus($nextStatus);
+            $task->save();
         }
 
         return $this->redirect(Yii::$app->request->referrer ?? '/task/');
@@ -67,7 +69,7 @@ class ReplyController extends SecuredController
      */
     public function actionTakeInWork($taskId, $replyId)
     {
-        $user = User::getUser(Yii::$app->user->getId());
+        $user = Yii::$app->user->identity;
         $task = Task::findOne($taskId);
         $reply = Reply::findOne($replyId);
 

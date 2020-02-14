@@ -332,13 +332,4 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
 
         return $rating;
     }
-
-    /**
-     * @param $id
-     * @return User
-     */
-    public static function getUser($id): self
-    {
-        return static::findOne(Yii::$app->user->getId()) ?? new static();
-    }
 }

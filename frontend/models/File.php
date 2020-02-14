@@ -101,7 +101,7 @@ class File extends \yii\db\ActiveRecord
 
     public function upload(UploadedFile $attach, string $dir = self::DEFAULT_DIR): ?self
     {
-        $path = Yii::$app->basePath . '/../' . $dir;
+        $path = Yii::$app->params['base_dir'] . $dir;
 
         if (!is_dir($path)) {
             mkdir($path);

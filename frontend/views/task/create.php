@@ -85,7 +85,30 @@ use yii\helpers\Html;
                         )
                         ->input('search', [
                             'class' => 'input-navigation input-middle input',
+                            'id' => 'autoComplete',
+                            'tabindex' => 1,
                             'placeholder' => 'Санкт-Петербург, Калининский район',
+                        ]); ?>
+
+                    <?= $form->field(
+                        $taskForm,
+                        'lat',
+                        [
+                            'template' => '{input}',
+                        ]
+                    )
+                        ->hiddenInput([
+                            'id' => 'lat',
+                        ]); ?>
+                    <?= $form->field(
+                        $taskForm,
+                        'long',
+                        [
+                            'template' => '{input}',
+                        ]
+                    )
+                        ->hiddenInput([
+                            'id' => 'long',
                         ]); ?>
 
                     <div class="create__price-time">
@@ -141,3 +164,5 @@ use yii\helpers\Html;
         </section>
     </div>
 </main>
+<script src="https://cdn.jsdelivr.net/npm/@tarekraafat/autocomplete.js@7.2.0/dist/js/autoComplete.min.js"></script>
+<script src="/js/index.js"></script>

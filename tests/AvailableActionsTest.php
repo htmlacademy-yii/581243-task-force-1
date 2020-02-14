@@ -5,12 +5,12 @@ namespace Tests;
 
 
 use PHPUnit\Framework\TestCase;
-use TaskForce\classes\actions\AvailableActions;
-use TaskForce\classes\actions\CancelAction;
-use TaskForce\classes\actions\DoneAction;
-use TaskForce\classes\actions\RefuseAction;
-use TaskForce\classes\actions\RespondAction;
-use TaskForce\classes\actions\TakeInWorkAction;
+use TaskForce\actions\AvailableActions;
+use TaskForce\actions\CancelAction;
+use TaskForce\actions\DoneAction;
+use TaskForce\actions\RefuseAction;
+use TaskForce\actions\RespondAction;
+use TaskForce\actions\TakeInWorkAction;
 use TaskForce\classes\models\Task;
 use TaskForce\classes\models\User;
 use TaskForce\classes\models\UserRoles;

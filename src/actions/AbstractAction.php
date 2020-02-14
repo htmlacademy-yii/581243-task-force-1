@@ -1,7 +1,7 @@
 <?php
 
 
-namespace TaskForce\classes\actions;
+namespace TaskForce\actions;
 
 
 use frontend\models\Task;
@@ -9,7 +9,7 @@ use frontend\models\User;
 
 /**
  * Class AbstractAction
- * @package TaskForce\classes\actions
+ * @package TaskForce\actions
  */
 abstract class AbstractAction
 {

@@ -13,10 +13,10 @@ use frontend\models\Status;
 use frontend\models\Task;
 use frontend\models\TaskFilter;
 use frontend\models\User;
-use TaskForce\classes\actions\AvailableActions;
-use TaskForce\classes\actions\DoneAction;
-use TaskForce\classes\actions\GetProblemAction;
-use TaskForce\classes\actions\RefuseAction;
+use TaskForce\actions\AvailableActions;
+use TaskForce\actions\DoneAction;
+use TaskForce\actions\GetProblemAction;
+use TaskForce\actions\RefuseAction;
 use TaskForce\exceptions\ActionException;
 use TaskForce\exceptions\StatusException;
 use Yii;
@@ -65,7 +65,7 @@ class TaskController extends SecuredController
         $task = Task::findOne($id);
         $client = $task->client;
         $replies = $task->replies;
-        $user = User::getUser(Yii::$app->user->getId());
+        $user = Yii::$app->user->identity;
         $actions = AvailableActions::getNextAction($user, $task);
         $replyForm = new Reply();
         $doneTaskForm = new DoneTaskForm();
@@ -89,7 +89,7 @@ class TaskController extends SecuredController
      */
     public function actionCreate()
     {
-        $user = User::getUser(Yii::$app->user->getId());
+        $user = Yii::$app->user->identity;
         if ($user->user_status !== User::CLIENT) {
             return $this->redirect('/task/');
         }
@@ -140,7 +140,7 @@ class TaskController extends SecuredController
      */
     public function actionDone()
     {
-        $user = User::getUser(Yii::$app->user->getId());
+        $user = Yii::$app->user->identity;
 
         $doneTaskForm = new DoneTaskForm();
 
@@ -162,6 +162,7 @@ class TaskController extends SecuredController
                     $action = $doneTaskForm->done === 'yes' ? DoneAction::getInnerName() : GetProblemAction::getInnerName();
                     $nextStatus = $task->getNextStatus($action);
                     $task->setCurrentStatus($nextStatus);
+                    $task->save();
                 }
             }
         }
@@ -176,7 +177,7 @@ class TaskController extends SecuredController
      */
     public function actionRefuse()
     {
-        $user = User::getUser(Yii::$app->user->getId());
+        $user = Yii::$app->user->identity;
 
         $refuseTaskForm = new RefuseTaskForm();
 
@@ -187,6 +188,7 @@ class TaskController extends SecuredController
             if ($task && $refuseTaskForm->validate() && RefuseAction::checkRights($user, $task)) {
                 $nextStatus = $task->getNextStatus(RefuseAction::getInnerName());
                 $task->setCurrentStatus($nextStatus);
+                $task->save();
             }
         }
 
