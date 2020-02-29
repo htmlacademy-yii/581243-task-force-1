@@ -11,9 +11,17 @@ return [
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
     'controllerNamespace' => 'frontend\controllers',
+    'modules' => [
+        'api' => [
+            'class' => 'frontend\modules\api\Module',
+        ],
+    ],
     'components' => [
         'request' => [
             'csrfParam' => '_csrf-frontend',
+            'parsers' => [
+                'application/json' => 'yii\web\JsonParser',
+            ],
         ],
         'user' => [
             'identityClass' => 'frontend\models\User',
@@ -47,7 +55,17 @@ return [
                 'file/download/<id:\d+>' => 'file/download',
                 'reply/reject/<taskId:\d+>/<replyId:\d+>' => 'reply/reject',
                 'reply/take-in-work/<taskId:\d+>/<replyId:\d+>' => 'reply/take-in-work',
-                'address/<query:.+>' => 'address/',
+                'address/<query:.+>' => 'address/', [
+                    'class' => 'yii\rest\UrlRule',
+                    'controller' => 'api/messages',
+                    'patterns' => [
+                        'GET,HEAD {id}' => 'view',
+                        'POST {id}' => 'create',
+                    ],
+                ], [
+                    'class' => 'yii\rest\UrlRule',
+                    'controller' => 'api/tasks',
+                ],
             ],
         ],
 
