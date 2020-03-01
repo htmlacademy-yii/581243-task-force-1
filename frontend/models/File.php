@@ -20,9 +20,6 @@ use yii\web\UploadedFile;
  */
 class File extends \yii\db\ActiveRecord
 {
-    const DEFAULT_DIR = 'uploads';
-    const BLOCK = ['.php', '.phtml', '.php3', '.php4', '.html', '.htm'];
-
     /**
      * {@inheritdoc}
      */
@@ -87,7 +84,7 @@ class File extends \yii\db\ActiveRecord
         ];
     }
 
-    public static function uploadAttaches(array $attaches, string $dir = self::DEFAULT_DIR): array
+    public static function uploadAttaches(array $attaches, string $dir = null): array
     {
         $files = [];
         foreach ($attaches as $attach) {
@@ -99,9 +96,14 @@ class File extends \yii\db\ActiveRecord
         return $files;
     }
 
-    public function upload(UploadedFile $attach, string $dir = self::DEFAULT_DIR): ?self
+    /**
+     * @param UploadedFile $attach
+     * @param string|null $dir
+     * @return File|null
+     */
+    public function upload(UploadedFile $attach, string $dir = null): ?self
     {
-        $path = Yii::$app->params['base_dir'] . $dir;
+        $path = $dir ?? Yii::$app->params['storage_uploads'];
 
         if (!is_dir($path)) {
             mkdir($path);
@@ -123,5 +125,17 @@ class File extends \yii\db\ActiveRecord
         }
 
         return null;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUrl(): string
+    {
+        if (strpos($this->path, '/uploads') !== false) {
+            return substr($this->path, strpos($this->path, '/uploads'));
+        }
+
+        return '#';
     }
 }

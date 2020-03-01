@@ -111,7 +111,7 @@ class TaskController extends SecuredController
 
                 $files = $taskForm->upload();
 
-                $task->expire_at = date('Y-m-d H:i:s', strtotime($task->expire_at));
+                $task->expire_at = $task->expire_at ? date('Y-m-d H:i:s', strtotime($task->expire_at)) : null;
 
                 if ($task->validate() && is_array($files) && $task->save()) {
 
@@ -193,5 +193,39 @@ class TaskController extends SecuredController
         }
 
         return $this->redirect(Yii::$app->request->referrer ?? '/task/');
+    }
+
+    public function actionMylist($status = null)
+    {
+        $user = Yii::$app->user->identity;
+
+        $taskBuilder = Task::find()->where(['client_id' => $user->id])
+            ->orWhere(['executor_id' => $user->id]);
+
+        switch ($status) {
+            case Status::STATUS_DONE:
+                $taskBuilder = $taskBuilder->andWhere(['task_status_id' => Status::STATUS_DONE]);
+                break;
+            case Status::STATUS_NEW:
+                $taskBuilder = $taskBuilder->andWhere(['task_status_id' => Status::STATUS_NEW])
+                    ->orWhere(['task_status_id' => Status::STATUS_HAS_RESPONSES]);
+                break;
+            case Status::STATUS_IN_WORK:
+                $taskBuilder = $taskBuilder->andWhere(['task_status_id' => Status::STATUS_IN_WORK]);
+                break;
+            case Status::STATUS_CANCEL:
+                $taskBuilder = $taskBuilder->andWhere(['task_status_id' => Status::STATUS_CANCEL])
+                    ->orWhere(['task_status_id' => Status::STATUS_FAILED]);
+                break;
+            case Status::STATUS_EXPIRED:
+                $taskBuilder = $taskBuilder->andWhere(['task_status_id' => Status::STATUS_IN_WORK])
+                ->andWhere(['<', 'expire_at', date('Y-m-d 00:00:00')]);
+                break;
+        }
+
+        return $this->render('mylist', [
+            'tasks' => $taskBuilder->all(),
+            'status' => $status,
+        ]);
     }
 }

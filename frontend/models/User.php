@@ -7,6 +7,8 @@ use yii\base\InvalidConfigException;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
 use yii\db\BaseActiveRecord;
+use yii\db\Exception;
+use yii\db\Query;
 use yii\web\IdentityInterface;
 
 /**
@@ -331,5 +333,23 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
         $rating = round($rating/count($opinions));
 
         return $rating;
+    }
+
+    /**
+     * @param array $ids
+     * @return array
+     * @throws Exception
+     */
+    public function syncCategories(array $ids): array
+    {
+        (new Query())
+            ->createCommand()
+            ->delete('user_category', ['user_id' => $this->id])
+            ->execute();
+        foreach (Category::find()->where(['in', 'id',  $ids])->all() as $category) {
+            $this->link('categories', $category);
+        }
+
+        return $this->categories;
     }
 }

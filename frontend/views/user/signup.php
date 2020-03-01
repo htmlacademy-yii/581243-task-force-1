@@ -1,7 +1,6 @@
 <?php
 use yii\widgets\ActiveForm;
 use yii\helpers\Html;
-use yii\web\YiiAsset;
 ?>
 <main class="page-main">
     <div class="main-container page-container">
@@ -77,6 +76,5 @@ use yii\web\YiiAsset;
 
             </div>
         </section>
-
     </div>
 </main>

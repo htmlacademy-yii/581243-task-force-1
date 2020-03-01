@@ -1,6 +1,7 @@
 <?php
 use TaskForce\actions\AvailableActions;
 use yii\helpers\Html;
+use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 use TaskForce\actions\RejectAction;
 ?>
@@ -81,7 +82,7 @@ use TaskForce\actions\RejectAction;
                                                     <?= $reply->executor->last_name; ?> <?= $reply->executor->name; ?>
                                                 </a>
                                             </p>
-                                            <?php $rating = $client->getRating(); ?>
+                                            <?php $rating = $reply->executor->getRating(); ?>
                                                 <?php for($i = 1; $i <= 5; $i++): ?>
                                                     <span class="<?= $i <= $rating ? : 'star-disabled'; ?>"></span>
                                                 <?php endfor; ?>
@@ -117,7 +118,7 @@ use TaskForce\actions\RejectAction;
                     <div class="profile-mini__wrapper">
                         <h3>Заказчик</h3>
                         <div class="profile-mini__top">
-                            <img src="/img/man-brune.jpg" width="62" height="62" alt="Аватар заказчика">
+                            <img src="<?= $user->avatar ? Url::to([$user->avatar->getUrl()]) : '/img/man-brune.jpg'; ?>" width="62" height="62" alt="Аватар заказчика">
                             <div class="profile-mini__name five-stars__rate">
                                 <?php $rating = $client->getRating(); ?>
                                 <p><?= $client->last_name; ?> <?= $client->name; ?></p>

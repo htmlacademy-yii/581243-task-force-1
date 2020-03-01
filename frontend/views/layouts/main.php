@@ -6,6 +6,7 @@
 use yii\helpers\Html;
 use frontend\assets\AppAsset;
 use frontend\models\User;
+use yii\helpers\Url;
 
 AppAsset::register($this);
 ?>
@@ -98,7 +99,7 @@ AppAsset::register($this);
             </div>
             <div class="header__account">
                 <a class="header__account-photo">
-                    <img src="/img/user-photo.png"
+                    <img src="<?= $user->avatar ? Url::to([$user->avatar->getUrl()]) : '/img/user-photo.png'; ?>"
                          width="43" height="44"
                          alt="Аватар пользователя">
                 </a>
@@ -109,10 +110,10 @@ AppAsset::register($this);
             <div class="account__pop-up">
                 <ul class="account__pop-up-list">
                     <li>
-                        <a href="#">Мои задания</a>
+                        <a href="<?= Url::to(['/task/mylist']); ?>">Мои задания</a>
                     </li>
                     <li>
-                        <a href="#">Настройки</a>
+                        <a href="<?= Url::to(['/user/account']); ?>">Настройки</a>
                     </li>
                     <li>
                         <a href="/user/logout">Выход</a>

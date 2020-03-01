@@ -3,10 +3,14 @@
 namespace frontend\controllers;
 
 
+use frontend\models\AccountForm;
+use frontend\models\Category;
 use frontend\models\City;
 use frontend\models\LoginForm;
 use frontend\models\User;
+use frontend\models\UserSettings;
 use Yii;
+use yii\base\Exception;
 use yii\web\Response;
 use yii\widgets\ActiveForm;
 
@@ -14,6 +18,7 @@ class UserController extends SecuredController
 {
     /**
      * @return string|Response
+     * @throws Exception
      */
     public function actionSignup()
     {
@@ -27,6 +32,8 @@ class UserController extends SecuredController
                 $user->password = Yii::$app->getSecurity()
                     ->generatePasswordHash($user->password);
                 $user->save();
+                UserSettings::firstOrCreate($user);
+
                 return $this->redirect('/task/');
             } else {
                 $errors = $user->getErrors();
@@ -40,6 +47,9 @@ class UserController extends SecuredController
         ]);
     }
 
+    /**
+     * @return array|Response
+     */
     public function actionLogin()
     {
         $loginForm = new LoginForm();
@@ -58,9 +68,56 @@ class UserController extends SecuredController
         }
     }
 
+    /**
+     * @return Response
+     */
     public function actionLogout() {
         Yii::$app->user->logout();
 
         return $this->redirect('/');
+    }
+
+    /**
+     * @return string
+     * @throws \Exception
+     */
+    public function actionAccount()
+    {
+        $user = Yii::$app->user->identity;
+        $categories = Category::find()->all();
+        $cities = City::find()->select('city')->indexBy('id')->column();
+
+        $accountForm = new AccountForm();
+        $userSettings = UserSettings::firstOrCreate($user);
+
+        if (Yii::$app->request->getIsPost()) {
+            $accountForm->load(Yii::$app->request->post());
+
+            if ($accountForm->validate()) {
+                $user->attributes = $accountForm->attributes;
+                $user->save();
+
+                $userSettings->attributes = $accountForm->attributes;
+                $userSettings->save();
+
+                $user->syncCategories($accountForm->categories);
+
+                $avatar = $accountForm->upload();
+                if ($avatar) {
+                    $user->link('avatar', $avatar);
+                    $accountForm->avatar = null;
+                }
+            }
+        }
+
+        $accountForm->attributes = $user->attributes;
+        $accountForm->attributes = $userSettings->attributes;
+
+        return $this->render('account', [
+            'accountForm' => $accountForm,
+            'categories' => $categories,
+            'cities' => $cities,
+            'user' => $user,
+        ]);
     }
 }

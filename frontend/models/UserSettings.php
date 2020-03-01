@@ -2,8 +2,9 @@
 
 namespace frontend\models;
 
-use Yii;
+use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
+use yii\db\BaseActiveRecord;
 
 /**
  * This is the model class for table "user_settings".
@@ -20,6 +21,25 @@ use yii\db\ActiveQuery;
 class UserSettings extends \yii\db\ActiveRecord
 {
     /**
+     * @return array
+     */
+    public function behaviors()
+    {
+        return [
+            'timestamp' => [
+                'class' => TimestampBehavior::className(),
+                'attributes' => [
+                    BaseActiveRecord::EVENT_BEFORE_INSERT => ['created_at', 'updated_at'],
+                    BaseActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
+                ],
+                'value' => function(){
+                    return gmdate("Y-m-d H:i:s");
+                },
+            ],
+        ];
+    }
+
+    /**
      * {@inheritdoc}
      */
     public static function tableName()
@@ -33,8 +53,9 @@ class UserSettings extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['user_id', 'new_messages', 'task_action', 'new_response', 'profile_access'], 'integer'],
-            [['created_at', 'updated_at'], 'required'],
+            [['new_messages', 'task_action', 'new_response', 'show_only_client', 'hide_profile'], 'boolean'],
+            [['user_id'], 'integer'],
+            [['user_id'], 'required'],
             [['created_at', 'updated_at'], 'safe'],
         ];
     }
@@ -50,7 +71,8 @@ class UserSettings extends \yii\db\ActiveRecord
             'new_messages' => 'New Messages',
             'task_action' => 'Task Action',
             'new_response' => 'New Response',
-            'profile_access' => 'Profile Access',
+            'show_only_client' => 'Show Only Client',
+            'hide_profile' => 'Hide Profile',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
         ];
@@ -62,5 +84,27 @@ class UserSettings extends \yii\db\ActiveRecord
     public function getUser()
     {
         return $this->hasOne(User::class, ['id' => 'user_id']);
+    }
+
+    /**
+     * @param User $user
+     * @return UserSettings
+     * @throws \Exception
+     */
+    public static function firstOrCreate(User $user): self
+    {
+        if ($model = $user->userSettings) {
+            return $model;
+        }
+
+        $model = new static(['user_id' => $user->id]);
+
+        if ($model->save()) {
+            $user->link('userSettings', $model);
+
+            return $model;
+        }
+
+        throw new \Exception();
     }
 }

@@ -21,6 +21,7 @@ class Status extends \yii\db\ActiveRecord
     CONST STATUS_IN_WORK = 4;           // в работе
     CONST STATUS_DONE = 5;              // заказчик принимает работу
     CONST STATUS_FAILED = 6;            // исполнитель отказался / заказчик принял с проблемами
+    CONST STATUS_EXPIRED = 7;           // срок выполнения задачи истек
 
     /**
      * {@inheritdoc}
@@ -70,8 +71,9 @@ class Status extends \yii\db\ActiveRecord
             self::STATUS_CANCEL => 'Заказчик отменил',
             self::STATUS_HAS_RESPONSES => 'Есть отклики',
             self::STATUS_IN_WORK => 'В работе',
-            self::STATUS_DONE => 'Заказчик приимает работу',
+            self::STATUS_DONE => 'Завершено',
             self::STATUS_FAILED => 'Исполнитель отказался',
+            self::STATUS_EXPIRED => 'Срок выполнения задачи истек',
         ];
     }
 }
