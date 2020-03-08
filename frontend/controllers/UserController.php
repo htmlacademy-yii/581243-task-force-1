@@ -93,6 +93,12 @@ class UserController extends SecuredController
         if (Yii::$app->request->getIsPost()) {
             $accountForm->load(Yii::$app->request->post());
 
+            $accountForm->images = $accountForm->uploadImages();
+            foreach ($accountForm->images as $image) {
+                $user->syncImages($image);
+            }
+
+
             if ($accountForm->validate()) {
                 $user->attributes = $accountForm->attributes;
                 $user->save();
@@ -102,7 +108,7 @@ class UserController extends SecuredController
 
                 $user->syncCategories($accountForm->categories);
 
-                $avatar = $accountForm->upload();
+                $avatar = $accountForm->uploadAvatar();
                 if ($avatar) {
                     $user->link('avatar', $avatar);
                     $accountForm->avatar = null;

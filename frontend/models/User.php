@@ -352,4 +352,30 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
 
         return $this->categories;
     }
+
+    /**
+     * @param File $image
+     * @throws Exception
+     * @throws InvalidConfigException
+     */
+    public function syncImages(File $image)
+    {
+        $lastImage = File::find()
+            ->where(['in', 'id', $this->getFotos()->select('id')->column()])
+            ->orderBy(['created_at' => SORT_ASC])
+            ->limit(1)->one();
+        if ($lastImage && ($this->getFotos()->count() >=6)) {
+            (new Query)
+                ->createCommand()
+                ->delete('user_foto', ['file_id' => $lastImage->id, 'user_id' => $this->id])
+                ->execute();
+
+            (new Query)
+                ->createCommand()
+                ->delete('files', ['id' => $lastImage->id])
+                ->execute();
+        }
+
+        $this->link('fotos', $image);
+    }
 }

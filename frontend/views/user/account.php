@@ -3,7 +3,6 @@
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 use yii\helpers\Html;
-use yii\web\YiiAsset;
 ?>
 <main class="page-main">
     <div class="main-container page-container">
@@ -125,6 +124,13 @@ use yii\web\YiiAsset;
                                 'class' => 'input textarea',
                             ]); ?>
                     </div>
+
+                    <h3 class="div-line">Фото работ</h3>
+
+                    <div class="account__redaction-section-wrapper account__redaction">
+                        <span class="dropzone" id="myDropzone"></span>
+                    </div>
+
                     <h3 class="div-line">Контакты</h3>
                     <div class="account__redaction-section-wrapper account__redaction">
                         <?= $form->field(
@@ -234,8 +240,19 @@ use yii\web\YiiAsset;
                         </div>
                     </div>
                 </div>
-            <?= Html::submitButton('Сохранить изменения', ['class' => 'button']); ?>
+            <?= Html::submitButton('Сохранить изменения', ['class' => 'button', 'id' => 'submit']); ?>
             <?php ActiveForm::end(); ?>
         </section>
     </div>
 </main>
+<script src="/js/dropzone.js"></script>
+<script>
+  Dropzone.autoDiscover = false;
+
+  var dropzone = new Dropzone(".dropzone", {url: window.location.href, maxFiles: 6, uploadMultiple: true,
+    acceptedFiles: 'image/*', previewTemplate: '<a href="#"><img data-dz-thumbnail alt="Фото работы"></a>',
+    headers: {
+    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+  }});
+
+</script>

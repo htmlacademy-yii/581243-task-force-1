@@ -23,9 +23,13 @@ class AccountForm extends Model
     public $new_password;
     public $confirm;
 
+    public $images;
+
     public $phone;
     public $skype;
     public $messenger;
+
+    const FILE_NAME = 'file';
 
     /**
      * Уведомления
@@ -52,6 +56,7 @@ class AccountForm extends Model
             'categories' => 'Categories',
             'new_password' => 'Новый пароль',
             'confirm' => 'Повтор пароля',
+            'images' => 'Фото работ',
             'phone' => 'Телефон',
             'skype' => 'Skype',
             'messenger' => 'Другой мессенджер',
@@ -96,6 +101,14 @@ class AccountForm extends Model
                 },
             ],
 
+            [
+                ['images'],
+                'image',
+                'extensions' => ['png', 'jpg', 'gif'],
+                'maxWidth' => 100, 'maxHeight' => 100,
+                'maxFiles' => 1
+            ],
+
             ['phone', 'match', 'pattern' => '/^[\d]{11}/i',
                 'message' => 'Номер телефона должен состоять из 11 цифр'],
             [['skype', 'messenger'], 'string', 'min' => 3, 'max' => 255],
@@ -124,7 +137,7 @@ class AccountForm extends Model
      * @param File|null $file
      * @return array|null
      */
-    public function upload(File $file = null): ?File
+    public function uploadAvatar(File $file = null): ?File
     {
         $file = $file ?? new File();
         if ($this->validate()) {
@@ -135,5 +148,21 @@ class AccountForm extends Model
         }
 
         return null;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function uploadImages()
+    {
+        if (isset($_FILES[static::FILE_NAME])) {
+            for ($i = 0; $i < count($_FILES[static::FILE_NAME]['name']); $i++) {
+                $image = UploadedFile::getInstanceByName(static::FILE_NAME . '[' . $i . ']');
+                $file = new File();
+                $files[] = $file->upload($image, Yii::$app->params['web_uploads']);
+            }
+        }
+
+        return $files ?? [];
     }
 }

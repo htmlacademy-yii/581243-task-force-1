@@ -53,7 +53,6 @@ return [
                 'task/view/<id:\d+>' => 'task/show',
                 'task/mylist/<status:\d+>' => 'task/mylist',
                 'file/download/<id:\d+>' => 'file/download',
-                'file/download/<id:\d+>' => 'file/download',
                 'reply/reject/<taskId:\d+>/<replyId:\d+>' => 'reply/reject',
                 'reply/take-in-work/<taskId:\d+>/<replyId:\d+>' => 'reply/take-in-work',
                 'address/<query:.+>' => 'address/', [
