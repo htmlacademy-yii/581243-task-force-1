@@ -20,6 +20,6 @@ class m200126_154613_alter_opinions_table extends Migration
      */
     public function safeDown()
     {
-        $this->alterColumn('opinions', 'rate', $this->tinyInteger());
+        $this->alterColumn('opinions', 'rate', $this->tinyInteger()->notNull());
     }
 }

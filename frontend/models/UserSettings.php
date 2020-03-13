@@ -105,6 +105,6 @@ class UserSettings extends \yii\db\ActiveRecord
             return $model;
         }
 
-        throw new \Exception();
+        throw new \Exception('Failed to get settings.');
     }
 }

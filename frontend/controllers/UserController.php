@@ -90,14 +90,13 @@ class UserController extends SecuredController
         $accountForm = new AccountForm();
         $userSettings = UserSettings::firstOrCreate($user);
 
+        $accountForm->attributes = $user->attributes;
+        $accountForm->attributes = $userSettings->attributes;
+
         if (Yii::$app->request->getIsPost()) {
             $accountForm->load(Yii::$app->request->post());
 
-            $accountForm->images = $accountForm->uploadImages();
-            foreach ($accountForm->images as $image) {
-                $user->syncImages($image);
-            }
-
+            $user->syncImages($accountForm->uploadImages());
 
             if ($accountForm->validate()) {
                 $user->attributes = $accountForm->attributes;
@@ -116,8 +115,7 @@ class UserController extends SecuredController
             }
         }
 
-        $accountForm->attributes = $user->attributes;
-        $accountForm->attributes = $userSettings->attributes;
+
 
         return $this->render('account', [
             'accountForm' => $accountForm,

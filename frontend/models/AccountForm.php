@@ -76,15 +76,14 @@ class AccountForm extends Model
         return [
             [['avatar'], 'image', 'extensions' => ['png', 'jpg', 'gif'], 'maxWidth' => 1000, 'maxHeight' => 1000,],
 
-            ['name', 'trim'],
-            ['name', 'required'],
+            [['name', 'email'], 'required'],
+            [['name', 'email'], 'trim'],
             ['name', 'string', 'min' => 2, 'max' => 255],
 
-            ['email', 'trim'],
-            ['email', 'required'],
             ['email', 'email'],
             ['email', 'string', 'max' => 255],
-            ['email', 'validateEmail'],
+            ['email', 'unique', 'targetAttribute' => 'email', 'targetClass' => User::className(),
+                'filter' => ['!=', 'id', Yii::$app->user->id], 'message' =>  'Такой логин уже зарегистрирован'],
 
             ['city_id', 'in', 'range' => City::find()->select('id')->asArray()->column()],
             [['birthday_at'], 'date', 'format' => 'php:Y-m-d'],
@@ -97,7 +96,7 @@ class AccountForm extends Model
                 'confirm', 'compare', 'compareAttribute' => 'new_password', 'message'=>"Пароли не совпадают",
                 'skipOnEmpty' => false,
                 'when' => function ($model) {
-                    return $model->new_password !== null && $model->new_password !== '';
+                    return !empty($model->new_password);
                 },
             ],
 
@@ -123,13 +122,6 @@ class AccountForm extends Model
 
         if (User::find()->where(['email' => $this->$attribute])->andWhere(['!=', 'id', $user->id])->one()) {
             $this->addError($attribute, 'email уже существует.');
-        }
-    }
-
-    public function validateCategories($attribute, $params)
-    {
-        if (Category::find()->where(['in', 'id', $this->$attribute])->count() != count($attribute)) {
-            $this->addError($attribute, 'Ошибка при выборе категории.');
         }
     }
 

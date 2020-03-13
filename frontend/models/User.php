@@ -354,28 +354,31 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     }
 
     /**
-     * @param File $image
+     * @param array $images
      * @throws Exception
      * @throws InvalidConfigException
      */
-    public function syncImages(File $image)
+    public function syncImages(array $images): void
     {
-        $lastImage = File::find()
-            ->where(['in', 'id', $this->getFotos()->select('id')->column()])
-            ->orderBy(['created_at' => SORT_ASC])
-            ->limit(1)->one();
-        if ($lastImage && ($this->getFotos()->count() >=6)) {
-            (new Query)
-                ->createCommand()
-                ->delete('user_foto', ['file_id' => $lastImage->id, 'user_id' => $this->id])
-                ->execute();
+        /**
+         * Удаляем все старые фотографии пользователя
+         */
+        $oldImages = $this->getFotos()->select('id')->column();
+        (new Query)
+            ->createCommand()
+            ->delete('user_foto', ['user_id' => $this->id])
+            ->execute();
 
-            (new Query)
-                ->createCommand()
-                ->delete('files', ['id' => $lastImage->id])
-                ->execute();
+        (new Query)
+            ->createCommand()
+            ->delete('files', ['in', 'id', $oldImages])
+            ->execute();
+
+        /**
+         * Добавляем новые фотографии (6 штук)
+         */
+        foreach (array_slice($images, 0, 6) as $image) {
+            $this->link('fotos', $image);
         }
-
-        $this->link('fotos', $image);
     }
 }
