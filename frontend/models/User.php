@@ -242,7 +242,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
      */
     public function getOpinions() {
         return $this->hasMany(Opinion::class, ['evaluated_user_id' => 'id'])
-            ->inverseOf('author');
+            ->inverseOf('evaluatedUser');
     }
 
     /**

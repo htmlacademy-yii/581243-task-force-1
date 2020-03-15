@@ -1,5 +1,6 @@
 <?php
 
+use frontend\models\Status;
 use frontend\models\User;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -28,12 +29,12 @@ use yii\widgets\ActiveForm;
                     <div class="feedback-card__top">
                         <div class="user__search-icon">
                             <!--TODO method getUrl in branch 8.3-->
-                            <a href="#"><img src="<?= $user->avatar ? /*Url::to([$user->avatar->getUrl()])*/'df' : '/img/user-photo.png'; ?>" width="65" height="65"></a>
-                            <span><?= $user->getExecutorTasks()->count(); ?> заданий</span>
+                            <a href="<?= Url::to(['/users/view/' . $user->id]); ?>"><img src="<?= $user->avatar ? /*Url::to([$user->avatar->getUrl()])*/'' : '/img/user-photo.png'; ?>" width="65" height="65"></a>
+                            <span><?= $user->getExecutorTasks()->where(['task_status_id' => Status::STATUS_DONE])->count(); ?> заданий</span>
                             <span><?= $user->getOpinions()->count(); ?> отзывов</span>
                         </div>
                         <div class="feedback-card__top--name user__search-card">
-                            <p class="link-name"><a href="#" class="link-regular"><?= $user->last_name; ?> <?= $user->name ?></a></p>
+                            <p class="link-name"><a href="<?= Url::to(['/users/view/' . $user->id]); ?>" class="link-regular"><?= $user->last_name; ?> <?= $user->name ?></a></p>
                             <?php $rating = $user->getRating(); ?>
                             <?php for($i = 1; $i <= 5; $i++): ?>
                                 <span class="<?= $i <= $rating ? : 'star-disabled'; ?>"></span>

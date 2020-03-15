@@ -51,6 +51,8 @@ return [
             'rules' => [
                 'signup' => 'user/signup',
                 'users' => 'user/',
+                'users/view/<id:\d+>' => 'user/show',
+                'users/favorite/<id:\d+>' => 'user/favorite',
                 'task/view/<id:\d+>' => 'task/show',
                 'file/download/<id:\d+>' => 'file/download',
                 'file/download/<id:\d+>' => 'file/download',

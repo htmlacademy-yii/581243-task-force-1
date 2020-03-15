@@ -9,6 +9,7 @@ use frontend\models\User;
 use frontend\models\UserFilter;
 use Yii;
 use yii\base\Exception;
+use yii\helpers\Url;
 use yii\web\Response;
 use yii\widgets\ActiveForm;
 
@@ -43,6 +44,39 @@ class UserController extends SecuredController
             'userFilter' => $userFilter,
             'categories' => $categories,
         ]);
+    }
+
+    /**
+     * @param $id
+     * @return string
+     */
+    public function actionShow($id)
+    {
+        $user = User::findOne($id);
+        $currentUser = Yii::$app->user->identity;
+
+        return $this->render('view', [
+            'user' => $user,
+            'favorite' => $currentUser->getFavoriteUsers()->where(['id' => $id])->one() ? true : false,
+        ]);
+    }
+
+    /**
+     * @param $id
+     * @return Response
+     */
+    public function actionFavorite($id)
+    {
+        $user = Yii::$app->user->identity;
+        $favouriteUser = User::findOne($id);
+
+        if ($user->getFavoriteUsers()->where(['id' => $id])->one()) {
+            $user->unlink('favoriteUsers', $favouriteUser);
+        } else {
+            $user->link('favoriteUsers', $favouriteUser);
+        }
+
+        return $this->redirect(Url::to(['/users/view/' . $id]));
     }
 
     /**
