@@ -22,8 +22,8 @@ class m200229_173556_alter_user_settings_table extends Migration
      */
     public function safeDown()
     {
-        $this->alterColumn('opinions', 'new_messages', $this->tinyInteger());
-        $this->alterColumn('opinions', 'task_action', $this->tinyInteger());
-        $this->alterColumn('opinions', 'new_response', $this->tinyInteger());
+        $this->alterColumn('user_settings', 'new_messages', $this->tinyInteger());
+        $this->alterColumn('user_settings', 'task_action', $this->tinyInteger());
+        $this->alterColumn('user_settings', 'new_response', $this->tinyInteger());
     }
 }
