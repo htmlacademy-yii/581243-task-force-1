@@ -2,18 +2,52 @@
 
 namespace frontend\controllers;
 
-
+use frontend\models\Category;
 use frontend\models\City;
 use frontend\models\LoginForm;
 use frontend\models\User;
+use frontend\models\UserFilter;
 use Yii;
+use yii\base\Exception;
 use yii\web\Response;
 use yii\widgets\ActiveForm;
 
 class UserController extends SecuredController
 {
     /**
+     * @return string
+     */
+    public function actionIndex()
+    {
+        $userFilter = new UserFilter();
+        $categories = Category::find()->all();
+
+        $usersBuilder = User::find()->where(['user_status' => User::EXECUTOR])
+            ->orderBy(['users.created_at' => SORT_ASC]);
+
+        if ($sort = \Yii::$app->request->get('sort_by')) {
+            $usersBuilder = User::sortBy($usersBuilder, $sort);
+        }
+
+        if (\Yii::$app->request->getIsPost()) {
+            $userFilter->load(\Yii::$app->request->post());
+            $usersBuilder = User::filter($usersBuilder, $userFilter);
+        }
+
+        if (!is_array($userFilter->categories)) {
+            $userFilter->categories = [];
+        }
+
+        return $this->render('index', [
+            'users' => $usersBuilder->all(),
+            'userFilter' => $userFilter,
+            'categories' => $categories,
+        ]);
+    }
+
+    /**
      * @return string|Response
+     * @throws Exception
      */
     public function actionSignup()
     {
@@ -40,6 +74,9 @@ class UserController extends SecuredController
         ]);
     }
 
+    /**
+     * @return array|Response
+     */
     public function actionLogin()
     {
         $loginForm = new LoginForm();
@@ -58,6 +95,9 @@ class UserController extends SecuredController
         }
     }
 
+    /**
+     * @return Response
+     */
     public function actionLogout() {
         Yii::$app->user->logout();
 

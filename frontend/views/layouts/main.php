@@ -1,11 +1,8 @@
 <?php
-
-/* @var $this \yii\web\View */
-/* @var $content string */
-
 use yii\helpers\Html;
 use frontend\assets\AppAsset;
 use frontend\models\User;
+use yii\helpers\Url;
 
 AppAsset::register($this);
 ?>
@@ -58,13 +55,13 @@ AppAsset::register($this);
             <div class="header__nav">
                 <ul class="header-nav__list site-list">
                     <li class="site-list__item">
-                        <a href="/task">Задания</a>
+                        <a href="<?= Url::to(['/task/']); ?>">Задания</a>
                     </li>
                     <li class="site-list__item">
-                        <a href="#">Исполнители</a>
+                        <a href="<?= Url::to(['/users/']); ?>">Исполнители</a>
                     </li>
                     <li class="site-list__item">
-                        <a href="/task/create">Создать задание</a>
+                        <a href="<?= Url::to(['/task/create/']); ?>">Создать задание</a>
                     </li>
                     <li class="site-list__item site-list__item--active">
                         <a>Мой профиль</a>

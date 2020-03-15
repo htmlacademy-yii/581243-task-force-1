@@ -50,6 +50,7 @@ return [
             'showScriptName' => false,
             'rules' => [
                 'signup' => 'user/signup',
+                'users' => 'user/',
                 'task/view/<id:\d+>' => 'task/show',
                 'file/download/<id:\d+>' => 'file/download',
                 'file/download/<id:\d+>' => 'file/download',
