@@ -339,6 +339,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
      * @param array $ids
      * @return array
      * @throws Exception
+     * @throws InvalidConfigException
      */
     public function syncCategories(array $ids): array
     {
@@ -349,6 +350,9 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
         foreach (Category::find()->where(['in', 'id',  $ids])->all() as $category) {
             $this->link('categories', $category);
         }
+
+        $this->user_status = $this->getCategories()->count() > 0 ? static::EXECUTOR : static::CLIENT;
+        $this->save();
 
         return $this->categories;
     }
