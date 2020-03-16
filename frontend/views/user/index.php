@@ -5,6 +5,7 @@ use frontend\models\User;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
+use yii\widgets\LinkPager;
 
 ?>
 <main class="page-main">
@@ -55,6 +56,16 @@ use yii\widgets\ActiveForm;
                     </div>
                 </div>
             <?php endforeach; ?>
+            <div class="new-task__pagination">
+                <?= LinkPager::widget([
+                    'pagination' => $pages,
+                    'linkContainerOptions' => ['class' => 'pagination__item'],
+                    'options' => [
+                        'class' => 'new-task__pagination-list',
+                    ],
+                    'prevPageLabel' => '',
+                    'nextPageLabel' => '',
+                ]); ?>
         </section>
         <section  class="search-task">
             <div class="search-task__wrapper">

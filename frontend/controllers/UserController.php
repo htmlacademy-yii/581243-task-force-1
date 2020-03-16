@@ -9,6 +9,7 @@ use frontend\models\User;
 use frontend\models\UserFilter;
 use Yii;
 use yii\base\Exception;
+use yii\data\Pagination;
 use yii\helpers\Url;
 use yii\web\Response;
 use yii\widgets\ActiveForm;
@@ -39,10 +40,14 @@ class UserController extends SecuredController
             $userFilter->categories = [];
         }
 
+        $pages = new Pagination(['totalCount' => $usersBuilder->count(), 'pageSize' => 5]);
+
         return $this->render('index', [
-            'users' => $usersBuilder->all(),
+            'users' => $usersBuilder->offset($pages->offset)
+                ->limit($pages->limit)->all(),
             'userFilter' => $userFilter,
             'categories' => $categories,
+            'pages' => $pages,
         ]);
     }
 
