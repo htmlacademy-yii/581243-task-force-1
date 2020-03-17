@@ -19,12 +19,12 @@ class SecuredController extends \yii\web\Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['login', 'signup'],
+                        'actions' => ['login', 'signup', 'auth'],
                         'allow' => true,
                         'roles' => ['?'],
                     ],
                     [
-                        'actions' => ['login', 'signup'],
+                        'actions' => ['login', 'signup', 'auth'],
                         'allow' => false,
                         'roles' => ['@'],
                         'denyCallback' => function($rule, $action) {
