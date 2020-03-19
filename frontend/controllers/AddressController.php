@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use GuzzleHttp\RequestOptions;
 use Yii;
 use yii\caching\TagDependency;
 use yii\web\Response;
@@ -36,7 +37,7 @@ class AddressController extends SecuredController
 
         $yandexResponse = $client->request('GET', '1.x', [
             'query' => [
-                'format' => 'json',
+                'format' => RequestOptions::JSON,
                 'apikey' => $api_key,
                 'geocode' => $query,
             ]
