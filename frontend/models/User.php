@@ -35,8 +35,8 @@ use yii\web\IdentityInterface;
  */
 class User extends \yii\db\ActiveRecord implements IdentityInterface
 {
-    const CLIENT = 0;
-    const EXECUTOR = 1;
+    const ROLE_CLIENT = 0;
+    const ROLE_EXECUTOR = 1;
     const RATING = 2;
     const ORDERS = 3;
     const VIEWS = 4;
@@ -363,11 +363,10 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
         }
 
         if ($filter->has_rate) {
-            $builder = $builder->select("*")
+            $builder = $builder
                 ->joinWith('opinions')
-                ->select(['users.*', 'COUNT(opinions.id) AS opinionCount'])
                 ->groupBy(['users.id'])
-                ->having('opinionCount > 0');
+                ->andFilterHaving(['>', 'count(opinions.id)', 0]);
         }
 
         if ($filter->favourite) {
@@ -390,17 +389,15 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     {
         switch ($type) {
             case static::RATING:
-                return $builder->select("*")
+                return $builder
                     ->joinWith('opinions')
-                    ->select(['users.*', 'SUM(opinions.rate) / COUNT(opinions.id) AS rating'])
                     ->groupBy(['users.id'])
-                    ->orderBy(['rating' => SORT_DESC]);
+                    ->orderBy(['SUM(opinions.rate) / COUNT(opinions.id)' => SORT_DESC]);
             case static::ORDERS:
-                return $builder->select("*")
+                return $builder
                     ->joinWith('executorTasks')
-                    ->select(['users.*', 'COUNT(tasks.name) AS taskCount'])
                     ->groupBy(['users.id'])
-                    ->orderBy(['taskCount' => SORT_DESC]);
+                    ->orderBy(['COUNT(tasks.name)' => SORT_DESC]);
             case static::VIEWS:
                 return $builder->orderBy(['views' => SORT_DESC]);
         }

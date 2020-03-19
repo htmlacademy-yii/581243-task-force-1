@@ -95,7 +95,7 @@ class TaskController extends SecuredController
     public function actionCreate()
     {
         $user = Yii::$app->user->identity;
-        if ($user->user_status !== User::CLIENT) {
+        if ($user->user_status !== User::ROLE_CLIENT) {
             return $this->redirect('/task/');
         }
 

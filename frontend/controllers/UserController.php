@@ -24,7 +24,7 @@ class UserController extends SecuredController
         $userFilter = new UserFilter();
         $categories = Category::find()->all();
 
-        $usersBuilder = User::find()->where(['user_status' => User::EXECUTOR])
+        $usersBuilder = User::find()->where(['user_status' => User::ROLE_EXECUTOR])
             ->orderBy(['users.created_at' => SORT_ASC]);
 
         if ($sort = \Yii::$app->request->get('sort_by')) {
