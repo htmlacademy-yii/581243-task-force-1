@@ -74,7 +74,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     public function rules()
     {
         return [
-            [['name', 'email', 'password', 'city_id'], 'required'],
+            [['name', 'email', 'password'], 'required'],
             [['age', 'city_id', 'user_status', 'avatar_id', 'views', 'settings_id'], 'integer'],
             [['birthday_at', 'last_activity_at', 'created_at', 'updated_at'], 'safe'],
             [['about'], 'string'],
@@ -86,6 +86,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
                 'message' => 'Номер телефона должен состоять из 11 цифр'],
             [['password'], 'string', 'min' => 8],
             [['email'], 'unique'],
+            [['vk_id'], 'integer'],
         ];
     }
 

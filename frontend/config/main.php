@@ -55,7 +55,6 @@ return [
                 'users/favorite/<id:\d+>' => 'user/favorite',
                 'task/view/<id:\d+>' => 'task/show',
                 'file/download/<id:\d+>' => 'file/download',
-                'file/download/<id:\d+>' => 'file/download',
                 'reply/reject/<taskId:\d+>/<replyId:\d+>' => 'reply/reject',
                 'reply/take-in-work/<taskId:\d+>/<replyId:\d+>' => 'reply/take-in-work',
                 'address/<query:.+>' => 'address/', [
@@ -68,6 +67,17 @@ return [
                 ], [
                     'class' => 'yii\rest\UrlRule',
                     'controller' => 'api/tasks',
+                ],
+            ],
+        ],
+        'authClientCollection' => [
+            'class' => 'yii\authclient\Collection',
+            'clients' => [
+                'vkontakte' => [
+                    'class' => 'yii\authclient\clients\VKontakte',
+                    'clientId' => '7358390',
+                    'clientSecret' => 'w04vA3yNRbtV5IuUoK1R',
+                    'scope' => 'email',
                 ],
             ],
         ],

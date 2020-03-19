@@ -84,6 +84,16 @@ class UserController extends SecuredController
         return $this->redirect(Url::to(['/users/view/' . $id]));
     }
 
+    public function actions()
+    {
+        return [
+            'auth' => [
+                'class' => 'yii\authclient\AuthAction',
+                'successCallback' => [$this, 'onAuthSuccess'],
+            ]
+        ];
+    }
+
     /**
      * @return string|Response
      * @throws Exception
@@ -141,5 +151,36 @@ class UserController extends SecuredController
         Yii::$app->user->logout();
 
         return $this->redirect('/');
+    }
+
+    /**
+     * @param $client
+     * @return Response
+     * @throws Exception]
+     */
+    public function onAuthSuccess($client)
+    {
+        $attributes = $client->getUserAttributes();
+        $user = User::find()->where(['vk_id' => $attributes['id']])->one();
+
+        if (!$user) {
+            $user = new User();
+            $user->vk_id = $attributes['id'];
+            $user->email = $attributes['email'];
+            $user->name = $attributes['first_name'];
+            $user->last_name = $attributes['last_name'] ?? null;
+            $user->password = Yii::$app->getSecurity()
+                ->generatePasswordHash(Yii::$app->security->generateRandomString(8));
+            if (isset($attributes['city']['title'])) {
+                $user->city_id = City::find()->where(['city' => $attributes['city']['title']])->one()->id ?? null;
+            }
+
+            if (!($user->validate() && $user->save())) {
+                return $this->redirect(Url::to(['/']));
+            }
+        }
+
+        Yii::$app->user->login($user);
+        return $this->redirect(Url::to(['/task/']));
     }
 }

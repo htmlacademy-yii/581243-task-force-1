@@ -3,6 +3,7 @@
 /* @var $this \yii\web\View */
 /* @var $content string */
 
+use yii\authclient\widgets\AuthChoice;
 use yii\helpers\Html;
 use frontend\assets\AppAsset;
 use yii\widgets\ActiveForm;
@@ -144,6 +145,16 @@ AppAsset::register($this);
                     'class' => 'enter-form-email input input-middle',
                 ])
                 ->label('Пароль', ['class' => 'form-modal-description']); ?>
+        </p>
+        <p>
+            Вход через соцсети:
+            <?= AuthChoice::widget([
+                'baseAuthUrl' => ['user/auth'],
+                'popupMode' => false,
+                'options' => [
+                    'label' => 'Вход через вконтакте'
+                ]
+            ]); ?>
         </p>
         <?= Html::submitButton('Войти', ['class' => 'button']); ?>
         <?php ActiveForm::end(); ?>
