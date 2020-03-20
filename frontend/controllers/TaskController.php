@@ -20,6 +20,7 @@ use TaskForce\actions\RefuseAction;
 use TaskForce\exceptions\ActionException;
 use TaskForce\exceptions\StatusException;
 use Yii;
+use yii\data\Pagination;
 use yii\web\Response;
 use yii\web\UploadedFile;
 
@@ -48,10 +49,14 @@ class TaskController extends SecuredController
 
         $taskBuilder = Task::filter($taskBuilder, $taskFilter);
 
+        $pages = new Pagination(['totalCount' => $taskBuilder->count(), 'pageSize' => 5]);
+
         return $this->render('index', [
-            'tasks' => $taskBuilder->all(),
+            'tasks' => $taskBuilder->offset($pages->offset)
+                ->limit($pages->limit)->all(),
             'taskFilter' => $taskFilter,
             'categories' => $categories,
+            'pages' => $pages,
         ]);
     }
 
@@ -90,7 +95,7 @@ class TaskController extends SecuredController
     public function actionCreate()
     {
         $user = Yii::$app->user->identity;
-        if ($user->user_status !== User::CLIENT) {
+        if ($user->user_status !== User::ROLE_CLIENT) {
             return $this->redirect('/task/');
         }
 

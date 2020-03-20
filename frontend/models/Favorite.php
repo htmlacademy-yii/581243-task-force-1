@@ -3,6 +3,8 @@
 namespace frontend\models;
 
 use Yii;
+use yii\behaviors\TimestampBehavior;
+use yii\db\BaseActiveRecord;
 
 /**
  * This is the model class for table "favorirites".
@@ -15,6 +17,25 @@ use Yii;
  */
 class Favorite extends \yii\db\ActiveRecord
 {
+    /**
+     * @return array
+     */
+    public function behaviors()
+    {
+        return [
+            'timestamp' => [
+                'class' => TimestampBehavior::className(),
+                'attributes' => [
+                    BaseActiveRecord::EVENT_BEFORE_INSERT => ['created_at'],
+                    BaseActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
+                ],
+                'value' => function(){
+                    return gmdate("Y-m-d H:i:s");
+                },
+            ],
+        ];
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -29,7 +50,7 @@ class Favorite extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['user_id', 'favorite_user_id', 'created_at'], 'required'],
+            [['user_id', 'favorite_user_id'], 'required'],
             [['user_id', 'favorite_user_id'], 'integer'],
             [['created_at', 'updated_at'], 'safe'],
             [['favorite_user_id', 'user_id'], 'unique', 'targetAttribute' => ['favorite_user_id', 'user_id']],

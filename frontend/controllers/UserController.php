@@ -2,18 +2,88 @@
 
 namespace frontend\controllers;
 
-
+use frontend\models\Category;
 use frontend\models\City;
 use frontend\models\LoginForm;
 use frontend\models\User;
+use frontend\models\UserFilter;
 use Yii;
 use yii\base\Exception;
+use yii\data\Pagination;
 use yii\helpers\Url;
 use yii\web\Response;
 use yii\widgets\ActiveForm;
 
 class UserController extends SecuredController
 {
+    /**
+     * @return string
+     */
+    public function actionIndex()
+    {
+        $userFilter = new UserFilter();
+        $categories = Category::find()->all();
+
+        $usersBuilder = User::find()->where(['user_status' => User::ROLE_EXECUTOR])
+            ->orderBy(['users.created_at' => SORT_ASC]);
+
+        if ($sort = \Yii::$app->request->get('sort_by')) {
+            $usersBuilder = User::sortBy($usersBuilder, $sort);
+        }
+
+        if (\Yii::$app->request->getIsPost()) {
+            $userFilter->load(\Yii::$app->request->post());
+            $usersBuilder = User::filter($usersBuilder, $userFilter);
+        }
+
+        if (!is_array($userFilter->categories)) {
+            $userFilter->categories = [];
+        }
+
+        $pages = new Pagination(['totalCount' => $usersBuilder->count(), 'pageSize' => 5]);
+
+        return $this->render('index', [
+            'users' => $usersBuilder->offset($pages->offset)
+                ->limit($pages->limit)->all(),
+            'userFilter' => $userFilter,
+            'categories' => $categories,
+            'pages' => $pages,
+        ]);
+    }
+
+    /**
+     * @param $id
+     * @return string
+     */
+    public function actionShow($id)
+    {
+        $user = User::findOne($id);
+        $currentUser = Yii::$app->user->identity;
+
+        return $this->render('view', [
+            'user' => $user,
+            'favorite' => $currentUser->getFavoriteUsers()->where(['id' => $id])->one() ? true : false,
+        ]);
+    }
+
+    /**
+     * @param $id
+     * @return Response
+     */
+    public function actionFavorite($id)
+    {
+        $user = Yii::$app->user->identity;
+        $favouriteUser = User::findOne($id);
+
+        if ($user->getFavoriteUsers()->where(['id' => $id])->one()) {
+            $user->unlink('favoriteUsers', $favouriteUser);
+        } else {
+            $user->link('favoriteUsers', $favouriteUser);
+        }
+
+        return $this->redirect(Url::to(['/users/view/' . $id]));
+    }
+
     public function actions()
     {
         return [

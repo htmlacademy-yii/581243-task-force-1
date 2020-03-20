@@ -12,6 +12,22 @@ use yii\web\Response;
 
 class SecuredController extends \yii\web\Controller
 {
+    /**
+     * @param $action
+     * @return bool
+     * @throws \yii\web\BadRequestHttpException
+     */
+    public function beforeAction($action)
+    {
+        $user = Yii::$app->user->identity;
+        if ($user) {
+            $user->last_activity_at = date('Y-m-d H:i:s');
+            $user->save();
+        }
+
+        return parent::beforeAction($action);
+    }
+
     public function behaviors()
     {
         return [

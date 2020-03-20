@@ -3,6 +3,8 @@
 
 use yii\widgets\ActiveForm;
 use yii\helpers\Html;
+use yii\widgets\LinkPager;
+
 ?>
 <main class="page-main">
     <div class="main-container page-container">
@@ -34,14 +36,15 @@ use yii\helpers\Html;
                 <?php endforeach; ?>
             </div>
             <div class="new-task__pagination">
-                <ul class="new-task__pagination-list">
-                    <li class="pagination__item"><a href="#"></a></li>
-                    <li class="pagination__item pagination__item--current">
-                        <a>1</a></li>
-                    <li class="pagination__item"><a href="#">2</a></li>
-                    <li class="pagination__item"><a href="#">3</a></li>
-                    <li class="pagination__item"><a href="#"></a></li>
-                </ul>
+                <?= LinkPager::widget([
+                    'pagination' => $pages,
+                    'linkContainerOptions' => ['class' => 'pagination__item'],
+                    'options' => [
+                        'class' => 'new-task__pagination-list',
+                    ],
+                    'prevPageLabel' => '',
+                    'nextPageLabel' => '',
+                ]); ?>
             </div>
         </section>
         <section  class="search-task">
