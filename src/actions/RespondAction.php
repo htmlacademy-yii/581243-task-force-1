@@ -37,7 +37,7 @@ class RespondAction extends AbstractAction
      */
     public static function checkRights(User $user, Task $task): bool
     {
-        if ($user->user_status !== User::EXECUTOR) {
+        if ($user->user_status !== User::ROLE_EXECUTOR) {
             return false;
         }
 

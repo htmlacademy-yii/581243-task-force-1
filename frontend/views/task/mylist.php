@@ -88,7 +88,7 @@ use yii\helpers\StringHelper;
                     </p>
                     <?php if (in_array($task->task_status_id, [Status::STATUS_DONE, Status::STATUS_FAILED])): ?>
                     <div class="feedback-card__top ">
-                        <a href="#"><img src="<?= $task->executor->avatar ? Url::to([$user->avatar->getUrl()]) : '/img/man-glasses.jpg'; ?>" width="36" height="36"></a>
+                        <a href="#"><img src="<?= $task->executor->avatar ? Url::to([$task->executor->avatar->getUrl()]) : '/img/man-glasses.jpg'; ?>" width="36" height="36"></a>
                         <div class="feedback-card__top--name my-list__bottom">
                             <p class="link-name"><a href="#" class="link-regular"><?= $task->executor->name; ?></a></p>
                             <a href="#" class="my-list__bottom-chat  my-list__bottom-chat--new">

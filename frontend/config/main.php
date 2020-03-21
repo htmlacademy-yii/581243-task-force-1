@@ -50,6 +50,9 @@ return [
             'showScriptName' => false,
             'rules' => [
                 'signup' => 'user/signup',
+                'users' => 'user/',
+                'users/view/<id:\d+>' => 'user/show',
+                'users/favorite/<id:\d+>' => 'user/favorite',
                 'task/view/<id:\d+>' => 'task/show',
                 'task/mylist/<status:\d+>' => 'task/mylist',
                 'file/download/<id:\d+>' => 'file/download',
@@ -68,7 +71,25 @@ return [
                 ],
             ],
         ],
-
+        'authClientCollection' => [
+            'class' => 'yii\authclient\Collection',
+            'clients' => [
+                'vkontakte' => [
+                    'class' => 'yii\authclient\clients\VKontakte',
+                    'clientId' => '7358390',
+                    'clientSecret' => 'w04vA3yNRbtV5IuUoK1R',
+                    'scope' => 'email',
+                ],
+            ],
+        ],
+        'cache' => [
+            'class' => 'yii\redis\Cache',
+            'redis' => [
+                'hostname' => 'localhost',
+                'port' => 6379,
+                'database' => 1,
+            ],
+        ],
     ],
     'params' => $params,
 ];

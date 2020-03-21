@@ -37,8 +37,11 @@ use yii\web\IdentityInterface;
  */
 class User extends \yii\db\ActiveRecord implements IdentityInterface
 {
-    const CLIENT = 0;
-    const EXECUTOR = 1;
+    const ROLE_CLIENT = 0;
+    const ROLE_EXECUTOR = 1;
+    const RATING = 2;
+    const ORDERS = 3;
+    const VIEWS = 4;
 
     /**
      * @return array
@@ -73,7 +76,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     public function rules()
     {
         return [
-            [['name', 'email', 'password', 'city_id'], 'required'],
+            [['name', 'email', 'password'], 'required'],
             [['age', 'city_id', 'user_status', 'avatar_id', 'views', 'settings_id'], 'integer'],
             [['birthday_at', 'last_activity_at', 'created_at', 'updated_at'], 'safe'],
             [['about'], 'string'],
@@ -85,6 +88,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
                 'message' => 'Номер телефона должен состоять из 11 цифр'],
             [['password'], 'string', 'min' => 8],
             [['email'], 'unique'],
+            [['vk_id'], 'integer'],
         ];
     }
 
@@ -214,7 +218,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
      * @return ActiveQuery
      */
     public function getExecutorTasks() {
-        return $this->hasMany(Task::class, ['client_id' => 'id'])
+        return $this->hasMany(Task::class, ['executor_id' => 'id'])
             ->inverseOf('executor');
     }
 
@@ -241,7 +245,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
      */
     public function getOpinions() {
         return $this->hasMany(Opinion::class, ['evaluated_user_id' => 'id'])
-            ->inverseOf('author');
+            ->inverseOf('evaluatedUser');
     }
 
     /**
@@ -351,7 +355,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
             $this->link('categories', $category);
         }
 
-        $this->user_status = $this->getCategories()->count() > 0 ? static::EXECUTOR : static::CLIENT;
+        $this->user_status = $this->getCategories()->count() > 0 ? static::ROLE_EXECUTOR : static::ROLE_CLIENT;
         $this->save();
 
         return $this->categories;
@@ -383,6 +387,73 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
          */
         foreach (array_slice($images, 0, 6) as $image) {
             $this->link('fotos', $image);
+        }
+    }
+
+    /**
+     * @param ActiveQuery $builder
+     * @param UserFilter $filter
+     * @return ActiveQuery
+     */
+    public static function filter(ActiveQuery $builder, UserFilter $filter)
+    {
+        $user = Yii::$app->user->identity;
+
+        if (!empty($ids = $filter->categories)) {
+            $builder = $builder
+                ->joinWith('categories')
+                ->andWhere(['in', 'categories.id', $ids]);
+        }
+
+        if ($filter->free) {
+            $statuses = [Status::STATUS_IN_WORK];
+            $builder = $builder->joinWith('executorTasks')
+                ->andWhere(['not in', 'tasks.task_status_id', $statuses]);
+        }
+
+        if ($filter->online) {
+            $date = date('Y-m-d 00:00:00', strtotime('now - 30 minutes'));
+            $builder = $builder->andWhere(['>=', 'last_activity_at', $date]);
+        }
+
+        if ($filter->has_rate) {
+            $builder = $builder
+                ->joinWith('opinions')
+                ->groupBy(['users.id'])
+                ->andFilterHaving(['>', 'count(opinions.id)', 0]);
+        }
+
+        if ($filter->favourite) {
+            $builder = $builder->andWhere(['in', 'users.id', $user->getFavoriteUsers()->select('id')->column()]);
+        }
+
+        if (trim($filter->name)) {
+            $builder = $builder->andWhere(['like', 'users.name', $filter->name]);
+        }
+
+        return $builder;
+    }
+
+    /**
+     * @param ActiveQuery $builder
+     * @param int $type
+     * @return ActiveQuery
+     */
+    public static function sortBy(ActiveQuery $builder, int $type)
+    {
+        switch ($type) {
+            case static::RATING:
+                return $builder
+                    ->joinWith('opinions')
+                    ->groupBy(['users.id'])
+                    ->orderBy(['SUM(opinions.rate) / COUNT(opinions.id)' => SORT_DESC]);
+            case static::ORDERS:
+                return $builder
+                    ->joinWith('executorTasks')
+                    ->groupBy(['users.id'])
+                    ->orderBy(['COUNT(tasks.name)' => SORT_DESC]);
+            case static::VIEWS:
+                return $builder->orderBy(['views' => SORT_DESC]);
         }
     }
 }
