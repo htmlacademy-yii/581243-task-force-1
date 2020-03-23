@@ -3,9 +3,11 @@
 /* @var $this \yii\web\View */
 /* @var $content string */
 
+use frontend\models\LoginForm;
 use yii\authclient\widgets\AuthChoice;
 use yii\helpers\Html;
 use frontend\assets\AppAsset;
+use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 
 AppAsset::register($this);
@@ -62,7 +64,7 @@ AppAsset::register($this);
                 <a href="#" class="header__account-enter open-modal" data-for="enter-form">
                     <span>Вход</span></a>
                 или
-                <a href="/signup" class="header__account-registration">
+                <a href="<?= Url::to(['/signup/']); ?>" class="header__account-registration">
                     Регистрация
                 </a>
             </div>
@@ -93,7 +95,7 @@ AppAsset::register($this);
                         <a href="">Исполнители</a>
                     </li>
                     <li class="links__item">
-                        <a href="/signup">Регистрация</a>
+                        <a href="<?= Url::to(['/signup/']); ?>">Регистрация</a>
                     </li>
                     <li class="links__item">
                         <a href="">Создать задание</a>
@@ -106,7 +108,7 @@ AppAsset::register($this);
             <div class="page-footer__copyright">
                 <a href="https://htmlacademy.ru">
                     <img class="copyright-logo"
-                         src="./img/academy-logo.png"
+                         src="/img/academy-logo.png"
                          width="185" height="63"
                          alt="Логотип HTML Academy">
                 </a>
@@ -116,7 +118,7 @@ AppAsset::register($this);
     <section class="modal enter-form form-modal" id="enter-form">
         <h2>Вход на сайт</h2>
         <?php
-        $loginForm = new \frontend\models\LoginForm();
+        $loginForm = new LoginForm();
 
         $form = ActiveForm::begin([
             'enableAjaxValidation' => true,

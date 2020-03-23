@@ -30,7 +30,7 @@ use TaskForce\actions\RejectAction;
                         <div class="content-view__attach">
                             <h3 class="content-view__h3">Вложения</h3>
                             <?php foreach ($task->files as $file): ?>
-                                <a href="/file/download/<?= $file->id; ?>"><?= $file->title; ?> . <?= $file->type; ?></a>
+                                <a href="<?=Url::to(['/file/download/' . $file->id]); ?>"><?= $file->title; ?> . <?= $file->type; ?></a>
                             <?php endforeach; ?>
                         </div>
                         <div class="content-view__location">
@@ -72,13 +72,14 @@ use TaskForce\actions\RejectAction;
                             <?php if (in_array($user->id, [$task->client_id, $reply->executor_id])): ?>
                                 <div class="content-view__feedback-card">
                                     <div class="feedback-card__top">
-                                        <a href="/user/view/<?= $reply->executor->id; ?>">
-                                            <img src="<?= $reply->executor->avatar->path ?? '/img/user-man.jpg' ?>"
+                                        <a href="<?=Url::to(['/users/view/' . $reply->executor->id]); ?>">
+
+                                            <img src="<?= $reply->executor->avatar ? Url::to([$reply->executor->avatar->getUrl()]) : '/img/user-man.jpg' ?>"
                                                  width="55" height="55">
                                         </a>
                                         <div class="feedback-card__top--name">
                                             <p>
-                                                <a href="/user/view/<?= $reply->executor->id; ?>" class="link-regular">
+                                                <a href="<?=Url::to(['/users/view/' . $reply->executor->id]); ?>" class="link-regular">
                                                     <?= $reply->executor->last_name; ?> <?= $reply->executor->name; ?>
                                                 </a>
                                             </p>
@@ -98,10 +99,10 @@ use TaskForce\actions\RejectAction;
                                     </div>
                                     <div class="feedback-card__actions">
                                         <?php if (in_array(AvailableActions::ACTION_TAKE_IN_WORK, $actions)): ?>
-                                            <a href="/reply/take-in-work/<?= $task->id; ?>/<?= $reply->id; ?>" class="button__small-color request-button button"
+                                            <a href="<?=Url::to(['/reply/take-in-work/' . $task->id . '/' . $reply->id]); ?>" class="button__small-color request-button button"
                                                type="button">Подтвердить</a>
                                             <?php if (RejectAction::checkRights($user, $task, $reply)): ?>
-                                                <a href="/reply/reject/<?= $task->id; ?>/<?= $reply->id; ?>" class="button__small-color refusal-button button"
+                                                <a href="<?=Url::to(['/reply/reject/' . $task->id . '/' . $reply->id]); ?>" class="button__small-color refusal-button button"
                                                    type="button">Отказать</a>
                                             <?php endif; ?>
                                         <?php endif; ?>
@@ -140,7 +141,7 @@ use TaskForce\actions\RejectAction;
                                 <?= explode(',', \Yii::$app->formatter->asDuration(time() - strtotime($client->created_at)))[0]; ?> на сайте
                             </span>
                         </p>
-                        <a href="/user/view/<?= $client->id; ?>"" class="link-regular">Смотреть профиль</a>
+                        <a href="<?=Url::to(['/user/view/' . $client->id]); ?>" class="link-regular">Смотреть профиль</a>
                     </div>
                 </div>
                 <div id="chat-container">

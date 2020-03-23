@@ -85,7 +85,7 @@ class AccountForm extends Model
             ['email', 'unique', 'targetAttribute' => 'email', 'targetClass' => User::className(),
                 'filter' => ['!=', 'id', Yii::$app->user->id], 'message' =>  'Такой логин уже зарегистрирован'],
 
-            ['city_id', 'in', 'range' => City::find()->select('id')->asArray()->column()],
+            ['city_id', 'validateCity'],
             [['birthday_at'], 'date', 'format' => 'php:Y-m-d'],
             [['about'], 'string'],
 
@@ -116,12 +116,10 @@ class AccountForm extends Model
         ];
     }
 
-    public function validateEmail($attribute, $params)
+    public function validateCity($attribute, $params)
     {
-        $user = Yii::$app->user->identity;
-
-        if (User::find()->where(['email' => $this->$attribute])->andWhere(['!=', 'id', $user->id])->one()) {
-            $this->addError($attribute, 'email уже существует.');
+        if (is_null(City::findOne($this->$attribute))) {
+            $this->addError($attribute, 'Указанный город не доступен.');
         }
     }
 

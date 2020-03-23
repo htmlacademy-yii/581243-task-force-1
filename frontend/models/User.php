@@ -349,9 +349,14 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     {
         (new Query())
             ->createCommand()
-            ->delete('user_category', ['user_id' => $this->id])
+            ->delete(
+                'user_category',
+                ['AND', ['user_id' => $this->id], ['not in', 'category_id', $ids]]
+            )
             ->execute();
-        foreach (Category::find()->where(['in', 'id',  $ids])->all() as $category) {
+        foreach (Category::find()->where(['in', 'id',  $ids])
+                     ->andWhere(['not in', 'id', $this->getCategories()->select('id')->column()])
+                     ->all() as $category) {
             $this->link('categories', $category);
         }
 

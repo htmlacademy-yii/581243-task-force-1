@@ -49,7 +49,7 @@ use yii\helpers\Url;
                     <div class="user__card-photo">
                         <h3 class="content-view__h3">Фото работ</h3>
                         <?php foreach ($user->fotos as $image): ?>
-                            <a href="#"><img src="<?= Url::to([$user->avatar->getUrl()]); ?>" width="85" height="86" alt="Фото работы"></a>
+                            <a href="#"><img src="<?= Url::to([$image->getUrl()]); ?>" width="85" height="86" alt="Фото работы"></a>
                         <?php endforeach; ?>
                     </div>
                 </div>
@@ -61,7 +61,7 @@ use yii\helpers\Url;
                         <div class="feedback-card__reviews">
                         <p class="link-task link">Задание <a href="#" class="link-regular">«<?= $opinion->task->name; ?>»</a></p>
                         <div class="card__review">
-                            <a href="<?= Url::to(['/users/view/' . $opinion->author->id]); ?>"><img src="./img/man-glasses.jpg" width="55" height="54"></a>
+                            <a href="<?= Url::to(['/users/view/' . $opinion->author->id]); ?>"><img src="<?= $opinion->author->avatar ? Url::to([$opinion->author->avatar->getUrl()]) : '/img/man-glasses.jpg'; ?>" width="55" height="54"></a>
                             <div class="feedback-card__reviews-content">
                                 <p class="link-name link"><a href="<?= Url::to(['/users/view/' . $opinion->author->id]); ?>" class="link-regular"><?= $opinion->author->last_name; ?> <?= $opinion->author->name; ?></a></p>
                                 <p class="review-text">

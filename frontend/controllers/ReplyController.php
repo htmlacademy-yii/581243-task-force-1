@@ -11,6 +11,7 @@ use TaskForce\actions\TakeInWorkAction;
 use TaskForce\exceptions\ActionException;
 use TaskForce\exceptions\StatusException;
 use Yii;
+use yii\helpers\Url;
 use yii\web\Response;
 
 class ReplyController extends SecuredController
@@ -40,7 +41,7 @@ class ReplyController extends SecuredController
             }
         }
 
-        return $this->redirect(Yii::$app->request->referrer ?? '/task/');
+        return $this->redirect(Yii::$app->request->referrer ?? Url::to(['/task/']));
     }
 
     public function actionReject($taskId, $replyId)
@@ -57,7 +58,7 @@ class ReplyController extends SecuredController
             $task->save();
         }
 
-        return $this->redirect(Yii::$app->request->referrer ?? '/task/');
+        return $this->redirect(Yii::$app->request->referrer ?? Url::to(['/task/']));
     }
 
     /**
@@ -80,6 +81,6 @@ class ReplyController extends SecuredController
             $task->save();
         }
 
-        return $this->redirect(Yii::$app->request->referrer ?? '/task/');
+        return $this->redirect(Yii::$app->request->referrer ?? Url::to(['/task/']));
     }
 }

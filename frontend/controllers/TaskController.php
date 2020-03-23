@@ -21,6 +21,7 @@ use TaskForce\exceptions\ActionException;
 use TaskForce\exceptions\StatusException;
 use Yii;
 use yii\data\Pagination;
+use yii\helpers\Url;
 use yii\web\Response;
 use yii\web\UploadedFile;
 
@@ -96,7 +97,7 @@ class TaskController extends SecuredController
     {
         $user = Yii::$app->user->identity;
         if ($user->user_status !== User::ROLE_CLIENT) {
-            return $this->redirect('/task/');
+            return $this->redirect(Url::to(['/task/']));
         }
 
         $taskForm = new NewTaskForm();
@@ -124,7 +125,7 @@ class TaskController extends SecuredController
                         $task->link('files', $file);
                     }
 
-                    return $this->redirect('/task/');
+                    return $this->redirect(Url::to(['/task/']));
                 }
             } else {
                 $errors = $taskForm->getErrors();
@@ -172,7 +173,7 @@ class TaskController extends SecuredController
             }
         }
 
-        return $this->redirect(Yii::$app->request->referrer ?? '/task/');
+        return $this->redirect(Yii::$app->request->referrer ?? Url::to(['/task/']));
     }
 
     /**
@@ -197,7 +198,7 @@ class TaskController extends SecuredController
             }
         }
 
-        return $this->redirect(Yii::$app->request->referrer ?? '/task/');
+        return $this->redirect(Yii::$app->request->referrer ?? Url::to(['/task/']));
     }
 
     public function actionMylist($status = null)

@@ -115,7 +115,7 @@ class UserController extends SecuredController
                 $user->save();
                 UserSettings::firstOrCreate($user);
 
-                return $this->redirect('/task/');
+                return $this->redirect(Url::to(['/task/']));
             } else {
                 $errors = $user->getErrors();
             }
@@ -144,7 +144,7 @@ class UserController extends SecuredController
             if ($loginForm->validate()) {
                 $user = $loginForm->getUser();
                 Yii::$app->user->login($user);
-                return $this->redirect('/task/');
+                return $this->redirect(Url::to(['/task/']));
             }
         }
     }
@@ -155,7 +155,7 @@ class UserController extends SecuredController
     public function actionLogout() {
         Yii::$app->user->logout();
 
-        return $this->redirect('/');
+        return $this->redirect(Url::to(['/']));
     }
 
     /**
@@ -177,8 +177,8 @@ class UserController extends SecuredController
         if (Yii::$app->request->getIsPost()) {
             $accountForm->load(Yii::$app->request->post());
 
-            if (!empty($accountForm->uploadImages())) {
-                $user->syncImages($accountForm->uploadImages());
+            if (!empty($images = $accountForm->uploadImages())) {
+                $user->syncImages($images);
             }
 
             if ($accountForm->validate()) {

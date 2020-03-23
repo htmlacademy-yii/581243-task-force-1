@@ -7,6 +7,7 @@ use frontend\models\User;
 use frontend\models\VerifyEmailForm;
 use Yii;
 use yii\base\InvalidArgumentException;
+use yii\helpers\Url;
 use yii\web\BadRequestHttpException;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
@@ -42,7 +43,7 @@ class SiteController extends SecuredController
                         'allow' => false,
                         'roles' => ['@'],
                         'denyCallback' => function($rule, $action) {
-                            return $this->redirect('/task/');
+                            return $this->redirect(Url::to(['/task/']));
                         },
                     ]
                 ],
