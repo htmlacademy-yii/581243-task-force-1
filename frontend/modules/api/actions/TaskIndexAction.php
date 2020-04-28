@@ -17,27 +17,31 @@ class TaskIndexAction extends Action
     public function run()
     {
         $user = Yii::$app->user->identity;
-        if (!$user) {
-            throw new ServerErrorHttpException('Not authorize.');
+        try {
+            if (!$user) {
+                throw new ServerErrorHttpException('Not authorize.');
+            }
+
+            if ($this->checkAccess) {
+                call_user_func($this->checkAccess, $this->id);
+            }
+
+            $tasks = [];
+            foreach ($user->executorTasks as $task) {
+                $tasks[] = [
+                    'title' => $task->name,
+                    'published_at' => $task->created_at,
+                    'new_messages' => $task->getMessages()
+                        ->where(['!=', 'author_id', $user->id])
+                        ->andWhere(['read' => false])->count(),
+                    'author_name' => $task->client->name,
+                    'id' => $task->id,
+                ];
+            }
+        } catch (ServerErrorHttpException $e) {
+            Yii::error($e->getMessage(), 'api');
         }
 
-        if ($this->checkAccess) {
-            call_user_func($this->checkAccess, $this->id);
-        }
-
-        $tasks = [];
-        foreach ($user->executorTasks as $task) {
-            $tasks[] = [
-                'title' => $task->name,
-                'published_at' => $task->created_at,
-                'new_messages' => $task->getMessages()
-                    ->where(['!=', 'author_id', $user->id])
-                    ->andWhere(['read' => false])->count(),
-                'author_name' => $task->client->name,
-                'id' => $task->id,
-            ];
-        }
-
-        return $tasks;
+        return $tasks ?? [];
     }
 }

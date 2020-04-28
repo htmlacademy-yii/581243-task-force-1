@@ -148,9 +148,8 @@ class TaskController extends SecuredController
     {
         $user = Yii::$app->user->identity;
 
-        $doneTaskForm = new DoneTaskForm();
-
         if (Yii::$app->request->getIsPost()) {
+            $doneTaskForm = new DoneTaskForm();
             $doneTaskForm->load(Yii::$app->request->post());
             $task = Task::findOne($doneTaskForm->task_id);
 
@@ -185,9 +184,8 @@ class TaskController extends SecuredController
     {
         $user = Yii::$app->user->identity;
 
-        $refuseTaskForm = new RefuseTaskForm();
-
         if (Yii::$app->request->getIsPost()) {
+            $refuseTaskForm = new RefuseTaskForm();
             $refuseTaskForm->load(Yii::$app->request->post());
             $task = Task::findOne($refuseTaskForm->task_id);
 

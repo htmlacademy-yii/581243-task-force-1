@@ -2,12 +2,11 @@
 
 namespace frontend\models;
 
-use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\BaseActiveRecord;
 
 /**
- * This is the model class for table "favorirites".
+ * This is the model class for table "favorites".
  *
  * @property int $id
  * @property int $user_id

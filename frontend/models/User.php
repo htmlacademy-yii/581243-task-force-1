@@ -289,9 +289,9 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
      * @return ActiveQuery
      * @throws InvalidConfigException
      */
-    public function getFotos() {
+    public function getPhotos() {
         return $this->hasMany(File::class, ['id' => 'file_id'])
-            ->viaTable('user_foto', ['user_id' => 'id']);
+            ->viaTable('user_photo', ['user_id' => 'id']);
     }
 
     /**
@@ -376,10 +376,10 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
         /**
          * Удаляем все старые фотографии пользователя
          */
-        $oldImages = $this->getFotos()->select('id')->column();
+        $oldImages = $this->getPhotos()->select('id')->column();
         (new Query)
             ->createCommand()
-            ->delete('user_foto', ['user_id' => $this->id])
+            ->delete('user_photo', ['user_id' => $this->id])
             ->execute();
 
         (new Query)
@@ -391,7 +391,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
          * Добавляем новые фотографии (6 штук)
          */
         foreach (array_slice($images, 0, 6) as $image) {
-            $this->link('fotos', $image);
+            $this->link('photos', $image);
         }
     }
 

@@ -48,7 +48,7 @@ use yii\helpers\Url;
                     </div>
                     <div class="user__card-photo">
                         <h3 class="content-view__h3">Фото работ</h3>
-                        <?php foreach ($user->fotos as $image): ?>
+                        <?php foreach ($user->photos as $image): ?>
                             <a href="#"><img src="<?= Url::to([$image->getUrl()]); ?>" width="85" height="86" alt="Фото работы"></a>
                         <?php endforeach; ?>
                     </div>

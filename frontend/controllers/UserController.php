@@ -133,8 +133,8 @@ class UserController extends SecuredController
      */
     public function actionLogin()
     {
-        $loginForm = new LoginForm();
         if (Yii::$app->request->getIsPost()) {
+            $loginForm = new LoginForm();
             $loginForm->load(Yii::$app->request->post());
             if (Yii::$app->request->isAjax) {
                 Yii::$app->response->format = Response::FORMAT_JSON;

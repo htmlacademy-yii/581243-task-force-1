@@ -18,7 +18,7 @@ class AccountForm extends Model
     public $birthday_at;
     public $about;
 
-    public $categories = [];  // специализации
+    public $categories = [];
 
     public $new_password;
     public $confirm;
@@ -34,11 +34,11 @@ class AccountForm extends Model
     /**
      * Уведомления
      */
-    public $new_messages;       // Новое сообщение
-    public $task_action;        // действия по заданияю ??
-    public $new_response;       // новый отзыв
-    public $show_only_client;   // показывать мои контакты только заказчику
-    public $hide_profile;       // не показывать мой профиль
+    public $new_messages;
+    public $task_action;
+    public $new_response;
+    public $show_only_client;
+    public $hide_profile;
 
     /**
      * {@inheritdoc}
@@ -125,7 +125,8 @@ class AccountForm extends Model
 
     /**
      * @param File|null $file
-     * @return array|null
+     * @return File|null
+     * @throws \Exception
      */
     public function uploadAvatar(File $file = null): ?File
     {

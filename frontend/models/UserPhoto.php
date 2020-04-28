@@ -2,23 +2,21 @@
 
 namespace frontend\models;
 
-use Yii;
-
 /**
- * This is the model class for table "user_foto".
+ * This is the model class for table "user_photo".
  *
  * @property int $id
  * @property int $user_id
  * @property int $file_id
  */
-class UserFoto extends \yii\db\ActiveRecord
+class UserPhoto extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
-        return 'user_foto';
+        return 'user_photo';
     }
 
     /**

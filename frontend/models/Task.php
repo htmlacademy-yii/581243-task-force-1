@@ -11,6 +11,7 @@ use TaskForce\actions\RespondAction;
 use TaskForce\actions\TakeInWorkAction;
 use TaskForce\exceptions\ActionException;
 use TaskForce\exceptions\StatusException;
+use Yii;
 use yii\base\InvalidConfigException;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
@@ -177,7 +178,11 @@ class Task extends \yii\db\ActiveRecord
         }
 
         if ($taskFilter->my_city) {
-            // нужна аутентификация пользователя
+            $user = Yii::$app->user->identity;
+
+            if ($user) {
+                $taskBuilder = $taskBuilder->andWhere(['like', 'address', $user->city->city]);
+            }
         }
 
         if ($taskFilter->no_executor) {

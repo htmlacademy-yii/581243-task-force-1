@@ -24,9 +24,9 @@ class ReplyController extends SecuredController
     public function actionCreate()
     {
         $user = Yii::$app->user->identity;
-        $replyForm = new Reply();
 
         if (Yii::$app->request->getIsPost()) {
+            $replyForm = new Reply();
             $replyForm->load(Yii::$app->request->post());
             $replyForm->executor_id = $user->id;
             $task = Task::findOne($replyForm->task_id);

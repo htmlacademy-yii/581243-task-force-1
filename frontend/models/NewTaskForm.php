@@ -2,7 +2,6 @@
 
 namespace frontend\models;
 
-use Yii;
 use yii\base\Model;
 
 class NewTaskForm extends Model
