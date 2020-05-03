@@ -8,6 +8,7 @@ use frontend\models\User;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
+use yii\helpers\Url;
 use yii\web\Response;
 
 class SecuredController extends \yii\web\Controller
@@ -44,7 +45,7 @@ class SecuredController extends \yii\web\Controller
                         'allow' => false,
                         'roles' => ['@'],
                         'denyCallback' => function($rule, $action) {
-                            return $this->redirect('/task/');
+                            return $this->redirect(Url::to(['/task/']));
                         },
                     ],
                     [
@@ -55,7 +56,7 @@ class SecuredController extends \yii\web\Controller
                         'allow' => false,
                         'roles' => ['?'],
                         'denyCallback' => function($rule, $action) {
-                            return $this->redirect('/');
+                            return $this->redirect(Url::to(['/']));
                         },
                     ],
                 ],

@@ -29,8 +29,7 @@ use yii\widgets\LinkPager;
                 <div class="content-view__feedback-card user__search-wrapper">
                     <div class="feedback-card__top">
                         <div class="user__search-icon">
-                            <!--TODO method getUrl in branch 8.3-->
-                            <a href="<?= Url::to(['/users/view/' . $user->id]); ?>"><img src="<?= $user->avatar ? /*Url::to([$user->avatar->getUrl()])*/'' : '/img/user-photo.png'; ?>" width="65" height="65"></a>
+                            <a href="<?= Url::to(['/users/view/' . $user->id]); ?>"><img src="<?= $user->avatar ? Url::to([$user->avatar->getUrl()]) : '/img/user-photo.png'; ?>" width="65" height="65"></a>
                             <span><?= $user->getExecutorTasks()->where(['task_status_id' => Status::STATUS_DONE])->count(); ?> заданий</span>
                             <span><?= $user->getOpinions()->count(); ?> отзывов</span>
                         </div>

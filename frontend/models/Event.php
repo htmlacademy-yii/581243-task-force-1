@@ -2,7 +2,6 @@
 
 namespace frontend\models;
 
-use Yii;
 use yii\db\ActiveQuery;
 
 /**
@@ -10,7 +9,7 @@ use yii\db\ActiveQuery;
  *
  * @property int $id
  * @property int $user_id
- * @property string $mesage
+ * @property string $message
  * @property string|null $send_to_email
  * @property string|null $send_email_at
  * @property string|null $view_feed_at
@@ -31,9 +30,9 @@ class Event extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['user_id', 'mesage'], 'required'],
+            [['user_id', 'message'], 'required'],
             [['user_id'], 'integer'],
-            [['mesage'], 'string'],
+            [['message'], 'string'],
             [['send_email_at', 'view_feed_at'], 'safe'],
             [['send_to_email'], 'string', 'max' => 255],
         ];
@@ -47,7 +46,7 @@ class Event extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'user_id' => 'User ID',
-            'mesage' => 'Mesage',
+            'message' => 'Message',
             'send_to_email' => 'Send To Email',
             'send_email_at' => 'Send Email At',
             'view_feed_at' => 'View Feed At',

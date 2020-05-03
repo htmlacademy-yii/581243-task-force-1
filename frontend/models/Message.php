@@ -2,7 +2,6 @@
 
 namespace frontend\models;
 
-use Yii;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
 use yii\db\BaseActiveRecord;

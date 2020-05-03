@@ -7,6 +7,8 @@ use yii\base\InvalidConfigException;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
 use yii\db\BaseActiveRecord;
+use yii\db\Exception;
+use yii\db\Query;
 use yii\web\IdentityInterface;
 
 /**
@@ -287,9 +289,9 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
      * @return ActiveQuery
      * @throws InvalidConfigException
      */
-    public function getFotos() {
+    public function getPhotos() {
         return $this->hasMany(File::class, ['id' => 'file_id'])
-            ->viaTable('user_foto', ['user_id' => 'id']);
+            ->viaTable('user_photo', ['user_id' => 'id']);
     }
 
     /**
@@ -338,6 +340,62 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     }
 
     /**
+     * @param array $ids
+     * @return array
+     * @throws Exception
+     * @throws InvalidConfigException
+     */
+    public function syncCategories(array $ids): array
+    {
+        (new Query())
+            ->createCommand()
+            ->delete(
+                'user_category',
+                ['AND', ['user_id' => $this->id], ['not in', 'category_id', $ids]]
+            )
+            ->execute();
+        foreach (Category::find()->where(['in', 'id',  $ids])
+                     ->andWhere(['not in', 'id', $this->getCategories()->select('id')->column()])
+                     ->all() as $category) {
+            $this->link('categories', $category);
+        }
+
+        $this->user_status = $this->getCategories()->count() > 0 ? static::ROLE_EXECUTOR : static::ROLE_CLIENT;
+        $this->save();
+
+        return $this->categories;
+    }
+
+    /**
+     * @param array $images
+     * @throws Exception
+     * @throws InvalidConfigException
+     */
+    public function syncImages(array $images): void
+    {
+        /**
+         * Удаляем все старые фотографии пользователя
+         */
+        $oldImages = $this->getPhotos()->select('id')->column();
+        (new Query)
+            ->createCommand()
+            ->delete('user_photo', ['user_id' => $this->id])
+            ->execute();
+
+        (new Query)
+            ->createCommand()
+            ->delete('files', ['in', 'id', $oldImages])
+            ->execute();
+
+        /**
+         * Добавляем новые фотографии (6 штук)
+         */
+        foreach (array_slice($images, 0, 6) as $image) {
+            $this->link('photos', $image);
+        }
+    }
+
+    /**
      * @param ActiveQuery $builder
      * @param UserFilter $filter
      * @return ActiveQuery
@@ -359,7 +417,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
         }
 
         if ($filter->online) {
-            $date = date('Y-m-d 00:00:00', strtotime('now - 5 minutes'));
+            $date = date('Y-m-d 00:00:00', strtotime('now - 30 minutes'));
             $builder = $builder->andWhere(['>=', 'last_activity_at', $date]);
         }
 

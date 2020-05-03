@@ -2,11 +2,14 @@
 
 namespace frontend\controllers;
 
+
+use frontend\models\AccountForm;
 use frontend\models\Category;
 use frontend\models\City;
 use frontend\models\LoginForm;
 use frontend\models\User;
 use frontend\models\UserFilter;
+use frontend\models\UserSettings;
 use Yii;
 use yii\base\Exception;
 use yii\data\Pagination;
@@ -110,7 +113,9 @@ class UserController extends SecuredController
                 $user->password = Yii::$app->getSecurity()
                     ->generatePasswordHash($user->password);
                 $user->save();
-                return $this->redirect('/task/');
+                UserSettings::firstOrCreate($user);
+
+                return $this->redirect(Url::to(['/task/']));
             } else {
                 $errors = $user->getErrors();
             }
@@ -128,8 +133,8 @@ class UserController extends SecuredController
      */
     public function actionLogin()
     {
-        $loginForm = new LoginForm();
         if (Yii::$app->request->getIsPost()) {
+            $loginForm = new LoginForm();
             $loginForm->load(Yii::$app->request->post());
             if (Yii::$app->request->isAjax) {
                 Yii::$app->response->format = Response::FORMAT_JSON;
@@ -139,7 +144,7 @@ class UserController extends SecuredController
             if ($loginForm->validate()) {
                 $user = $loginForm->getUser();
                 Yii::$app->user->login($user);
-                return $this->redirect('/task/');
+                return $this->redirect(Url::to(['/task/']));
             }
         }
     }
@@ -150,7 +155,55 @@ class UserController extends SecuredController
     public function actionLogout() {
         Yii::$app->user->logout();
 
-        return $this->redirect('/');
+        return $this->redirect(Url::to(['/']));
+    }
+
+    /**
+     * @return string
+     * @throws \Exception
+     */
+    public function actionAccount()
+    {
+        $user = Yii::$app->user->identity;
+        $categories = Category::find()->all();
+        $cities = City::find()->select('city')->indexBy('id')->column();
+
+        $accountForm = new AccountForm();
+        $userSettings = UserSettings::firstOrCreate($user);
+
+        $accountForm->attributes = $user->attributes;
+        $accountForm->attributes = $userSettings->attributes;
+
+        if (Yii::$app->request->getIsPost()) {
+            $accountForm->load(Yii::$app->request->post());
+
+            if (!empty($images = $accountForm->uploadImages())) {
+                $user->syncImages($images);
+            }
+
+            if ($accountForm->validate()) {
+                $user->attributes = $accountForm->attributes;
+                $user->save();
+
+                $userSettings->attributes = $accountForm->attributes;
+                $userSettings->save();
+
+                $user->syncCategories(is_array($accountForm->categories) ? $accountForm->categories : []);
+
+                $avatar = $accountForm->uploadAvatar();
+                if ($avatar) {
+                    $user->link('avatar', $avatar);
+                    $accountForm->avatar = null;
+                }
+            }
+        }
+
+        return $this->render('account', [
+            'accountForm' => $accountForm,
+            'categories' => $categories,
+            'cities' => $cities,
+            'user' => $user,
+        ]);
     }
 
     /**

@@ -15,37 +15,43 @@ class MessageCreateAction extends Action
     public function run($id)
     {
         $user = Yii::$app->user->identity;
-        if (!$user) {
-            throw new ServerErrorHttpException('Not authorize.');
-        }
 
-        if ($this->checkAccess) {
-            call_user_func($this->checkAccess, $this->id);
-        }
+        try {
+            if (!$user) {
+                throw new ServerErrorHttpException('Not authorize.');
+            }
 
-        /* @var $model \yii\db\ActiveRecord */
-        $model = new $this->modelClass([
-            'scenario' => $this->scenario,
-        ]);
+            if ($this->checkAccess) {
+                call_user_func($this->checkAccess, $this->id);
+            }
 
-        $body = json_decode(Yii::$app->getRequest()->getRawBody(), true);
+            /* @var $model \yii\db\ActiveRecord */
+            $model = new $this->modelClass([
+                'scenario' => $this->scenario,
+            ]);
 
-        $model->task_id = $id;
-        $model->author_id = $user->id;
-        $model->comment = $body['message'] ?? null;
+            $body = json_decode(Yii::$app->getRequest()->getRawBody(), true);
 
-        if ($model->save()) {
-            $response = Yii::$app->getResponse();
-            $response->format = Response::FORMAT_JSON;
-            $response->setStatusCode(201);
+            $model->task_id = $id;
+            $model->author_id = $user->id;
+            $model->comment = $body['message'] ?? null;
 
-            return [
-                'message' => $model->comment,
-                'published_at' => $model->created_at,
-                'is_mine' => (int)$model->author_id === $user->id,
-            ];
-        } elseif (!$model->hasErrors()) {
-            throw new ServerErrorHttpException('Failed to create the object for unknown reason.');
+            if ($model->save()) {
+                $response = Yii::$app->getResponse();
+                $response->format = Response::FORMAT_JSON;
+                $response->setStatusCode(201);
+
+                return [
+                    'message' => $model->comment,
+                    'published_at' => $model->created_at,
+                    'is_mine' => (int)$model->author_id === $user->id,
+                ];
+            } elseif (!$model->hasErrors()) {
+                throw new ServerErrorHttpException('Failed to create the object for unknown reason.');
+            }
+        } catch (ServerErrorHttpException $e) {
+            Yii::error($e->getMessage(), 'api');
+            return [];
         }
     }
 }

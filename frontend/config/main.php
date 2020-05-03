@@ -1,4 +1,14 @@
 <?php
+
+use frontend\models\User;
+use frontend\modules\api\Module;
+use yii\authclient\clients\VKontakte;
+use yii\authclient\Collection;
+use yii\log\FileTarget;
+use yii\redis\Cache;
+use yii\rest\UrlRule;
+use yii\web\JsonParser;
+
 $params = array_merge(
     require __DIR__ . '/../../common/config/params.php',
     require __DIR__ . '/../../common/config/params-local.php',
@@ -13,18 +23,18 @@ return [
     'controllerNamespace' => 'frontend\controllers',
     'modules' => [
         'api' => [
-            'class' => 'frontend\modules\api\Module',
+            'class' => Module::class,
         ],
     ],
     'components' => [
         'request' => [
             'csrfParam' => '_csrf-frontend',
             'parsers' => [
-                'application/json' => 'yii\web\JsonParser',
+                'application/json' => JsonParser::class,
             ],
         ],
         'user' => [
-            'identityClass' => 'frontend\models\User',
+            'identityClass' => User::class,
             'enableAutoLogin' => true,
             'identityCookie' => ['name' => '_identity-frontend', 'httpOnly' => true],
             'loginUrl' => ['/'],
@@ -37,7 +47,7 @@ return [
             'traceLevel' => YII_DEBUG ? 3 : 0,
             'targets' => [
                 [
-                    'class' => 'yii\log\FileTarget',
+                    'class' => FileTarget::class,
                     'levels' => ['error', 'warning'],
                 ],
             ],
@@ -54,27 +64,28 @@ return [
                 'users/view/<id:\d+>' => 'user/show',
                 'users/favorite/<id:\d+>' => 'user/favorite',
                 'task/view/<id:\d+>' => 'task/show',
+                'task/mylist/<status:\d+>' => 'task/mylist',
                 'file/download/<id:\d+>' => 'file/download',
                 'reply/reject/<taskId:\d+>/<replyId:\d+>' => 'reply/reject',
                 'reply/take-in-work/<taskId:\d+>/<replyId:\d+>' => 'reply/take-in-work',
                 'address/<query:.+>' => 'address/', [
-                    'class' => 'yii\rest\UrlRule',
+                    'class' => UrlRule::class,
                     'controller' => 'api/messages',
                     'patterns' => [
                         'GET,HEAD {id}' => 'view',
                         'POST {id}' => 'create',
                     ],
                 ], [
-                    'class' => 'yii\rest\UrlRule',
+                    'class' => UrlRule::class,
                     'controller' => 'api/tasks',
                 ],
             ],
         ],
         'authClientCollection' => [
-            'class' => 'yii\authclient\Collection',
+            'class' => Collection::class,
             'clients' => [
                 'vkontakte' => [
-                    'class' => 'yii\authclient\clients\VKontakte',
+                    'class' => VKontakte::class,
                     'clientId' => '7358390',
                     'clientSecret' => 'w04vA3yNRbtV5IuUoK1R',
                     'scope' => 'email',
@@ -82,7 +93,7 @@ return [
             ],
         ],
         'cache' => [
-            'class' => 'yii\redis\Cache',
+            'class' => Cache::class,
             'redis' => [
                 'hostname' => 'localhost',
                 'port' => 6379,

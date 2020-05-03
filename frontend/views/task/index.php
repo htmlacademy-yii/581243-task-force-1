@@ -1,6 +1,7 @@
 <?php
 /* @var $model User */
 
+use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 use yii\helpers\Html;
 use yii\widgets\LinkPager;
@@ -14,7 +15,7 @@ use yii\widgets\LinkPager;
                 <?php foreach ($tasks as $task): ?>
                     <div class="new-task__card">
                         <div class="new-task__title">
-                            <a href="/task/view/<?= $task->id; ?>" class="link-regular">
+                            <a href="<?=Url::to(['/task/view/' . $task->id]); ?>" class="link-regular">
                                 <h2><?= $task['name']; ?></h2>
                             </a>
                             <a  class="new-task__type link-regular" href="#">

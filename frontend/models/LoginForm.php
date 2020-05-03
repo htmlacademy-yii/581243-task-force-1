@@ -2,7 +2,6 @@
 
 namespace frontend\models;
 
-use yii\base\InvalidArgumentException;
 use yii\base\Model;
 
 class LoginForm extends Model
