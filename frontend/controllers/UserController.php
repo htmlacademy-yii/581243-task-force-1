@@ -2,7 +2,6 @@
 
 namespace frontend\controllers;
 
-
 use frontend\models\AccountForm;
 use frontend\models\Category;
 use frontend\models\City;
@@ -12,7 +11,7 @@ use frontend\models\UserFilter;
 use frontend\models\UserSettings;
 use Yii;
 use yii\base\Exception;
-use yii\data\Pagination;
+use yii\data\ActiveDataProvider;
 use yii\helpers\Url;
 use yii\web\Response;
 use yii\widgets\ActiveForm;
@@ -22,7 +21,7 @@ class UserController extends SecuredController
     /**
      * @return string
      */
-    public function actionIndex()
+    public function actionIndex(): string
     {
         $userFilter = new UserFilter();
         $categories = Category::find()->all();
@@ -43,22 +42,25 @@ class UserController extends SecuredController
             $userFilter->categories = [];
         }
 
-        $pages = new Pagination(['totalCount' => $usersBuilder->count(), 'pageSize' => 5]);
+        $dataProvider = new ActiveDataProvider([
+            'query' => $usersBuilder,
+            'pagination' => [
+                'pageSize' => 5,
+            ],
+        ]);
 
         return $this->render('index', [
-            'users' => $usersBuilder->offset($pages->offset)
-                ->limit($pages->limit)->all(),
             'userFilter' => $userFilter,
             'categories' => $categories,
-            'pages' => $pages,
+            'dataProvider' => $dataProvider,
         ]);
     }
 
     /**
-     * @param $id
+     * @param int $id
      * @return string
      */
-    public function actionShow($id)
+    public function actionShow(int $id): string
     {
         $user = User::findOne($id);
         $currentUser = Yii::$app->user->identity;
@@ -73,7 +75,7 @@ class UserController extends SecuredController
      * @param $id
      * @return Response
      */
-    public function actionFavorite($id)
+    public function actionFavorite(int $id): Response
     {
         $user = Yii::$app->user->identity;
         $favouriteUser = User::findOne($id);
@@ -87,7 +89,7 @@ class UserController extends SecuredController
         return $this->redirect(Url::to(['/users/view/' . $id]));
     }
 
-    public function actions()
+    public function actions(): array
     {
         return [
             'auth' => [
@@ -152,7 +154,8 @@ class UserController extends SecuredController
     /**
      * @return Response
      */
-    public function actionLogout() {
+    public function actionLogout(): Response
+    {
         Yii::$app->user->logout();
 
         return $this->redirect(Url::to(['/']));
@@ -162,7 +165,7 @@ class UserController extends SecuredController
      * @return string
      * @throws \Exception
      */
-    public function actionAccount()
+    public function actionAccount(): string
     {
         $user = Yii::$app->user->identity;
         $categories = Category::find()->all();
@@ -211,7 +214,7 @@ class UserController extends SecuredController
      * @return Response
      * @throws Exception]
      */
-    public function onAuthSuccess($client)
+    public function onAuthSuccess($client): Response
     {
         $attributes = $client->getUserAttributes();
         $user = User::find()->where(['vk_id' => $attributes['id']])->one();

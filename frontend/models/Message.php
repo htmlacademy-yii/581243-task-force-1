@@ -21,7 +21,7 @@ class Message extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'messages';
     }
@@ -29,7 +29,7 @@ class Message extends \yii\db\ActiveRecord
     /**
      * @return array
      */
-    public function behaviors()
+    public function behaviors(): array
     {
         return [
             'timestamp' => [
@@ -48,7 +48,7 @@ class Message extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['task_id', 'author_id', 'comment'], 'required'],
@@ -61,7 +61,7 @@ class Message extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => 'ID',
@@ -76,7 +76,7 @@ class Message extends \yii\db\ActiveRecord
     /**
      * @return ActiveQuery
      */
-    public function getTask()
+    public function getTask(): ActiveQuery
     {
         return $this->hasOne(Task::class, ['id' => 'task_id']);
     }
@@ -84,7 +84,7 @@ class Message extends \yii\db\ActiveRecord
     /**
      * @return ActiveQuery
      */
-    public function getUser()
+    public function getUser(): ActiveQuery
     {
         return $this->hasOne(User::class, ['id' => 'author_id']);
     }

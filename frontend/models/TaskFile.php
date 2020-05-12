@@ -16,7 +16,7 @@ class TaskFile extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'task_file';
     }
@@ -24,7 +24,7 @@ class TaskFile extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['task_id', 'file_id'], 'required'],
@@ -36,7 +36,7 @@ class TaskFile extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => 'ID',
@@ -48,7 +48,7 @@ class TaskFile extends \yii\db\ActiveRecord
     /**
      * @return ActiveQuery
      */
-    public function getTask()
+    public function getTask(): ActiveQuery
     {
         return $this->hasOne(Task::class, ['id' => 'task_id']);
     }

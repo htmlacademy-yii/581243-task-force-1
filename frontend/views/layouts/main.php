@@ -20,8 +20,6 @@ AppAsset::register($this);
     <?php $this->registerCsrfMetaTags() ?>
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
-    <link rel="stylesheet" href="css/normalize.css">
-    <link rel="stylesheet" href="css/style.css">
 </head>
 <?php $user = User::findOne(\Yii::$app->user->getId()); ?>
 <body class="<?= ($user ? '' : 'landing'); ?>">
@@ -107,7 +105,7 @@ AppAsset::register($this);
                              alt="Аватар пользователя">
                     </a>
                     <span class="header__account-name">
-                         <?= $user->name; ?>
+                         <?= htmlspecialchars($user->name); ?>
                      </span>
                 </div>
                 <div class="account__pop-up">
@@ -269,7 +267,6 @@ AppAsset::register($this);
     <?php endif; ?>
 </div>
 <div class="overlay"></div>
-<script src="/js/main.js"></script>
 
 <?php $this->endBody() ?>
 </body>

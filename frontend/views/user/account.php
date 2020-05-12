@@ -245,7 +245,6 @@ use yii\helpers\Html;
         </section>
     </div>
 </main>
-<script src="/js/dropzone.js"></script>
 <script>
   Dropzone.autoDiscover = false;
 

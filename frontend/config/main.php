@@ -1,5 +1,7 @@
 <?php
 
+use frontend\components\AddressComponent;
+use frontend\components\TaskComponent;
 use frontend\models\User;
 use frontend\modules\api\Module;
 use yii\authclient\clients\VKontakte;
@@ -17,6 +19,8 @@ $params = array_merge(
 );
 
 return [
+    'language' => 'ru-RU',
+    'timeZone' => 'UTC',
     'id' => 'app-frontend',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
@@ -32,6 +36,13 @@ return [
             'parsers' => [
                 'application/json' => JsonParser::class,
             ],
+            'cookieValidationKey' => '',
+        ],
+        'address' => [
+            'class' => AddressComponent::class,
+        ],
+        'task' => [
+            'class' => TaskComponent::class,
         ],
         'user' => [
             'identityClass' => User::class,

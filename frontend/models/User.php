@@ -46,7 +46,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     /**
      * @return array
      */
-    public function behaviors()
+    public function behaviors(): array
     {
         return [
             'timestamp' => [
@@ -65,15 +65,30 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'users';
     }
 
     /**
+     * @param bool $insert
+     * @return bool
+     */
+    public function beforeSave($insert): bool
+    {
+        if (parent::beforeSave($insert)) {
+            $this->name = strip_tags($this->name);
+            $this->last_name = strip_tags($this->last_name);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['name', 'email', 'password'], 'required'],
@@ -92,7 +107,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
         ];
     }
 
-    public function validateCity($attribute, $params)
+    public function validateCity(string $attribute): void
     {
         if (is_null(City::findOne($this->$attribute))) {
             $this->addError($attribute, 'Указанный город не доступен.');
@@ -103,11 +118,11 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     /**
      * Finds an identity by the given ID.
      * @param string|int $id the ID to be looked for
-     * @return IdentityInterface|null the identity object that matches the given ID.
+     * @return User
      * Null should be returned if such an identity cannot be found
      * or the identity is not in an active state (disabled, deleted, etc.)
      */
-    public static function findIdentity($id)
+    public static function findIdentity($id): self
     {
         return self::findOne($id);
     }
@@ -170,7 +185,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
         // TODO: Implement validateAuthKey() method.
     }
 
-    public function validatePassword($password)
+    public function validatePassword(string $password): string
     {
         return Yii::$app->security->validatePassword($password, $this->password);
     }
@@ -178,7 +193,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => 'ID',
@@ -208,7 +223,8 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
      * Задания заказчика
      * @return ActiveQuery
      */
-    public function getClientTasks() {
+    public function getClientTasks(): ActiveQuery
+    {
         return $this->hasMany(Task::class, ['client_id' => 'id'])
             ->inverseOf('client');
     }
@@ -217,7 +233,8 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
      * Задания исполнителя
      * @return ActiveQuery
      */
-    public function getExecutorTasks() {
+    public function getExecutorTasks(): ActiveQuery
+    {
         return $this->hasMany(Task::class, ['executor_id' => 'id'])
             ->inverseOf('executor');
     }
@@ -225,7 +242,8 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     /**
      * @return ActiveQuery
      */
-    public function getEvents() {
+    public function getEvents(): ActiveQuery
+    {
         return $this->hasMany(Event::class, ['user_id' => 'id'])
             ->inverseOf('user');
     }
@@ -234,7 +252,8 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
      * Свои отзывы
      * @return ActiveQuery
      */
-    public function getSelfOpinions() {
+    public function getSelfOpinions(): ActiveQuery
+    {
         return $this->hasMany(Opinion::class, ['author_id' => 'id'])
             ->inverseOf('author');
     }
@@ -243,7 +262,8 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
      * Отзывы на данного пользователя
      * @return ActiveQuery
      */
-    public function getOpinions() {
+    public function getOpinions(): ActiveQuery
+    {
         return $this->hasMany(Opinion::class, ['evaluated_user_id' => 'id'])
             ->inverseOf('evaluatedUser');
     }
@@ -252,7 +272,8 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
      * Отклики пользователя
      * @return ActiveQuery
      */
-    public function getReplies() {
+    public function getReplies(): ActiveQuery
+    {
         return $this->hasMany(Reply::class, ['executor_id' => 'id'])
             ->inverseOf('executor');
     }
@@ -260,7 +281,8 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     /**
      * @return ActiveQuery
      */
-    public function getMessages() {
+    public function getMessages(): ActiveQuery
+    {
         return $this->hasMany(Message::class, ['author_id' => 'id'])
             ->inverseOf('user');
     }
@@ -270,7 +292,8 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
      * @return ActiveQuery
      * @throws InvalidConfigException
      */
-    public function getFavoriteUsers() {
+    public function getFavoriteUsers(): ActiveQuery
+    {
         return $this->hasMany(User::class, ['id' => 'favorite_user_id'])
             ->viaTable('favorites', ['user_id' => 'id']);
     }
@@ -279,7 +302,8 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
      * @return ActiveQuery
      * @throws InvalidConfigException
      */
-    public function getCategories() {
+    public function getCategories(): ActiveQuery
+    {
         return $this->hasMany(Category::class, ['id' => 'category_id'])
             ->viaTable('user_category', ['user_id' => 'id']);
     }
@@ -289,7 +313,8 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
      * @return ActiveQuery
      * @throws InvalidConfigException
      */
-    public function getPhotos() {
+    public function getPhotos(): ActiveQuery
+    {
         return $this->hasMany(File::class, ['id' => 'file_id'])
             ->viaTable('user_photo', ['user_id' => 'id']);
     }
@@ -297,7 +322,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     /**
      * @return ActiveQuery
      */
-    public function getCity()
+    public function getCity(): ActiveQuery
     {
         return $this->hasOne(City::class, ['id' => 'city_id']);
     }
@@ -305,7 +330,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     /**
      * @return ActiveQuery
      */
-    public function getAvatar()
+    public function getAvatar(): ActiveQuery
     {
         return $this->hasOne(File::class, ['id' => 'avatar_id']);
     }
@@ -313,7 +338,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     /**
      * @return ActiveQuery
      */
-    public function getUserSettings()
+    public function getUserSettings(): ActiveQuery
     {
         return $this->hasOne(UserSettings::class, ['id' => 'settings_id']);
     }
@@ -400,7 +425,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
      * @param UserFilter $filter
      * @return ActiveQuery
      */
-    public static function filter(ActiveQuery $builder, UserFilter $filter)
+    public static function filter(ActiveQuery $builder, UserFilter $filter): ActiveQuery
     {
         $user = Yii::$app->user->identity;
 
@@ -444,7 +469,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
      * @param int $type
      * @return ActiveQuery
      */
-    public static function sortBy(ActiveQuery $builder, int $type)
+    public static function sortBy(ActiveQuery $builder, int $type): ActiveQuery
     {
         switch ($type) {
             case static::RATING:

@@ -7,7 +7,7 @@ use yii\rest\Action;
 
 class MessageViewAction extends Action
 {
-    public function run($id)
+    public function run(int $id): array
     {
         $user = Yii::$app->user->identity;
 

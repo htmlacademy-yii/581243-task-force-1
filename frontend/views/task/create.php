@@ -3,6 +3,7 @@ use yii\widgets\ActiveForm;
 use yii\helpers\Html;
 ?>
 
+<?php $this->registerJsFile('https://cdn.jsdelivr.net/npm/@tarekraafat/autocomplete.js@7.2.0/dist/js/autoComplete.min.js'); ?>
 <main class="page-main">
     <div class="main-container page-container">
         <section class="create__task">
@@ -164,5 +165,3 @@ use yii\helpers\Html;
         </section>
     </div>
 </main>
-<script src="https://cdn.jsdelivr.net/npm/@tarekraafat/autocomplete.js@7.2.0/dist/js/autoComplete.min.js"></script>
-<script src="/js/index.js"></script>

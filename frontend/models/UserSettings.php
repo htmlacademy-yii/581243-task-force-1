@@ -23,7 +23,7 @@ class UserSettings extends \yii\db\ActiveRecord
     /**
      * @return array
      */
-    public function behaviors()
+    public function behaviors(): array
     {
         return [
             'timestamp' => [
@@ -42,7 +42,7 @@ class UserSettings extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'user_settings';
     }
@@ -50,7 +50,7 @@ class UserSettings extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['new_messages', 'task_action', 'new_response', 'show_only_client', 'hide_profile'], 'boolean'],
@@ -63,7 +63,7 @@ class UserSettings extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => 'ID',
@@ -81,7 +81,7 @@ class UserSettings extends \yii\db\ActiveRecord
     /**
      * @return ActiveQuery
      */
-    public function getUser()
+    public function getUser(): ActiveQuery
     {
         return $this->hasOne(User::class, ['id' => 'user_id']);
     }

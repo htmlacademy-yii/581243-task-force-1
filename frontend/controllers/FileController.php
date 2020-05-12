@@ -3,16 +3,16 @@
 namespace frontend\controllers;
 
 use frontend\models\File;
-use yii\console\Response;
 use Yii;
+use yii\web\Response;
 
 class FileController extends SecuredController
 {
     /**
-     * @param $id
-     * @return string|Response|\yii\web\Response
+     * @param int $id
+     * @return Response
      */
-    public function actionDownload($id)
+    public function actionDownload(int $id): Response
     {
         $file = File::findOne($id);
 

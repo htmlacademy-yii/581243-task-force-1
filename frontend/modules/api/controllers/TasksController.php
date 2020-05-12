@@ -10,7 +10,7 @@ class TasksController extends ActiveController
 {
     public $modelClass = Message::class;
 
-    public function actions()
+    public function actions(): array
     {
         $actions = [
             'index' => [

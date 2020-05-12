@@ -14,7 +14,7 @@ class DoneTaskForm extends Model
     /**
      * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['done', 'task_id'], 'required'],
@@ -27,7 +27,7 @@ class DoneTaskForm extends Model
     /**
      * @return array
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'done' => 'Статус задания',

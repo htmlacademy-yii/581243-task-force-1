@@ -2,23 +2,20 @@
 
 namespace frontend\controllers;
 
-
-use frontend\models\City;
-use frontend\models\User;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\helpers\Url;
-use yii\web\Response;
+use yii\web\BadRequestHttpException;
 
 class SecuredController extends \yii\web\Controller
 {
     /**
      * @param $action
      * @return bool
-     * @throws \yii\web\BadRequestHttpException
+     * @throws BadRequestHttpException
      */
-    public function beforeAction($action)
+    public function beforeAction($action): bool
     {
         $user = Yii::$app->user->identity;
         if ($user) {
@@ -29,7 +26,7 @@ class SecuredController extends \yii\web\Controller
         return parent::beforeAction($action);
     }
 
-    public function behaviors()
+    public function behaviors(): array
     {
         return [
             'access' => [

@@ -1,22 +1,9 @@
 <?php
 namespace frontend\controllers;
 
-use frontend\models\ResendVerificationEmailForm;
 use frontend\models\Task;
-use frontend\models\User;
-use frontend\models\VerifyEmailForm;
-use Yii;
-use yii\base\InvalidArgumentException;
 use yii\helpers\Url;
-use yii\web\BadRequestHttpException;
-use yii\web\Controller;
-use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
-use common\models\LoginForm;
-use frontend\models\PasswordResetRequestForm;
-use frontend\models\ResetPasswordForm;
-use frontend\models\SignupForm;
-use frontend\models\ContactForm;
 
 /**
  * Site controller
@@ -26,7 +13,7 @@ class SiteController extends SecuredController
     /**
      * {@inheritdoc}
      */
-    public function behaviors()
+    public function behaviors(): array
     {
         return [
             'access' => [
@@ -54,7 +41,7 @@ class SiteController extends SecuredController
     /**
      * {@inheritdoc}
      */
-    public function actions()
+    public function actions(): array
     {
         return [
             'error' => [
@@ -72,7 +59,7 @@ class SiteController extends SecuredController
      *
      * @return mixed
      */
-    public function actionIndex()
+    public function actionIndex(): string
     {
         $tasks = Task::find()->orderBy([
             'created_at' => SORT_DESC,

@@ -12,11 +12,11 @@ use yii\widgets\LinkPager;
         <section class="new-task">
             <div class="new-task__wrapper">
                 <h1>Новые задания</h1>
-                <?php foreach ($tasks as $task): ?>
+                <?php foreach ($dataProvider->getModels() as $task): ?>
                     <div class="new-task__card">
                         <div class="new-task__title">
                             <a href="<?=Url::to(['/task/view/' . $task->id]); ?>" class="link-regular">
-                                <h2><?= $task['name']; ?></h2>
+                                <h2><?= htmlspecialchars($task['name']); ?></h2>
                             </a>
                             <a  class="new-task__type link-regular" href="#">
                                 <p><?= $task->category->name; ?></p>
@@ -24,12 +24,12 @@ use yii\widgets\LinkPager;
                         </div>
                         <div class="new-task__icon new-task__icon--<?= $task->category->icon;?>"></div>
                         <p class="new-task_description">
-                            <?= $task['description']; ?>
+                            <?= htmlspecialchars($task['description']); ?>
                         </p>
                         <b class="new-task__price new-task__price--translation">
                             <?= $task['budget']; ?><b> ₽</b>
                         </b>
-                        <p class="new-task__place"><?= $task['address']; ?></p>
+                        <p class="new-task__place"><?= htmlspecialchars($task['address']); ?></p>
                         <span class="new-task__time">
                             <?= \Yii::$app->formatter->asRelativeTime(strtotime($task['created_at'])); ?>
                         </span>
@@ -38,7 +38,7 @@ use yii\widgets\LinkPager;
             </div>
             <div class="new-task__pagination">
                 <?= LinkPager::widget([
-                    'pagination' => $pages,
+                    'pagination' => $dataProvider->getPagination(),
                     'linkContainerOptions' => ['class' => 'pagination__item'],
                     'options' => [
                         'class' => 'new-task__pagination-list',

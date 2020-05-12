@@ -2,19 +2,16 @@
 
 namespace frontend\modules\api\actions;
 
-use frontend\models\Task;
-use frontend\models\User;
 use Yii;
 use yii\base\Model;
 use yii\rest\Action;
-use yii\web\Response;
 use yii\web\ServerErrorHttpException;
 
 class TaskIndexAction extends Action
 {
     public $scenario = Model::SCENARIO_DEFAULT;
 
-    public function run()
+    public function run(): array
     {
         $user = Yii::$app->user->identity;
         try {

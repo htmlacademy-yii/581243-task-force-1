@@ -12,7 +12,7 @@ class MessageCreateAction extends Action
 {
     public $scenario = Model::SCENARIO_DEFAULT;
 
-    public function run($id)
+    public function run(int $id): array
     {
         $user = Yii::$app->user->identity;
 

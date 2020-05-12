@@ -19,7 +19,7 @@ class Event extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'events';
     }
@@ -27,7 +27,7 @@ class Event extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['user_id', 'message'], 'required'],
@@ -41,7 +41,7 @@ class Event extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels():array
     {
         return [
             'id' => 'ID',
@@ -56,7 +56,7 @@ class Event extends \yii\db\ActiveRecord
     /**
      * @return ActiveQuery
      */
-    public function getUser()
+    public function getUser(): ActiveQuery
     {
         return $this->hasOne(User::class, ['id' => 'user_id']);
     }

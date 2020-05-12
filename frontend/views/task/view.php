@@ -1,9 +1,23 @@
 <?php
+
+use frontend\models\Status;
 use TaskForce\actions\AvailableActions;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 use TaskForce\actions\RejectAction;
+?>
+<?php
+$this->registerJsFile('https://api-maps.yandex.ru/2.1/?apikey=<?=' . \Yii::$app->params['apiKey'] . '&lang=ru_RU');
+
+if (in_array($task->task_status_id, [
+        Status::STATUS_IN_WORK,
+        Status::STATUS_DONE,
+        Status::STATUS_FAILED,
+        Status::STATUS_EXPIRED,
+    ])) {
+    $this->registerJsFile('/js/messenger.js');
+}
 ?>
 <div class="table-layout">
     <main class="page-main">
@@ -13,7 +27,7 @@ use TaskForce\actions\RejectAction;
                     <div class="content-view__card-wrapper">
                         <div class="content-view__header">
                             <div class="content-view__headline">
-                                <h1><?= $task->name; ?></h1>
+                                <h1><?= htmlspecialchars($task->name); ?></h1>
                                 <span>Размещено в категории
                                     <a href="#" class="link-regular"><?= $task->category->name; ?></a>
                                     <?= \Yii::$app->formatter->asRelativeTime(strtotime($task->created_at)); ?></span>
@@ -24,7 +38,7 @@ use TaskForce\actions\RejectAction;
                         <div class="content-view__description">
                             <h3 class="content-view__h3">Общее описание</h3>
                             <p>
-                                <?= $task->description; ?>
+                                <?= htmlspecialchars($task->description); ?>
                             </p>
                         </div>
                         <div class="content-view__attach">
@@ -43,7 +57,7 @@ use TaskForce\actions\RejectAction;
                                      data-long="<?= $task->long; ?>"></div>
                                 <div class="content-view__address">
                                     <span class="address__town">
-                                        <?= $task->address; ?>
+                                        <?= htmlspecialchars($task->address); ?>
                                     </span>
                                 </div>
                             </div>
@@ -80,7 +94,7 @@ use TaskForce\actions\RejectAction;
                                         <div class="feedback-card__top--name">
                                             <p>
                                                 <a href="<?=Url::to(['/users/view/' . $reply->executor->id]); ?>" class="link-regular">
-                                                    <?= $reply->executor->last_name; ?> <?= $reply->executor->name; ?>
+                                                    <?= htmlspecialchars($reply->executor->last_name); ?> <?= htmlspecialchars($reply->executor->name); ?>
                                                 </a>
                                             </p>
                                             <?php $rating = $reply->executor->getRating(); ?>
@@ -122,7 +136,7 @@ use TaskForce\actions\RejectAction;
                             <img src="<?= $user->avatar ? Url::to([$user->avatar->getUrl()]) : '/img/man-brune.jpg'; ?>" width="62" height="62" alt="Аватар заказчика">
                             <div class="profile-mini__name five-stars__rate">
                                 <?php $rating = $client->getRating(); ?>
-                                <p><?= $client->last_name; ?> <?= $client->name; ?></p>
+                                <p><?= htmlspecialchars($client->last_name); ?> <?= htmlspecialchars($client->name); ?></p>
                                 <?php for($i = 1; $i <= 5; $i++): ?>
                                     <span class="<?= $i <= $rating ? : 'star-disabled'; ?>"></span>
                                 <?php endfor; ?>
@@ -146,7 +160,7 @@ use TaskForce\actions\RejectAction;
                 </div>
                 <div id="chat-container">
                     <!--                    добавьте сюда атрибут task с указанием в нем id текущего задания-->
-                    <chat class="connect-desk__chat" task="<?= $task->id; ?>">></chat>
+                    <chat class="connect-desk__chat" task="<?= $task->id; ?>"></chat>
                 </div>
             </section>
         </div>
@@ -333,5 +347,3 @@ use TaskForce\actions\RejectAction;
     </section>
 </div>
 <div class="overlay"></div>
-<script src="https://api-maps.yandex.ru/2.1/?apikey=<?= \Yii::$app->params['apiKey']; ?>&lang=ru_RU" type="text/javascript"></script>
-<script src="/js/messenger.js"></script>

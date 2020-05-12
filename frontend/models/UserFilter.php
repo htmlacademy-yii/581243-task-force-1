@@ -14,7 +14,7 @@ class UserFilter extends Model
     public $has_rate;
     public $favourite;
 
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'categories' => 'Категории',
@@ -27,7 +27,7 @@ class UserFilter extends Model
         ];
     }
 
-    public function rules()
+    public function rules(): array
     {
         return [
             [['categories', 'additionally', 'name', 'free', 'online', 'has_rate', 'favourite'], 'safe']

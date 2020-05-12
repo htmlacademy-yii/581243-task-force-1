@@ -23,7 +23,7 @@ class File extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'files';
     }
@@ -31,7 +31,7 @@ class File extends \yii\db\ActiveRecord
     /**
      * @return array
      */
-    public function behaviors()
+    public function behaviors(): array
     {
         return [
             'timestamp' => [
@@ -51,7 +51,7 @@ class File extends \yii\db\ActiveRecord
      * @return bool
      * @throws \Exception
      */
-    public function beforeDelete()
+    public function beforeDelete(): bool
     {
         if (file_exists($this->path) && !unlink($this->path)) {
             throw new \Exception('Can not delete file');
@@ -63,7 +63,7 @@ class File extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['title', 'type', 'path', 'user_id'], 'required'],
@@ -74,7 +74,7 @@ class File extends \yii\db\ActiveRecord
         ];
     }
 
-    public function validateType($attribute)
+    public function validateType(string $attribute): void
     {
         if (!in_array($this->$attribute, Yii::$app->params['allowed_files'])) {
             $this->addError($attribute, 'Файлы должены иметь расширения: ' . join(', ', Yii::$app->params['allowed_files']));
@@ -84,7 +84,7 @@ class File extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => 'ID',

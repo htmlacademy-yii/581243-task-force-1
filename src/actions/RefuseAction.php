@@ -1,8 +1,6 @@
 <?php
 
-
 namespace TaskForce\actions;
-
 
 use frontend\models\Status;
 use frontend\models\Task;

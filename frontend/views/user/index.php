@@ -25,7 +25,7 @@ use yii\widgets\LinkPager;
                     </li>
                 </ul>
             </div>
-            <?php foreach ($users as $user): ?>
+            <?php foreach ($dataProvider->getModels() as $user): ?>
                 <div class="content-view__feedback-card user__search-wrapper">
                     <div class="feedback-card__top">
                         <div class="user__search-icon">
@@ -34,14 +34,14 @@ use yii\widgets\LinkPager;
                             <span><?= $user->getOpinions()->count(); ?> отзывов</span>
                         </div>
                         <div class="feedback-card__top--name user__search-card">
-                            <p class="link-name"><a href="<?= Url::to(['/users/view/' . $user->id]); ?>" class="link-regular"><?= $user->last_name; ?> <?= $user->name ?></a></p>
+                            <p class="link-name"><a href="<?= Url::to(['/users/view/' . $user->id]); ?>" class="link-regular"><?= htmlspecialchars($user->last_name); ?> <?= htmlspecialchars($user->name); ?></a></p>
                             <?php $rating = $user->getRating(); ?>
                             <?php for($i = 1; $i <= 5; $i++): ?>
                                 <span class="<?= $i <= $rating ? : 'star-disabled'; ?>"></span>
                             <?php endfor; ?>
                             <b><?= $rating; ?></b>
                             <p class="user__search-content">
-                                <?= $user->about ?>
+                                <?= htmlspecialchars($user->about); ?>
                             </p>
                         </div>
                         <span class="new-task__time">
@@ -57,7 +57,7 @@ use yii\widgets\LinkPager;
             <?php endforeach; ?>
             <div class="new-task__pagination">
                 <?= LinkPager::widget([
-                    'pagination' => $pages,
+                    'pagination' => $dataProvider->getPagination(),
                     'linkContainerOptions' => ['class' => 'pagination__item'],
                     'options' => [
                         'class' => 'new-task__pagination-list',

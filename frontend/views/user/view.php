@@ -11,8 +11,8 @@ use yii\helpers\Url;
                 <div class="user__card">
                     <img src="<?= $user->avatar ? Url::to([$user->avatar->getUrl()]) : '/img/user-photo.png'; ?>" width="120" height="120" alt="Аватар пользователя">
                     <div class="content-view__headline">
-                        <h1><?= $user->last_name; ?> <?= $user->name; ?></h1>
-                        <p><?= $user->address; ?>, <?= $user->age; ?> лет</p>
+                        <h1><?= htmlspecialchars($user->last_name); ?> <?= htmlspecialchars($user->name); ?></h1>
+                        <p><?= htmlspecialchars($user->address); ?>, <?= $user->age; ?> лет</p>
                         <div class="profile-mini__name five-stars__rate">
                             <?php $rating = $user->getRating(); ?>
                             <?php for($i = 1; $i <= 5; $i++): ?>
@@ -29,7 +29,7 @@ use yii\helpers\Url;
                     </div>
                 </div>
                 <div class="content-view__description">
-                    <p><?= $user->about; ?></p>
+                    <p><?= htmlspecialchars($user->about); ?></p>
                 </div>
                 <div class="user__card-general-information">
                     <div class="user__card-info">
@@ -59,13 +59,13 @@ use yii\helpers\Url;
                 <div class="content-view__feedback-wrapper reviews-wrapper">
                     <?php foreach ($user->opinions as $opinion): ?>
                         <div class="feedback-card__reviews">
-                        <p class="link-task link">Задание <a href="#" class="link-regular">«<?= $opinion->task->name; ?>»</a></p>
+                        <p class="link-task link">Задание <a href="#" class="link-regular">«<?= htmlspecialchars($opinion->task->name); ?>»</a></p>
                         <div class="card__review">
                             <a href="<?= Url::to(['/users/view/' . $opinion->author->id]); ?>"><img src="<?= $opinion->author->avatar ? Url::to([$opinion->author->avatar->getUrl()]) : '/img/man-glasses.jpg'; ?>" width="55" height="54"></a>
                             <div class="feedback-card__reviews-content">
-                                <p class="link-name link"><a href="<?= Url::to(['/users/view/' . $opinion->author->id]); ?>" class="link-regular"><?= $opinion->author->last_name; ?> <?= $opinion->author->name; ?></a></p>
+                                <p class="link-name link"><a href="<?= Url::to(['/users/view/' . $opinion->author->id]); ?>" class="link-regular"><?= htmlspecialchars($opinion->author->last_name); ?> <?= htmlspecialchars($opinion->author->name); ?></a></p>
                                 <p class="review-text">
-                                    <?= $opinion->comment; ?>
+                                    <?= htmlspecialchars($opinion->comment); ?>
                                 </p>
                             </div>
                             <div class="card__review-rate">

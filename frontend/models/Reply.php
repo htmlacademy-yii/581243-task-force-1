@@ -22,7 +22,7 @@ class Reply extends \yii\db\ActiveRecord
     /**
      * @return array
      */
-    public function behaviors()
+    public function behaviors(): array
     {
         return [
             'timestamp' => [
@@ -41,7 +41,7 @@ class Reply extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'replies';
     }
@@ -49,7 +49,7 @@ class Reply extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['task_id', 'executor_id'], 'required'],
@@ -63,7 +63,7 @@ class Reply extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => 'ID',
@@ -80,7 +80,7 @@ class Reply extends \yii\db\ActiveRecord
     /**
      * @return ActiveQuery
      */
-    public function getTask()
+    public function getTask(): ActiveQuery
     {
         return $this->hasOne(Task::class, ['id' => 'task_id']);
     }
@@ -88,7 +88,7 @@ class Reply extends \yii\db\ActiveRecord
     /**
      * @return ActiveQuery
      */
-    public function getExecutor()
+    public function getExecutor(): ActiveQuery
     {
         return $this->hasOne(User::class, ['id' => 'executor_id']);
     }

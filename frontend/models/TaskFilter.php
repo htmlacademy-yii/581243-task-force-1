@@ -13,7 +13,7 @@ class TaskFilter extends Model
     public $date ;
     public $title;
 
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'categories' => 'Категории',
@@ -25,7 +25,7 @@ class TaskFilter extends Model
         ];
     }
 
-    public function rules()
+    public function rules(): array
     {
         return [
             [['categories', 'my_city', 'no_executor', 'no_address', 'date', 'title'], 'safe']

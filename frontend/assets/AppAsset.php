@@ -17,6 +17,10 @@ class AppAsset extends AssetBundle
         'css/style.css',
     ];
     public $js = [
+        'js/dropzone.js',
+        'js/index.js',
+        'js/main.js',
+        'js/vue.js',
     ];
     public $depends = [
         'yii\web\YiiAsset',

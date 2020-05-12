@@ -16,7 +16,7 @@ class NewTaskForm extends Model
     public $lat;
     public $long;
 
-    public function rules()
+    public function rules(): array
     {
         return [
             [['name', 'description', 'category_id'], 'required'],
@@ -29,7 +29,7 @@ class NewTaskForm extends Model
         ];
     }
 
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => 'ID',

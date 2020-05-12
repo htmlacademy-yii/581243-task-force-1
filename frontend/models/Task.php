@@ -40,7 +40,7 @@ class Task extends \yii\db\ActiveRecord
     /**
      * @return array
      */
-    public function behaviors()
+    public function behaviors(): array
     {
         return [
             'timestamp' => [
@@ -59,7 +59,7 @@ class Task extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'tasks';
     }
@@ -67,7 +67,7 @@ class Task extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['name', 'description', 'category_id', 'client_id', 'task_status_id'], 'required'],
@@ -82,7 +82,7 @@ class Task extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => 'ID',
@@ -106,7 +106,7 @@ class Task extends \yii\db\ActiveRecord
      * Заказчик
      * @return ActiveQuery
      */
-    public function getClient()
+    public function getClient(): ActiveQuery
     {
         return $this->hasOne(User::class, ['id' => 'client_id']);
     }
@@ -114,7 +114,7 @@ class Task extends \yii\db\ActiveRecord
     /**
      * @return ActiveQuery
      */
-    public function getCategory()
+    public function getCategory(): ActiveQuery
     {
         return $this->hasOne(Category::class, ['id' => 'category_id']);
     }
@@ -123,7 +123,7 @@ class Task extends \yii\db\ActiveRecord
      * Исполнитель
      * @return ActiveQuery
      */
-    public function getExecutor()
+    public function getExecutor(): ActiveQuery
     {
         return $this->hasOne(User::class, ['id' => 'executor_id']);
     }
@@ -131,7 +131,7 @@ class Task extends \yii\db\ActiveRecord
     /**
      * @return ActiveQuery
      */
-    public function getStatus()
+    public function getStatus(): ActiveQuery
     {
         return $this->hasOne(Status::class, ['id' => 'task_status_id']);
     }
@@ -140,7 +140,8 @@ class Task extends \yii\db\ActiveRecord
      * Отклики
      * @return ActiveQuery
      */
-    public function getReplies() {
+    public function getReplies(): ActiveQuery
+    {
         return $this->hasMany(Reply::class, ['task_id' => 'id'])
             ->inverseOf('task');
     }
@@ -149,7 +150,8 @@ class Task extends \yii\db\ActiveRecord
      * Отзывы (заказчика и исполнителя)
      * @return ActiveQuery
      */
-    public function getOpinions() {
+    public function getOpinions(): ActiveQuery
+    {
         return $this->hasMany(Opinion::class, ['task_id' => 'id'])
             ->inverseOf('task');
     }
@@ -157,7 +159,8 @@ class Task extends \yii\db\ActiveRecord
     /**
      * @return ActiveQuery
      */
-    public function getMessages() {
+    public function getMessages(): ActiveQuery
+    {
         return $this->hasMany(Message::class, ['task_id' => 'id'])
             ->inverseOf('task');
     }
@@ -166,7 +169,8 @@ class Task extends \yii\db\ActiveRecord
      * @return ActiveQuery
      * @throws InvalidConfigException
      */
-    public function getFiles() {
+    public function getFiles(): ActiveQuery
+    {
         return $this->hasMany(File::class, ['id' => 'file_id'])
             ->viaTable('task_file', ['task_id' => 'id']);
     }
