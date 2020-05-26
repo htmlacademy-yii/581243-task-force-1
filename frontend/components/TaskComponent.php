@@ -3,6 +3,7 @@
 namespace frontend\components;
 
 use frontend\models\DoneTaskForm;
+use frontend\models\Event;
 use frontend\models\NewTaskForm;
 use frontend\models\Opinion;
 use frontend\models\Status;
@@ -10,6 +11,7 @@ use frontend\models\Task;
 use frontend\models\User;
 use TaskForce\actions\DoneAction;
 use TaskForce\actions\GetProblemAction;
+use Yii;
 use yii\db\ActiveQuery;
 use yii\web\UploadedFile;
 
@@ -51,6 +53,13 @@ class TaskComponent
             DoneAction::checkRights($user, $task) &&
             GetProblemAction::checkRights($user, $task)) {
             $opinion->save();
+
+            if ($event = Yii::$app->event->createOpinionEvent(Event::NEW_OPINION, $opinion)) {
+                Yii::$app->event->send($event);
+            }
+            if ($event = Yii::$app->event->createTaskEvent(Event::DONE, $task)) {
+                Yii::$app->event->send($event);
+            }
 
             $action = $doneTaskForm->done === 'yes' ? DoneAction::getInnerName() : GetProblemAction::getInnerName();
             $nextStatus = $task->getNextStatus($action);

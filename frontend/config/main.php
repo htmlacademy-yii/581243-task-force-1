@@ -1,6 +1,7 @@
 <?php
 
 use frontend\components\AddressComponent;
+use frontend\components\EventComponent;
 use frontend\components\TaskComponent;
 use frontend\models\User;
 use frontend\modules\api\Module;
@@ -43,6 +44,9 @@ return [
         ],
         'task' => [
             'class' => TaskComponent::class,
+        ],
+        'event' => [
+            'class' => EventComponent::class,
         ],
         'user' => [
             'identityClass' => User::class,

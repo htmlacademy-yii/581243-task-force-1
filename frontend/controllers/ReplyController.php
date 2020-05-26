@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use frontend\models\Event;
 use frontend\models\Reply;
 use frontend\models\Task;
 use TaskForce\actions\RejectAction;
@@ -37,6 +38,10 @@ class ReplyController extends SecuredController
                 $nextStatus = $task->getNextStatus(RespondAction::getInnerName());
                 $task->setCurrentStatus($nextStatus);
                 $task->save();
+
+                if ($event = Yii::$app->event->createTaskEvent(Event::NEW_REPLY, $task)) {
+                    Yii::$app->event->send($event);
+                }
             }
         }
 
@@ -85,6 +90,10 @@ class ReplyController extends SecuredController
             $task->setCurrentStatus($nextStatus);
             $task->executor_id = $reply->executor_id;
             $task->save();
+
+            if ($event = Yii::$app->event->createTaskEvent(Event::TAKE_IN_WORK, $task)) {
+                Yii::$app->event->send($event);
+            }
         }
 
         return $this->redirect(Yii::$app->request->referrer ?? Url::to(['/task/']));

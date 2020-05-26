@@ -5,9 +5,11 @@ namespace frontend\controllers;
 use Exception;
 use frontend\models\Category;
 use frontend\models\DoneTaskForm;
+use frontend\models\Event;
 use frontend\models\NewTaskForm;
 use frontend\models\RefuseTaskForm;
 use frontend\models\Reply;
+use frontend\models\Status;
 use frontend\models\Task;
 use frontend\models\TaskFilter;
 use frontend\models\User;
@@ -70,7 +72,6 @@ class TaskController extends SecuredController
     public function actionShow(int $id): string
     {
         $task = Task::findOne($id);
-        $client = $task->client;
         $replies = $task->replies;
         $user = Yii::$app->user->identity;
         $actions = AvailableActions::getNextAction($user, $task);
@@ -78,9 +79,23 @@ class TaskController extends SecuredController
         $doneTaskForm = new DoneTaskForm();
         $refuseTaskForm = new RefuseTaskForm();
 
+        /**
+         * Если для задания выбран исполнитель и страницу просматривает автор этого задания,
+         * то карточка показывает исполнителя.
+         */
+        if (($task->task_status_id === Status::STATUS_IN_WORK) &&
+            ($task->client_id === $user->id)) {
+            $client = $task->executor;
+            $viewer = User::ROLE_EXECUTOR;
+        } else {
+            $client = $task->client;
+            $viewer = User::ROLE_CLIENT;
+        }
+
         return $this->render('view', [
             'task' => $task,
             'client' => $client,
+            'viewer' => $viewer,
             'replies' => $replies,
             'user' => $user,
             'actions' => $actions,
@@ -160,6 +175,10 @@ class TaskController extends SecuredController
                 $nextStatus = $task->getNextStatus(RefuseAction::getInnerName());
                 $task->setCurrentStatus($nextStatus);
                 $task->save();
+
+                if ($event = Yii::$app->event->createTaskEvent(Event::REFUSE, $task)) {
+                    Yii::$app->event->send($event);
+                }
             }
         }
 

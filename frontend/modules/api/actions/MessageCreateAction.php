@@ -2,6 +2,7 @@
 
 namespace frontend\modules\api\actions;
 
+use frontend\models\Event;
 use Yii;
 use yii\base\Model;
 use yii\rest\Action;
@@ -40,6 +41,10 @@ class MessageCreateAction extends Action
                 $response = Yii::$app->getResponse();
                 $response->format = Response::FORMAT_JSON;
                 $response->setStatusCode(201);
+
+                if ($event = Yii::$app->event->createMessageEvent(Event::NEW_MESSAGE, $model)) {
+                    Yii::$app->event->send($event);
+                }
 
                 return [
                     'message' => $model->comment,

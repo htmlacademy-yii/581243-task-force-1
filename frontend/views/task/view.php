@@ -1,6 +1,7 @@
 <?php
 
 use frontend\models\Status;
+use frontend\models\User;
 use TaskForce\actions\AvailableActions;
 use yii\helpers\Html;
 use yii\helpers\Url;
@@ -131,16 +132,18 @@ if (in_array($task->task_status_id, [
             <section class="connect-desk">
                 <div class="connect-desk__profile-mini">
                     <div class="profile-mini__wrapper">
-                        <h3>Заказчик</h3>
+                        <h3><?= $viewer === User::ROLE_CLIENT ? 'Заказчик' : 'Исполнитель'; ?></h3>
                         <div class="profile-mini__top">
-                            <img src="<?= $user->avatar ? Url::to([$user->avatar->getUrl()]) : '/img/man-brune.jpg'; ?>" width="62" height="62" alt="Аватар заказчика">
+                            <img src="<?= $client->avatar ? Url::to([$client->avatar->getUrl()]) : '/img/man-brune.jpg'; ?>" width="62" height="62" alt="Аватар заказчика">
                             <div class="profile-mini__name five-stars__rate">
                                 <?php $rating = $client->getRating(); ?>
                                 <p><?= htmlspecialchars($client->last_name); ?> <?= htmlspecialchars($client->name); ?></p>
+                                <?php if ($viewer === User::ROLE_EXECUTOR): ?>
                                 <?php for($i = 1; $i <= 5; $i++): ?>
                                     <span class="<?= $i <= $rating ? : 'star-disabled'; ?>"></span>
                                 <?php endfor; ?>
                                 <b><?= $client->getRating(); ?></b>
+                                <?php endif; ?>
                             </div>
                         </div>
                         <p class="info-customer">
