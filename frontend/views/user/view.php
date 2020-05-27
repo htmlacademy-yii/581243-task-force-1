@@ -39,12 +39,14 @@ use yii\helpers\Url;
                                 <a href="#" class="link-regular"><?= $category->name ?></a>
                             <?php endforeach; ?>
                         </div>
-                        <h3 class="content-view__h3">Контакты</h3>
-                        <div class="user__card-link">
-                            <a class="user__card-link--tel link-regular" href="#"><?= $user->phone; ?></a>
-                            <a class="user__card-link--email link-regular" href="#"><?= $user->email; ?></a>
-                            <a class="user__card-link--skype link-regular" href="#"><?= $user->skype; ?></a>
-                        </div>
+                        <?php if (!$hideContacts): ?>
+                            <h3 class="content-view__h3">Контакты</h3>
+                            <div class="user__card-link">
+                                <a class="user__card-link--tel link-regular" href="#"><?= $user->phone; ?></a>
+                                <a class="user__card-link--email link-regular" href="#"><?= $user->email; ?></a>
+                                <a class="user__card-link--skype link-regular" href="#"><?= $user->skype; ?></a>
+                            </div>
+                        <?php endif; ?>
                     </div>
                     <div class="user__card-photo">
                         <h3 class="content-view__h3">Фото работ</h3>
@@ -82,7 +84,7 @@ use yii\helpers\Url;
                                         break;
                                 }
                                 ?>
-                                <p class="<?= $rateClass; ?> big-rate"><?= $opinion->rate; ?><span></span></p>
+                                <p class="<?= $rateClass ?? ''; ?> big-rate"><?= $opinion->rate; ?><span></span></p>
                             </div>
                         </div>
                     </div>

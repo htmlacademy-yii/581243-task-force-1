@@ -85,16 +85,16 @@ class TaskController extends SecuredController
          */
         if (($task->task_status_id === Status::STATUS_IN_WORK) &&
             ($task->client_id === $user->id)) {
-            $client = $task->executor;
+            $profile = $task->executor;
             $viewer = User::ROLE_EXECUTOR;
         } else {
-            $client = $task->client;
+            $profile = $task->client;
             $viewer = User::ROLE_CLIENT;
         }
 
         return $this->render('view', [
             'task' => $task,
-            'client' => $client,
+            'profile' => $profile,
             'viewer' => $viewer,
             'replies' => $replies,
             'user' => $user,

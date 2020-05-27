@@ -3,6 +3,8 @@
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 use yii\helpers\Html;
+
+$this->registerJsFile('/js/account.js');
 ?>
 <main class="page-main">
     <div class="main-container page-container">
@@ -245,13 +247,3 @@ use yii\helpers\Html;
         </section>
     </div>
 </main>
-<script>
-  Dropzone.autoDiscover = false;
-
-  var dropzone = new Dropzone(".dropzone", {url: window.location.href, maxFiles: 6, uploadMultiple: true,
-    acceptedFiles: 'image/*', previewTemplate: '<a href="#"><img data-dz-thumbnail alt="Фото работы"></a>',
-    headers: {
-    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-  }, maxFilesize: 2, parallelUploads: 6});
-
-</script>

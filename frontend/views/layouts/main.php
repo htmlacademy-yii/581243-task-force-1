@@ -1,5 +1,6 @@
 <?php
 
+use frontend\models\Event;
 use frontend\models\LoginForm;
 use yii\authclient\widgets\AuthChoice;
 use yii\helpers\Html;
@@ -85,18 +86,23 @@ AppAsset::register($this);
                 <div class="header__lightbulb"></div>
                 <div class="lightbulb__pop-up">
                     <h3>Новые события</h3>
-                    <p class="lightbulb__new-task lightbulb__new-task--message">
-                        Новое сообщение в чате
-                        <a href="#" class="link-regular">«Помочь с курсовой»</a>
-                    </p>
-                    <p class="lightbulb__new-task lightbulb__new-task--executor">
-                        Выбран исполнитель для
-                        <a href="#" class="link-regular">«Помочь с курсовой»</a>
-                    </p>
-                    <p class="lightbulb__new-task lightbulb__new-task--close">
-                        Завершено задание
-                        <a href="#" class="link-regular">«Помочь с курсовой»</a>
-                    </p>
+                    <?php foreach ($user->getEvents()->where(['view_feed_at' => null])->all() as $event): ?>
+                        <?php
+                        switch ($event->type) {
+                            case Event::NEW_MESSAGE:
+                                $class = 'message';
+                                break;
+                            case Event::DONE:
+                                $class = 'close';
+                                break;
+                            default:
+                                $class = 'executor';
+                        }
+                        ?>
+                        <p class="lightbulb__new-task lightbulb__new-task--<?= $class; ?>">
+                            <?= $event->message; ?>
+                        </p>
+                    <?php endforeach; ?>
                 </div>
                 <div class="header__account">
                     <a class="header__account-photo">

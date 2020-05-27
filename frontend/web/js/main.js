@@ -15,6 +15,11 @@ for (var i = 0; i < openModalLinks.length; i++) {
   });
 }
 
+var lightbulb = document.getElementsByClassName('header__lightbulb')[0];
+lightbulb.addEventListener('mouseover', function () {
+  fetch('/events');
+});
+
 function closeModal(event) {
   var modal = event.currentTarget.parentElement;
 

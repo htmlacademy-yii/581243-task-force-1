@@ -134,15 +134,15 @@ if (in_array($task->task_status_id, [
                     <div class="profile-mini__wrapper">
                         <h3><?= $viewer === User::ROLE_CLIENT ? 'Заказчик' : 'Исполнитель'; ?></h3>
                         <div class="profile-mini__top">
-                            <img src="<?= $client->avatar ? Url::to([$client->avatar->getUrl()]) : '/img/man-brune.jpg'; ?>" width="62" height="62" alt="Аватар заказчика">
+                            <img src="<?= $profile->avatar ? Url::to([$profile->avatar->getUrl()]) : '/img/man-brune.jpg'; ?>" width="62" height="62" alt="Аватар заказчика">
                             <div class="profile-mini__name five-stars__rate">
-                                <?php $rating = $client->getRating(); ?>
-                                <p><?= htmlspecialchars($client->last_name); ?> <?= htmlspecialchars($client->name); ?></p>
+                                <?php $rating = $profile->getRating(); ?>
+                                <p><?= htmlspecialchars($profile->last_name); ?> <?= htmlspecialchars($profile->name); ?></p>
                                 <?php if ($viewer === User::ROLE_EXECUTOR): ?>
                                 <?php for($i = 1; $i <= 5; $i++): ?>
                                     <span class="<?= $i <= $rating ? : 'star-disabled'; ?>"></span>
                                 <?php endfor; ?>
-                                <b><?= $client->getRating(); ?></b>
+                                <b><?= $profile->getRating(); ?></b>
                                 <?php endif; ?>
                             </div>
                         </div>
@@ -151,14 +151,16 @@ if (in_array($task->task_status_id, [
                                 <?= \Yii::t(
                                     'app',
                                     '{n, plural, one{# отзыв} few{# отзыва} many{# отзывов} other{# отзывов}}',
-                                    ['n' => $client->getOpinions()->count()]
+                                    ['n' => $profile->getOpinions()->count()]
                                 ); ?>
                             </span>
                             <span class="last-">
-                                <?= explode(',', \Yii::$app->formatter->asDuration(time() - strtotime($client->created_at)))[0]; ?> на сайте
+                                <?= explode(',', \Yii::$app->formatter->asDuration(time() - strtotime($profile->created_at)))[0]; ?> на сайте
                             </span>
                         </p>
-                        <a href="<?=Url::to(['/user/view/' . $client->id]); ?>" class="link-regular">Смотреть профиль</a>
+                        <?php if ($viewer === User::ROLE_EXECUTOR): ?>
+                            <a href="<?=Url::to(['/user/view/' . $profile->id]); ?>" class="link-regular">Смотреть профиль</a>
+                        <?php endif; ?>
                     </div>
                 </div>
                 <div id="chat-container">

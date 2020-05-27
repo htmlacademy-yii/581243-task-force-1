@@ -6,6 +6,7 @@ use frontend\models\AccountForm;
 use frontend\models\Category;
 use frontend\models\City;
 use frontend\models\LoginForm;
+use frontend\models\Status;
 use frontend\models\User;
 use frontend\models\UserFilter;
 use frontend\models\UserSettings;
@@ -13,6 +14,7 @@ use Yii;
 use yii\base\Exception;
 use yii\data\ActiveDataProvider;
 use yii\helpers\Url;
+use yii\web\NotFoundHttpException;
 use yii\web\Response;
 use yii\widgets\ActiveForm;
 
@@ -27,6 +29,8 @@ class UserController extends SecuredController
         $categories = Category::find()->all();
 
         $usersBuilder = User::find()->where(['user_status' => User::ROLE_EXECUTOR])
+            ->joinWith('userSettings')
+            ->andWhere(['user_settings.hide_profile' => null])
             ->orderBy(['users.created_at' => SORT_ASC]);
 
         if ($sort = \Yii::$app->request->get('sort_by')) {
@@ -59,14 +63,28 @@ class UserController extends SecuredController
     /**
      * @param int $id
      * @return string
+     * @throws NotFoundHttpException
      */
     public function actionShow(int $id): string
     {
         $user = User::findOne($id);
+
+        if ($user->user_status === User::ROLE_CLIENT) {
+            throw new NotFoundHttpException();
+        }
+
         $currentUser = Yii::$app->user->identity;
+
+        if ($user->userSettings && $user->userSettings->show_only_client &&
+            ($user->getExecutorTasks()
+                ->where(['client_id' => $currentUser->id])
+                ->andWhere(['task_status_id' => Status::STATUS_IN_WORK])->count() == 0)) {
+            $hideContacts = true;
+        }
 
         return $this->render('view', [
             'user' => $user,
+            'hideContacts' => $hideContacts ?? false,
             'favorite' => $currentUser->getFavoriteUsers()->where(['id' => $id])->one() ? true : false,
         ]);
     }
@@ -175,7 +193,6 @@ class UserController extends SecuredController
         $userSettings = UserSettings::firstOrCreate($user);
 
         $accountForm->attributes = $user->attributes;
-        $accountForm->attributes = $userSettings->attributes;
 
         if (Yii::$app->request->getIsPost()) {
             $accountForm->load(Yii::$app->request->post());
@@ -199,6 +216,8 @@ class UserController extends SecuredController
                     $accountForm->avatar = null;
                 }
             }
+        } else {
+            $accountForm->attributes = $userSettings->attributes;
         }
 
         return $this->render('account', [

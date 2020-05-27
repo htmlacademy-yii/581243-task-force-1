@@ -76,6 +76,7 @@ return [
             'rules' => [
                 'signup' => 'user/signup',
                 'users' => 'user/',
+                'events' => 'event/',
                 'users/view/<id:\d+>' => 'user/show',
                 'users/favorite/<id:\d+>' => 'user/favorite',
                 'task/view/<id:\d+>' => 'task/show',
