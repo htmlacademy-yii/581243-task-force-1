@@ -26,6 +26,9 @@ class SecuredController extends \yii\web\Controller
         return parent::beforeAction($action);
     }
 
+    /**
+     * @return array
+     */
     public function behaviors(): array
     {
         return [

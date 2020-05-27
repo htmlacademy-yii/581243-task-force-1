@@ -85,7 +85,7 @@ use yii\widgets\LinkPager;
                         'categories',
                         ['template' => '{input}{label}{error}', 'options' => ['tag' => false]]
                     )->checkboxList(
-                        $categories,
+                        $categoriesProvider->getModels(),
                         ['item' =>  function ($index, $category, $name) use ($userFilter) {
                             return Html::checkbox(
                                     $name,

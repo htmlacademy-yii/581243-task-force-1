@@ -12,7 +12,7 @@ use yii\widgets\LinkPager;
         <section class="new-task">
             <div class="new-task__wrapper">
                 <h1>Новые задания</h1>
-                <?php foreach ($dataProvider->getModels() as $task): ?>
+                <?php foreach ($taskProvider->getModels() as $task): ?>
                     <div class="new-task__card">
                         <div class="new-task__title">
                             <a href="<?=Url::to(['/task/view/' . $task->id]); ?>" class="link-regular">
@@ -38,7 +38,7 @@ use yii\widgets\LinkPager;
             </div>
             <div class="new-task__pagination">
                 <?= LinkPager::widget([
-                    'pagination' => $dataProvider->getPagination(),
+                    'pagination' => $taskProvider->getPagination(),
                     'linkContainerOptions' => ['class' => 'pagination__item'],
                     'options' => [
                         'class' => 'new-task__pagination-list',
@@ -67,7 +67,7 @@ use yii\widgets\LinkPager;
                         'categories',
                         ['template' => '{input}{label}{error}', 'options' => ['tag' => false]]
                     )->checkboxList(
-                        $categories,
+                        $categoriesProvider->getModels(),
                         ['item' =>  function ($index, $category, $name) use ($taskFilter) {
                             return Html::checkbox(
                                 $name,

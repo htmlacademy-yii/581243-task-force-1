@@ -8,15 +8,24 @@ use frontend\models\NewTaskForm;
 use frontend\models\Opinion;
 use frontend\models\Status;
 use frontend\models\Task;
+use frontend\models\TaskFilter;
 use frontend\models\User;
 use TaskForce\actions\DoneAction;
 use TaskForce\actions\GetProblemAction;
+use TaskForce\exceptions\ActionException;
+use TaskForce\exceptions\StatusException;
 use Yii;
 use yii\db\ActiveQuery;
 use yii\web\UploadedFile;
 
 class TaskComponent
 {
+    /**
+     * @param NewTaskForm $taskForm
+     * @param User $user
+     * @return bool
+     * @throws StatusException
+     */
     public function create(NewTaskForm $taskForm, User $user): bool
     {
         $taskForm->files = UploadedFile::getInstances($taskForm, 'files');
@@ -42,6 +51,13 @@ class TaskComponent
         return false;
     }
 
+    /**
+     * @param DoneTaskForm $doneTaskForm
+     * @param Task $task
+     * @param User $user
+     * @throws ActionException
+     * @throws StatusException
+     */
     public function done(DoneTaskForm $doneTaskForm, Task $task, User $user): void
     {
         $opinion = new Opinion();
@@ -97,6 +113,59 @@ class TaskComponent
                 $taskBuilder = $taskBuilder->andWhere(['task_status_id' => Status::STATUS_IN_WORK])
                     ->andWhere(['<', 'expire_at', date('Y-m-d 00:00:00')]);
                 break;
+        }
+
+        return $taskBuilder;
+    }
+
+    /**
+     * @param ActiveQuery $taskBuilder
+     * @param TaskFilter $taskFilter
+     * @return ActiveQuery
+     */
+    public function filter(ActiveQuery $taskBuilder, TaskFilter $taskFilter): ActiveQuery
+    {
+        if (!empty($ids = $taskFilter->categories)) {
+            $taskBuilder = $taskBuilder->andWhere(['in', 'category_id', $ids]);
+        }
+
+        if ($taskFilter->my_city) {
+            $user = Yii::$app->user->identity;
+
+            if ($user) {
+                $taskBuilder = $taskBuilder->andWhere(['like', 'address', $user->city->city]);
+            }
+        }
+
+        if ($taskFilter->no_executor) {
+            $taskBuilder->andWhere(['executor_id' => NULL]);
+        }
+        if ($taskFilter->no_address) {
+            $taskBuilder->andWhere(['address' => NULL]);
+        }
+
+        $date = null;
+        switch ($taskFilter->date) {
+            case 'day':
+                $date = date('Y-m-d 00:00:00', strtotime('now - 24 hours'));
+                break;
+            case 'week':
+                $date = date('Y-m-d 00:00:00', strtotime('now - 1 week'));
+                break;
+            case 'month':
+                $date = date('Y-m-d 00:00:00', strtotime('now - 1 month'));
+                break;
+            case 'year':
+                $date = date('Y-m-d 00:00:00', strtotime('now - 1 year'));
+                break;
+        }
+
+        if ($date) {
+            $taskBuilder = $taskBuilder->andWhere(['>=', 'created_at', $date]);
+        }
+
+        if (trim($taskFilter->title)) {
+            $taskBuilder = $taskBuilder->andWhere(['like', 'name', $taskFilter->title]);
         }
 
         return $taskBuilder;

@@ -2,6 +2,7 @@
 namespace frontend\controllers;
 
 use frontend\models\Task;
+use yii\data\ActiveDataProvider;
 use yii\helpers\Url;
 use yii\filters\AccessControl;
 
@@ -55,15 +56,22 @@ class SiteController extends SecuredController
     }
 
     /**
-     * Displays homepage.
-     *
-     * @return mixed
+     * @return string
      */
     public function actionIndex(): string
     {
-        $tasks = Task::find()->orderBy([
-            'created_at' => SORT_DESC,
-        ])->limit(4)->all();
-        return $this->render('index', ['tasks' => $tasks]);
+        $dataProvider = new ActiveDataProvider([
+            'query' => Task::find(),
+            'pagination' => [
+                'pageSize' => 4,
+            ],
+            'sort' => [
+                'defaultOrder' => [
+                    'created_at' => SORT_DESC,
+                ],
+            ],
+        ]);
+
+        return $this->render('index', ['dataProvider' => $dataProvider]);
     }
 }

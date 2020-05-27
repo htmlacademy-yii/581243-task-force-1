@@ -19,6 +19,7 @@ use TaskForce\exceptions\ActionException;
 use TaskForce\exceptions\StatusException;
 use Yii;
 use yii\data\ActiveDataProvider;
+use yii\data\ArrayDataProvider;
 use yii\helpers\Url;
 use yii\web\Response;
 
@@ -31,9 +32,8 @@ class TaskController extends SecuredController
     {
         $taskFilter = new TaskFilter();
         $taskBuilder = Task::find()->where(['task_status_id' => [1, 3]]);
-        $categories = Category::find()->all();
 
-        if (\Yii::$app->request->getIsPost()) {
+        if (Yii::$app->request->getIsPost()) {
             $taskFilter->load(\Yii::$app->request->post());
         } else {
             $taskFilter->date = 'year';
@@ -43,9 +43,9 @@ class TaskController extends SecuredController
             $taskFilter->categories = [];
         }
 
-        $taskBuilder = Task::filter($taskBuilder, $taskFilter);
+        $taskBuilder = Yii::$app->task->filter($taskBuilder, $taskFilter);
 
-        $dataProvider = new ActiveDataProvider([
+        $taskProvider = new ActiveDataProvider([
             'query' => $taskBuilder,
             'pagination' => [
                 'pageSize' => 5,
@@ -59,8 +59,10 @@ class TaskController extends SecuredController
 
         return $this->render('index', [
             'taskFilter' => $taskFilter,
-            'categories' => $categories,
-            'dataProvider' => $dataProvider,
+            'categoriesProvider' => new ActiveDataProvider([
+                'query' => Category::find(),
+            ]),
+            'taskProvider' => $taskProvider,
         ]);
     }
 
@@ -72,12 +74,7 @@ class TaskController extends SecuredController
     public function actionShow(int $id): string
     {
         $task = Task::findOne($id);
-        $replies = $task->replies;
         $user = Yii::$app->user->identity;
-        $actions = AvailableActions::getNextAction($user, $task);
-        $replyForm = new Reply();
-        $doneTaskForm = new DoneTaskForm();
-        $refuseTaskForm = new RefuseTaskForm();
 
         /**
          * Если для задания выбран исполнитель и страницу просматривает автор этого задания,
@@ -96,18 +93,17 @@ class TaskController extends SecuredController
             'task' => $task,
             'profile' => $profile,
             'viewer' => $viewer,
-            'replies' => $replies,
+            'replies' => $task->replies,
             'user' => $user,
-            'actions' => $actions,
-            'replyForm' => $replyForm,
-            'doneTaskForm' => $doneTaskForm,
-            'refuseTaskForm' => $refuseTaskForm,
+            'actions' => AvailableActions::getNextAction($user, $task),
+            'replyForm' => new Reply(),
+            'doneTaskForm' => new DoneTaskForm(),
+            'refuseTaskForm' => new RefuseTaskForm(),
         ]);
     }
 
     /**
      * @return string|Response
-     * @throws StatusException
      */
     public function actionCreate()
     {
@@ -117,7 +113,6 @@ class TaskController extends SecuredController
         }
 
         $taskForm = new NewTaskForm();
-        $categories = Category::find()->select('name')->indexBy('id')->column();
         $errors = [];
 
         if (Yii::$app->request->getIsPost()) {
@@ -132,7 +127,9 @@ class TaskController extends SecuredController
 
         return $this->render('create', [
             'taskForm' => $taskForm,
-            'categories' => $categories,
+            'categories' => new ArrayDataProvider([
+                'allModels' => Category::find()->select('name')->indexBy('id')->column(),
+            ]),
             'errors' => $errors,
         ]);
     }
@@ -193,10 +190,17 @@ class TaskController extends SecuredController
     {
         $user = Yii::$app->user->identity;
 
-        $taskBuilder = Yii::$app->task->userList($user, $status);
+        $dataProvider = new ActiveDataProvider([
+            'query' => Yii::$app->task->userList($user, $status),
+            'sort' => [
+                'defaultOrder' => [
+                    'created_at' => SORT_DESC,
+                ],
+            ],
+        ]);
 
         return $this->render('mylist', [
-            'tasks' => $taskBuilder->all(),
+            'dataProvider' => $dataProvider,
             'status' => $status,
         ]);
     }

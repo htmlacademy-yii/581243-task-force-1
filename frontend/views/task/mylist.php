@@ -72,7 +72,7 @@ use yii\helpers\StringHelper;
         <section class="my-list">
             <div class="my-list__wrapper">
                 <h1>Мои задания</h1>
-                <?php foreach ($tasks as $task): ?>
+                <?php foreach ($dataProvider->getModels() as $task): ?>
                 <div class="new-task__card">
                     <div class="new-task__title">
                         <a href="<?= Url::to(['task/view/' . $task->id]); ?>" class="link-regular"><h2><?= htmlspecialchars($task->name); ?></h2></a>

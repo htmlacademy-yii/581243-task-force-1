@@ -1,9 +1,10 @@
 <?php
 use yii\widgets\ActiveForm;
 use yii\helpers\Html;
+
+$this->registerJsFile('https://cdn.jsdelivr.net/npm/@tarekraafat/autocomplete.js@7.2.0/dist/js/autoComplete.min.js');
 ?>
 
-<?php $this->registerJsFile('https://cdn.jsdelivr.net/npm/@tarekraafat/autocomplete.js@7.2.0/dist/js/autoComplete.min.js'); ?>
 <main class="page-main">
     <div class="main-container page-container">
         <section class="create__task">
@@ -57,7 +58,7 @@ use yii\helpers\Html;
                             'options' => ['class' => 'create__task-form form-create'],
                         ]
                     )
-                        ->dropDownList($categories, [
+                        ->dropDownList($categories->getModels(), [
                             'class' => 'multiple-select input multiple-select-big',
                             'size' => 1
                         ])

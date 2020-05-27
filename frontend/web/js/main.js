@@ -16,9 +16,11 @@ for (var i = 0; i < openModalLinks.length; i++) {
 }
 
 var lightbulb = document.getElementsByClassName('header__lightbulb')[0];
-lightbulb.addEventListener('mouseover', function () {
-  fetch('/events');
-});
+if (lightbulb) {
+  lightbulb.addEventListener('mouseover', function () {
+    fetch('/events');
+  });
+}
 
 function closeModal(event) {
   var modal = event.currentTarget.parentElement;
@@ -30,10 +32,13 @@ function closeModal(event) {
 for (var j = 0; j < closeModalLinks.length; j++) {
   var closeModalLink = closeModalLinks[j];
 
-  closeModalLink.addEventListener("click", closeModal)
+  closeModalLink.addEventListener("click", closeModal);
 }
 
-document.getElementById('close-modal').addEventListener("click", closeModal);
+var closeModal = document.getElementById('close-modal');
+if (closeModal) {
+  closeModal.addEventListener("click", closeModal);
+}
 
 var starRating = document.getElementsByClassName("completion-form-star");
 

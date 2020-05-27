@@ -50,7 +50,7 @@ use yii\helpers\Html;
                     'city_id',
                     ['template' => '{label}{input}{error}', 'options' => ['tag' => false]]
                 )
-                    ->dropDownList($cities, [
+                    ->dropDownList($cities->getModels(), [
                         'class' => 'multiple-select input town-select registration-town',
                         'size' => 1
                     ])

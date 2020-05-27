@@ -94,7 +94,7 @@ use yii\helpers\StringHelper;
         <div class="landing-bottom">
             <div class="landing-bottom-container">
                 <h2>Последние задания на сайте</h2>
-                <?php foreach ($tasks as $task): ?>
+                <?php foreach ($dataProvider->getModels() as $task): ?>
                 <div class="landing-task">
                     <div class="landing-task-top task-<?= $task->category->icon;?>"></div>
                     <div class="landing-task-description" style="ove rflow: hidden;">

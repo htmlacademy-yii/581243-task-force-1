@@ -4,13 +4,49 @@ namespace frontend\components;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\BadResponseException;
+use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Exception\ServerException;
 use GuzzleHttp\RequestOptions;
 use Yii;
 use yii\caching\TagDependency;
+use yii\web\Response;
 
 class AddressComponent
 {
+    /**
+     * @param string $query
+     * @return Response
+     */
+    public function getResponse(string $query): Response
+    {
+        $response = Yii::$app->response;
+        $cache = Yii::$app->cache;
+
+        if ($cache && $query) {
+            if ($cacheData = Yii::$app->cache->get(sha1($query))) {
+                $response->data = json_decode($cacheData, true);
+                $response->format = Response::FORMAT_JSON;
+
+                return $response;
+            }
+        }
+
+        try {
+            $data = $this->getDataFromYandex($query);
+
+            if ($cache && $query) {
+                $this->setDataToCache($query, $data);
+            }
+        } catch (RequestException $e) {
+            $data = [];
+        }
+
+        $response->data = $data;
+        $response->format = Response::FORMAT_JSON;
+
+        return $response;
+    }
+
     /**
      * @param string $query
      * @return array

@@ -59,7 +59,7 @@ $this->registerJsFile('/js/account.js');
                                     'options' => ['class' => 'account__input account__input--name'],
                                 ]
                             )
-                                ->dropDownList($cities, [
+                                ->dropDownList($cities->getModels(), [
                                     'class' => 'multiple-select input multiple-select-big',
                                     'size' => 1
                                 ]); ?>
@@ -94,7 +94,7 @@ $this->registerJsFile('/js/account.js');
                             'categories',
                             ['template' => '{input}{label}{error}', 'options' => ['class' => 'search-task__categories account_checkbox--bottom']]
                         )->checkboxList(
-                            $categories,
+                            $categoriesProvider->getModels(),
                             ['item' =>  function ($index, $category, $name) use ($user) {
                                 return Html::checkbox(
                                         $name,

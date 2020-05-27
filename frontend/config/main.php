@@ -3,6 +3,7 @@
 use frontend\components\AddressComponent;
 use frontend\components\EventComponent;
 use frontend\components\TaskComponent;
+use frontend\components\UserComponent;
 use frontend\models\User;
 use frontend\modules\api\Module;
 use yii\authclient\clients\VKontakte;
@@ -47,6 +48,9 @@ return [
         ],
         'event' => [
             'class' => EventComponent::class,
+        ],
+        'userData' => [
+            'class' => UserComponent::class,
         ],
         'user' => [
             'identityClass' => User::class,
