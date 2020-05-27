@@ -64,12 +64,12 @@ class UserController extends SecuredController
     public function actionShow(int $id): string
     {
         $user = User::findOne($id);
+        $currentUser = Yii::$app->user->identity;
 
-        if ($user->user_status === User::ROLE_CLIENT) {
+        if (($user->user_status === User::ROLE_CLIENT) &&
+            ($user->id !== $currentUser->id)) {
             throw new NotFoundHttpException();
         }
-
-        $currentUser = Yii::$app->user->identity;
 
         return $this->render('view', [
             'user' => $user,

@@ -5,11 +5,11 @@ use frontend\models\LoginForm;
 use yii\authclient\widgets\AuthChoice;
 use yii\helpers\Html;
 use frontend\assets\AppAsset;
-use frontend\models\User;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 
 AppAsset::register($this);
+$user = Yii::$app->user->identity;
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
@@ -22,7 +22,6 @@ AppAsset::register($this);
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
 </head>
-<?php $user = User::findOne(\Yii::$app->user->getId()); ?>
 <body class="<?= ($user ? '' : 'landing'); ?>">
 <?php $this->beginBody() ?>
 
@@ -69,24 +68,24 @@ AppAsset::register($this);
                         <li class="site-list__item">
                             <a href="<?= Url::to(['/task/create/']); ?>">Создать задание</a>
                         </li>
-                        <li class="site-list__item site-list__item--active">
-                            <a>Мой профиль</a>
+                        <li class="site-list__item">
+                            <a href="<?= Url::to(['/users/view/' . $user->id]); ?>">Мой профиль</a>
                         </li>
                     </ul>
                 </div>
                 <div class="header__town">
-                    <select class="multiple-select input town-select" size="1" name="town[]">
-                        <option value="Moscow">Москва</option>
-                        <option selected value="SPB">Санкт-Петербург</option>
-                        <option value="Krasnodar">Краснодар</option>
-                        <option value="Irkutsk">Иркутск</option>
-                        <option value="Vladivostok">Владивосток</option>
-                    </select>
+                    <?= Html::dropDownList('town[]', $this->context->selectedCity,
+                        $this->context->cities,
+                        [
+                            'class' => 'multiple-select input town-select',
+                            'size' => 1,
+                            'id' => 'selectedCity',
+                        ]); ?>
                 </div>
                 <div class="header__lightbulb"></div>
                 <div class="lightbulb__pop-up">
                     <h3>Новые события</h3>
-                    <?php foreach ($user->getEvents()->where(['view_feed_at' => null])->all() as $event): ?>
+                    <?php foreach ($this->context->events as $event): ?>
                         <?php
                         switch ($event->type) {
                             case Event::NEW_MESSAGE:

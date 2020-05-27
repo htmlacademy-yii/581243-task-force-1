@@ -2,6 +2,7 @@
 namespace frontend\controllers;
 
 use frontend\models\Task;
+use Yii;
 use yii\data\ActiveDataProvider;
 use yii\helpers\Url;
 use yii\filters\AccessControl;
@@ -73,5 +74,13 @@ class SiteController extends SecuredController
         ]);
 
         return $this->render('index', ['dataProvider' => $dataProvider]);
+    }
+
+    /**
+     * @param int $id
+     */
+    public function actionCity(int $id): void
+    {
+        Yii::$app->session->set('city', $id);
     }
 }

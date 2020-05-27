@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use frontend\models\City;
 use Yii;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
@@ -10,6 +11,10 @@ use yii\web\BadRequestHttpException;
 
 class SecuredController extends \yii\web\Controller
 {
+    public $cities;
+    public $events;
+    public $selectedCity;
+
     /**
      * @param $action
      * @return bool
@@ -21,7 +26,12 @@ class SecuredController extends \yii\web\Controller
         if ($user) {
             $user->last_activity_at = date('Y-m-d H:i:s');
             $user->save();
+
+            $this->events = $user->getEvents()->where(['view_feed_at' => null])->all();
+            $this->selectedCity = Yii::$app->session->get('city') ?? $user->city_id;
         }
+
+        $this->cities = City::find()->select('city')->indexBy('id')->column();
 
         return parent::beforeAction($action);
     }
