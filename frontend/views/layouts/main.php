@@ -2,6 +2,7 @@
 
 use frontend\models\Event;
 use frontend\models\LoginForm;
+use frontend\models\User;
 use yii\authclient\widgets\AuthChoice;
 use yii\helpers\Html;
 use frontend\assets\AppAsset;
@@ -83,7 +84,7 @@ $user = Yii::$app->user->identity;
                     ]);
                     ?>
                     <?= $form->field(
-                        $user,
+                        new User(),
                         'city_id',
                         ['template' => '{input}', 'options' => ['tag' => false]]
                     )
@@ -92,7 +93,7 @@ $user = Yii::$app->user->identity;
                             'size' => 1,
                             'options' =>
                                 [
-                                    $this->context->selectedCity => ['selected' => true]
+                                    $this->context->selectedCity => ['selected' => $this->context->selectedCity]
                                 ],
                         ]); ?>
                     <?php ActiveForm::end(); ?>

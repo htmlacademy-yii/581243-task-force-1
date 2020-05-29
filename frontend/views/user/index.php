@@ -14,18 +14,18 @@ use yii\widgets\LinkPager;
             <div class="user__search-link">
                 <p>Сортировать по:</p>
                 <ul class="user__search-list">
-                    <li class="user__search-item user__search-item--current">
+                    <li class="user__search-item <?= (int)$sortBy === User::RATING ? 'user__search-item--current' : ''; ?>">
                         <a href="<?= Url::to(['/users', 'sort_by' => User::RATING]); ?>" class="link-regular">Рейтингу</a>
                     </li>
-                    <li class="user__search-item">
+                    <li class="user__search-item <?= (int)$sortBy === User::ORDERS ? 'user__search-item--current' : ''; ?>">
                         <a href="<?= Url::to(['/users', 'sort_by' => User::ORDERS]); ?>" class="link-regular">Числу заказов</a>
                     </li>
-                    <li class="user__search-item">
+                    <li class="user__search-item <?= (int)$sortBy === User::VIEWS ? 'user__search-item--current' : ''; ?>">
                         <a href="<?= Url::to(['/users', 'sort_by' => User::VIEWS]); ?>" class="link-regular">Популярности</a>
                     </li>
                 </ul>
             </div>
-            <?php foreach ($dataProvider->getModels() as $user): ?>
+            <?php foreach ($dataProvider->models as $user): ?>
                 <div class="content-view__feedback-card user__search-wrapper">
                     <div class="feedback-card__top">
                         <div class="user__search-icon">
@@ -71,6 +71,7 @@ use yii\widgets\LinkPager;
                 <?php
                 $form = ActiveForm::begin([
                     'id' => 'search-user__form',
+                    'method' => 'get',
                     'options' => [
                         'class' => 'search-task__form',
                         'name' => 'test',
@@ -107,10 +108,7 @@ use yii\widgets\LinkPager;
                             $userFilter,
                             $attr,
                             ['template' => '{input}{label}{error}']
-                        )->input('checkbox', [
-                            'class' => 'visually-hidden checkbox__input',
-                            'checked' => $userFilter->$attr,
-                        ]);
+                        )->checkbox(['class' => 'visually-hidden checkbox__input'], false);
                     }
                     ?>
                 </fieldset>

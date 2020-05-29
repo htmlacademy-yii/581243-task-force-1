@@ -37,6 +37,11 @@ use yii\db\BaseActiveRecord;
  */
 class Task extends \yii\db\ActiveRecord
 {
+    const DAY = 1;
+    const WEEK = 2;
+    const MONTH = 3;
+    const ALL = 4;
+
     /**
      * @return array
      */
@@ -53,6 +58,19 @@ class Task extends \yii\db\ActiveRecord
                     return gmdate("Y-m-d H:i:s");
                 },
             ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public static function getPeriods(): array
+    {
+        return [
+            static::DAY => 'За день',
+            static::WEEK => 'За неделю',
+            static::MONTH => 'За месяц',
+            static::ALL => 'За все время',
         ];
     }
 

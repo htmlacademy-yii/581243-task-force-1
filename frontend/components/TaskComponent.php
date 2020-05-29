@@ -125,38 +125,41 @@ class TaskComponent
      */
     public function filter(ActiveQuery $taskBuilder, TaskFilter $taskFilter): ActiveQuery
     {
+        $user = Yii::$app->user->identity;
+
         if (!empty($ids = $taskFilter->categories)) {
             $taskBuilder = $taskBuilder->andWhere(['in', 'category_id', $ids]);
         }
 
         if ($taskFilter->my_city) {
-            $user = Yii::$app->user->identity;
-
-            if ($user) {
-                $taskBuilder = $taskBuilder->andWhere(['like', 'address', $user->city->city]);
-            }
+            $taskBuilder->andWhere(['city_id' => $user->city_id]);
         }
 
         if ($taskFilter->no_executor) {
             $taskBuilder->andWhere(['task_status_id' => Status::STATUS_NEW]);
         }
+
         if ($taskFilter->no_address) {
             $taskBuilder->andWhere(['city_id' => NULL]);
         }
 
+        if (!($taskFilter->my_city  || $taskFilter->no_address)) {
+            $taskBuilder->andWhere(['city_id' => (Yii::$app->session->get('city') ?? $user->city_id)]);
+        }
+
         $date = null;
         switch ($taskFilter->date) {
-            case 'day':
+            case Task::DAY:
                 $date = date('Y-m-d 00:00:00', strtotime('now - 24 hours'));
                 break;
-            case 'week':
+            case Task::WEEK:
                 $date = date('Y-m-d 00:00:00', strtotime('now - 1 week'));
                 break;
-            case 'month':
+            case Task::MONTH:
                 $date = date('Y-m-d 00:00:00', strtotime('now - 1 month'));
                 break;
-            case 'year':
-                $date = date('Y-m-d 00:00:00', strtotime('now - 1 year'));
+            case Task::ALL:
+                $date = null;
                 break;
         }
 

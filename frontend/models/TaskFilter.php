@@ -10,7 +10,7 @@ class TaskFilter extends Model
     public $my_city;
     public $no_executor;
     public $no_address;
-    public $date ;
+    public $date = Task::ALL;
     public $title;
 
     public function attributeLabels(): array

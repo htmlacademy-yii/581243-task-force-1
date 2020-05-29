@@ -155,9 +155,7 @@ class UserComponent
             $usersBuilder = $this->sortBy($usersBuilder, $sort);
         }
 
-        if (Yii::$app->request->getIsPost()) {
-            $usersBuilder = $this->filter($usersBuilder, $userFilter);
-        }
+        $usersBuilder = $this->filter($usersBuilder, $userFilter);
 
         return $usersBuilder;
     }

@@ -33,11 +33,7 @@ class TaskController extends SecuredController
         $taskFilter = new TaskFilter();
         $taskBuilder = Task::find()->where(['task_status_id' => [1, 3]]);
 
-        if (Yii::$app->request->getIsPost()) {
-            $taskFilter->load(\Yii::$app->request->post());
-        } else {
-            $taskFilter->date = 'year';
-        }
+        $taskFilter->load(Yii::$app->request->get());
 
         if (!is_array($taskFilter->categories)) {
             $taskFilter->categories = [];

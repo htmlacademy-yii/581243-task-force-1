@@ -58,11 +58,13 @@ class AddressComponent
             'base_uri' => 'https://geocode-maps.yandex.ru/',
         ]);
         $api_key = Yii::$app->params['apiKey'];
+        $city = Yii::$app->user->identity->city;
         $yandexResponse = $client->request('GET', '1.x', [
             'query' => [
                 'format' => RequestOptions::JSON,
                 'apikey' => $api_key,
                 'geocode' => $query,
+                'll' => $city ? ($city->long . ',' . $city->lat) : null,
                 'lang' => static::LANG,
             ]
         ]);

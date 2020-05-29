@@ -27,16 +27,15 @@ class UserController extends SecuredController
     {
         $userFilter = new UserFilter();
 
-        if (Yii::$app->request->getIsPost()) {
-            $userFilter->load(Yii::$app->request->post());
-        }
+        $userFilter->load(Yii::$app->request->get());
 
         if (!is_array($userFilter->categories)) {
             $userFilter->categories = [];
         }
 
+        $builder = Yii::$app->userData->getList($userFilter);
         $dataProvider = new ActiveDataProvider([
-            'query' => Yii::$app->userData->getList($userFilter),
+            'query' => $builder,
             'pagination' => [
                 'pageSize' => 5,
             ],
@@ -53,6 +52,7 @@ class UserController extends SecuredController
                 'query' => Category::find(),
             ]),
             'dataProvider' => $dataProvider,
+            'sortBy' => Yii::$app->request->get('sort_by'),
         ]);
     }
 

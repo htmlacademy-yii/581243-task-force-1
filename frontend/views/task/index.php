@@ -1,6 +1,7 @@
 <?php
 /* @var $model User */
 
+use frontend\models\Task;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 use yii\helpers\Html;
@@ -54,6 +55,7 @@ use yii\widgets\LinkPager;
                 <?php
                 $form = ActiveForm::begin([
                     'id' => 'search-task__form',
+                    'method' => 'get',
                     'options' => [
                         'class' => 'search-task__form',
                         'name' => 'test',
@@ -88,10 +90,7 @@ use yii\widgets\LinkPager;
                             $taskFilter,
                             $attr,
                             ['template' => '{input}{label}{error}']
-                        )->input('checkbox', [
-                            'class' => 'visually-hidden checkbox__input',
-                            'checked' => $taskFilter->$attr,
-                        ]);
+                        )->checkbox(['class' => 'visually-hidden checkbox__input'], false);
                     }
                     ?>
                 </fieldset>
@@ -99,12 +98,7 @@ use yii\widgets\LinkPager;
                     $taskFilter,
                     'date',
                     ['template' => '{label}<br>{input}{error}', 'options' => ['tag' => false]]
-                )->dropDownList([
-                    'day' => 'За день',
-                    'week' => 'За неделю',
-                    'month' => 'За месяц',
-                    'year' => 'За год',
-                ], [
+                )->dropDownList(Task::getPeriods(), [
                     'class' => 'multiple-select input',
                     'size' => 1
                 ])->label('Период', ['class' => 'search-task__name']); ?>
