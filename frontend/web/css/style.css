@@ -189,6 +189,11 @@ footer {
   width: 30px;
   height: 30px; }
 
+.header__lightbulb_events {
+  background-image: url("../img/lightbulb-white.png");
+  width: 30px;
+  height: 30px; }
+
 .header__lightbulb:hover + .lightbulb__pop-up {
   display: block; }
 

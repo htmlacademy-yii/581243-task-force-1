@@ -15,9 +15,10 @@ for (var i = 0; i < openModalLinks.length; i++) {
   });
 }
 
-var lightbulb = document.getElementsByClassName('header__lightbulb')[0];
+var lightbulb = document.getElementsByClassName('header__lightbulb_events')[0];
 if (lightbulb) {
   lightbulb.addEventListener('mouseover', function () {
+    console.log('test');
     fetch('/events');
   });
 }

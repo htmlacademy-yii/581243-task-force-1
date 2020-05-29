@@ -98,7 +98,7 @@ $user = Yii::$app->user->identity;
                         ]); ?>
                     <?php ActiveForm::end(); ?>
                 </div>
-                <div class="header__lightbulb"></div>
+                <div class="header__lightbulb <?= empty($this->context->events) ?: 'header__lightbulb_events'; ?>"></div>
                 <div class="lightbulb__pop-up">
                     <h3>Новые события</h3>
                     <?php foreach ($this->context->events as $event): ?>
