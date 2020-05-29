@@ -3,6 +3,7 @@
 namespace frontend\models;
 
 use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "task_file".
@@ -11,7 +12,7 @@ use yii\db\ActiveQuery;
  * @property int $task_id
  * @property int $file_id
  */
-class TaskFile extends \yii\db\ActiveRecord
+class TaskFile extends ActiveRecord
 {
     /**
      * {@inheritdoc}

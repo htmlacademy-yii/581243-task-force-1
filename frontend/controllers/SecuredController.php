@@ -8,8 +8,9 @@ use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\helpers\Url;
 use yii\web\BadRequestHttpException;
+use yii\web\Controller;
 
-class SecuredController extends \yii\web\Controller
+class SecuredController extends Controller
 {
     public $cities;
     public $events;

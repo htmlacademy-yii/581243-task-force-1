@@ -19,6 +19,9 @@ class NewTaskForm extends Model
     public $locality;
     public $city_id;
 
+    /**
+     * @return array
+     */
     public function rules(): array
     {
         return [

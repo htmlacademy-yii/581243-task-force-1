@@ -5,6 +5,7 @@ namespace frontend\modules\api\actions;
 use frontend\models\Event;
 use Yii;
 use yii\base\Model;
+use yii\db\ActiveRecord;
 use yii\rest\Action;
 use yii\web\Response;
 use yii\web\ServerErrorHttpException;
@@ -13,6 +14,10 @@ class MessageCreateAction extends Action
 {
     public $scenario = Model::SCENARIO_DEFAULT;
 
+    /**
+     * @param int $id
+     * @return array
+     */
     public function run(int $id): array
     {
         $user = Yii::$app->user->identity;
@@ -26,7 +31,7 @@ class MessageCreateAction extends Action
                 call_user_func($this->checkAccess, $this->id);
             }
 
-            /* @var $model \yii\db\ActiveRecord */
+            /* @var $model ActiveRecord */
             $model = new $this->modelClass([
                 'scenario' => $this->scenario,
             ]);

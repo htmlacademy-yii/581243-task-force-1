@@ -4,6 +4,7 @@ namespace frontend\models;
 
 use Yii;
 use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveRecord;
 use yii\db\BaseActiveRecord;
 use yii\web\UploadedFile;
 
@@ -18,7 +19,7 @@ use yii\web\UploadedFile;
  * @property string $created_at
  * @property string|null $updated_at
  */
-class File extends \yii\db\ActiveRecord
+class File extends ActiveRecord
 {
     /**
      * {@inheritdoc}

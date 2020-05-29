@@ -13,6 +13,9 @@ class TaskFilter extends Model
     public $date = Task::ALL;
     public $title;
 
+    /**
+     * @return array
+     */
     public function attributeLabels(): array
     {
         return [
@@ -25,6 +28,9 @@ class TaskFilter extends Model
         ];
     }
 
+    /**
+     * @return array
+     */
     public function rules(): array
     {
         return [

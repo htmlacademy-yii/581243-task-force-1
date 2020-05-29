@@ -6,6 +6,7 @@ use Yii;
 use yii\base\InvalidConfigException;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 use yii\db\BaseActiveRecord;
 use yii\web\IdentityInterface;
 
@@ -33,7 +34,7 @@ use yii\web\IdentityInterface;
  * @property string|null $updated_at
  * @property int|null $settings_id
  */
-class User extends \yii\db\ActiveRecord implements IdentityInterface
+class User extends ActiveRecord implements IdentityInterface
 {
     const ROLE_CLIENT = 0;
     const ROLE_EXECUTOR = 1;
@@ -105,13 +106,15 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
         ];
     }
 
+    /**
+     * @param string $attribute
+     */
     public function validateCity(string $attribute): void
     {
         if (is_null(City::findOne($this->$attribute))) {
             $this->addError($attribute, 'Указанный город не доступен.');
         }
     }
-
 
     /**
      * Finds an identity by the given ID.

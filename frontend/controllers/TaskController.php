@@ -182,7 +182,7 @@ class TaskController extends SecuredController
      * @param int|null $status
      * @return string
      */
-    public function actionMylist(int $status = null): string
+    public function actionMyList(int $status = null): string
     {
         $user = Yii::$app->user->identity;
 
@@ -195,7 +195,7 @@ class TaskController extends SecuredController
             ],
         ]);
 
-        return $this->render('mylist', [
+        return $this->render('my_list', [
             'dataProvider' => $dataProvider,
             'status' => $status,
         ]);

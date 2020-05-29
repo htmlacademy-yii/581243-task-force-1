@@ -3,6 +3,7 @@
 namespace frontend\models;
 
 use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "statuses".
@@ -10,7 +11,7 @@ use yii\db\ActiveQuery;
  * @property int $id
  * @property string|null $status
  */
-class Status extends \yii\db\ActiveRecord
+class Status extends ActiveRecord
 {
     /**
      * Статусы

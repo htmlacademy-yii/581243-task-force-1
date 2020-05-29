@@ -14,6 +14,9 @@ class UserFilter extends Model
     public $has_rate;
     public $favourite;
 
+    /**
+     * @return array
+     */
     public function attributeLabels(): array
     {
         return [
@@ -27,6 +30,9 @@ class UserFilter extends Model
         ];
     }
 
+    /**
+     * @return array
+     */
     public function rules(): array
     {
         return [

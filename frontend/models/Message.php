@@ -4,6 +4,7 @@ namespace frontend\models;
 
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 use yii\db\BaseActiveRecord;
 
 /**
@@ -16,7 +17,7 @@ use yii\db\BaseActiveRecord;
  * @property string $created_at
  * @property string|null $updated_at
  */
-class Message extends \yii\db\ActiveRecord
+class Message extends ActiveRecord
 {
     /**
      * {@inheritdoc}

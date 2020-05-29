@@ -11,20 +11,15 @@ use yii\web\UploadedFile;
 class AccountForm extends Model
 {
     public $avatar;
-
     public $name;
     public $email;
     public $city_id;
     public $birthday_at;
     public $about;
-
     public $categories = [];
-
     public $new_password;
     public $confirm;
-
     public $images;
-
     public $phone;
     public $skype;
     public $messenger;

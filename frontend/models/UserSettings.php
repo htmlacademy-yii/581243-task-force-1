@@ -4,6 +4,7 @@ namespace frontend\models;
 
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 use yii\db\BaseActiveRecord;
 
 /**
@@ -18,7 +19,7 @@ use yii\db\BaseActiveRecord;
  * @property string $created_at
  * @property string $updated_at
  */
-class UserSettings extends \yii\db\ActiveRecord
+class UserSettings extends ActiveRecord
 {
     /**
      * @return array

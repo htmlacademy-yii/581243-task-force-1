@@ -12,6 +12,9 @@ class MessagesController extends ActiveController
 {
     public $modelClass = Message::class;
 
+    /**
+     * @return array
+     */
     public function actions(): array
     {
         $actions = [

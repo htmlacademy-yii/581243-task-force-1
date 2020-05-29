@@ -2,6 +2,8 @@
 
 namespace frontend\models;
 
+use yii\db\ActiveRecord;
+
 /**
  * This is the model class for table "user_photo".
  *
@@ -9,7 +11,7 @@ namespace frontend\models;
  * @property int $user_id
  * @property int $file_id
  */
-class UserPhoto extends \yii\db\ActiveRecord
+class UserPhoto extends ActiveRecord
 {
     /**
      * {@inheritdoc}

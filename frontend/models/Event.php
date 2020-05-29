@@ -4,6 +4,7 @@ namespace frontend\models;
 
 use Carbon\Carbon;
 use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "events".
@@ -15,7 +16,7 @@ use yii\db\ActiveQuery;
  * @property string|null $send_email_at
  * @property string|null $view_feed_at
  */
-class Event extends \yii\db\ActiveRecord
+class Event extends ActiveRecord
 {
     const NEW_REPLY = 1;
     const NEW_MESSAGE = 2;

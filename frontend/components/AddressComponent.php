@@ -14,6 +14,7 @@ use yii\web\Response;
 class AddressComponent
 {
     const LANG = 'ru_RU';
+
     /**
      * @param string $query
      * @return Response

@@ -4,6 +4,7 @@ namespace frontend\models;
 
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 use yii\db\BaseActiveRecord;
 
 /**
@@ -17,7 +18,7 @@ use yii\db\BaseActiveRecord;
  * @property string|null $updated_at
  * @property int $executor_id
  */
-class Reply extends \yii\db\ActiveRecord
+class Reply extends ActiveRecord
 {
     /**
      * @return array

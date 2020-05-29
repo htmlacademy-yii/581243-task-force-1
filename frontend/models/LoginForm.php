@@ -8,9 +8,11 @@ class LoginForm extends Model
 {
     public $email;
     public $password;
-
     private $_user;
 
+    /**
+     * @return array
+     */
     public function rules(): array
     {
         return [
@@ -20,6 +22,9 @@ class LoginForm extends Model
         ];
     }
 
+    /**
+     * @param string $attribute
+     */
     public function validatePassword(string $attribute): void
     {
         if (!$this->hasErrors()) {
@@ -30,6 +35,9 @@ class LoginForm extends Model
         }
     }
 
+    /**
+     * @return User
+     */
     public function getUser(): User
     {
         if ($this->_user === null) {

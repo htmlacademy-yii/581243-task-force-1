@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Tests;
-
 
 use PHPUnit\Framework\TestCase;
 use TaskForce\handlers\create_dumps\CsvDatasetParser;
@@ -10,7 +8,7 @@ use TaskForce\handlers\create_dumps\SqlDumpBuilder;
 
 class SqlDumpTest extends TestCase
 {
-    public function testDumpCreation()
+    public function testDumpCreation(): void
     {
         $file = __DIR__ . '/../frontend/web/data/opinions.csv';
 
@@ -25,6 +23,6 @@ class SqlDumpTest extends TestCase
 
         $file = $builder->createDump($data['data']);
         $this->assertTrue(file_exists($file));
-        //unlink($file);
+        unlink($file);
     }
 }
