@@ -62,8 +62,8 @@ use yii\widgets\LinkPager;
                     'options' => [
                         'class' => 'new-task__pagination-list',
                     ],
-                    'prevPageLabel' => '',
-                    'nextPageLabel' => '',
+                    'prevPageLabel' => '&nbsp;',
+                    'nextPageLabel' => '&nbsp;',
                 ]); ?>
         </section>
         <section  class="search-task">

@@ -74,13 +74,28 @@ $user = Yii::$app->user->identity;
                     </ul>
                 </div>
                 <div class="header__town">
-                    <?= Html::dropDownList('town[]', $this->context->selectedCity,
-                        $this->context->cities,
-                        [
+                    <?php
+                    $form = ActiveForm::begin([
+                        'enableAjaxValidation' => true,
+                        'action' => '/site/set-city',
+                        'enableClientValidation' => false,
+                        'validateOnChange' => true,
+                    ]);
+                    ?>
+                    <?= $form->field(
+                        $user,
+                        'city_id',
+                        ['template' => '{input}', 'options' => ['tag' => false]]
+                    )
+                        ->dropDownList($this->context->cities, [
                             'class' => 'multiple-select input town-select',
                             'size' => 1,
-                            'id' => 'selectedCity',
+                            'options' =>
+                                [
+                                    $this->context->selectedCity => ['selected' => true]
+                                ],
                         ]); ?>
+                    <?php ActiveForm::end(); ?>
                 </div>
                 <div class="header__lightbulb"></div>
                 <div class="lightbulb__pop-up">

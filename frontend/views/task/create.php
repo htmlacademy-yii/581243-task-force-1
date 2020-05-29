@@ -112,6 +112,16 @@ $this->registerJsFile('https://cdn.jsdelivr.net/npm/@tarekraafat/autocomplete.js
                         ->hiddenInput([
                             'id' => 'long',
                         ]); ?>
+                    <?= $form->field(
+                        $taskForm,
+                        'locality',
+                        [
+                            'template' => '{input}',
+                        ]
+                    )
+                        ->hiddenInput([
+                            'id' => 'locality',
+                        ]); ?>
 
                     <div class="create__price-time">
                         <?= $form->field(

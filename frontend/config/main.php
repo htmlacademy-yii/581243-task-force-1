@@ -81,7 +81,6 @@ return [
                 'signup' => 'user/signup',
                 'users' => 'user/',
                 'events' => 'event/',
-                'site/set-city/<id:\d+>' => 'site/city',
                 'users/view/<id:\d+>' => 'user/show',
                 'users/favorite/<id:\d+>' => 'user/favorite',
                 'task/view/<id:\d+>' => 'task/show',

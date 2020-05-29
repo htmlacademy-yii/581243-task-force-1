@@ -33,6 +33,7 @@ use yii\db\BaseActiveRecord;
  * @property int $task_status_id
  * @property string $created_at
  * @property string|null $updated_at
+ * @property int|null $city_id
  */
 class Task extends \yii\db\ActiveRecord
 {
@@ -48,7 +49,7 @@ class Task extends \yii\db\ActiveRecord
                     BaseActiveRecord::EVENT_BEFORE_INSERT => ['created_at'],
                     BaseActiveRecord::EVENT_BEFORE_UPDATE => ['updated_at'],
                 ],
-                'value' => function(){
+                'value' => function() {
                     return gmdate("Y-m-d H:i:s");
                 },
             ],
@@ -71,7 +72,7 @@ class Task extends \yii\db\ActiveRecord
         return [
             [['name', 'description', 'category_id', 'client_id', 'task_status_id'], 'required'],
             [['description'], 'string'],
-            [['category_id', 'budget', 'client_id', 'executor_id', 'task_status_id'], 'integer'],
+            [['category_id', 'budget', 'client_id', 'executor_id', 'task_status_id', 'city_id'], 'integer'],
             [['expire_at', 'created_at', 'updated_at'], 'safe'],
             [['name', 'address', 'lat', 'long'], 'string', 'max' => 255],
             [['expire_at'], 'date', 'format' => 'php:Y-m-d H:i:s'],
@@ -98,6 +99,7 @@ class Task extends \yii\db\ActiveRecord
             'task_status_id' => 'Task Status ID',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
+            'city_id' => 'City ID',
         ];
     }
 
@@ -174,6 +176,11 @@ class Task extends \yii\db\ActiveRecord
             ->viaTable('task_file', ['task_id' => 'id']);
     }
 
+    /**
+     * @param int $status
+     * @return bool
+     * @throws StatusException
+     */
     public function setCurrentStatus(int $status): bool
     {
         if (key_exists($status, Status::getAllStatuses())) {

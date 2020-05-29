@@ -13,6 +13,7 @@ use yii\web\Response;
 
 class AddressComponent
 {
+    const LANG = 'ru_RU';
     /**
      * @param string $query
      * @return Response
@@ -62,6 +63,7 @@ class AddressComponent
                 'format' => RequestOptions::JSON,
                 'apikey' => $api_key,
                 'geocode' => $query,
+                'lang' => static::LANG,
             ]
         ]);
 
@@ -74,12 +76,21 @@ class AddressComponent
             throw new BadResponseException('Api error');
         }
 
-        $data = array_map(function ($item) {
-            return [
-                'city' => $item['GeoObject']['metaDataProperty']['GeocoderMetaData']['text'],
-                'point' => $item['GeoObject']['Point']['pos'],
-            ];
-        }, $result['response']['GeoObjectCollection']['featureMember']);
+        if (!empty($result['response']['GeoObjectCollection']['featureMember'])) {
+            $data = array_map(function (array $item): array {
+                foreach ($item['GeoObject']['metaDataProperty']['GeocoderMetaData']['Address']['Components'] as $component) {
+                    if ($component['kind'] === 'locality') {
+                        $locality = $component['name'];
+                    }
+                }
+
+                return [
+                    'city' => $item['GeoObject']['metaDataProperty']['GeocoderMetaData']['text'],
+                    'point' => $item['GeoObject']['Point']['pos'],
+                    'locality' => $locality ?? null,
+                ];
+            }, $result['response']['GeoObjectCollection']['featureMember']);
+        }
 
         return $data;
     }

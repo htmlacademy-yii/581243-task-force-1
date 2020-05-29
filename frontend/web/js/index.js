@@ -29,12 +29,12 @@ const autoCompletejs = new autoComplete({
     element: "p"
   },
   onSelection: function(feedback) {
-    console.log('feedback --', feedback);
     document.querySelector("#autoComplete").blur();
 
     const point = feedback.selection.value.point.split(' ');
     document.querySelector("#long").value = point[0];
     document.querySelector("#lat").value = point[1];
+    document.querySelector("#locality").value = feedback.selection.value.locality;
 
     const selection = feedback.selection.value.city;
     document.querySelector("#autoComplete_list").innerHTML = selection;

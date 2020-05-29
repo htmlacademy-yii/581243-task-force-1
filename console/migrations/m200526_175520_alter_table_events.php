@@ -3,7 +3,7 @@
 use yii\db\Migration;
 
 /**
- * Class m200428_145619_alter_table_user_photo
+ * Class m200526_175520_alter_table_events
  */
 class m200526_175520_alter_table_events extends Migration
 {

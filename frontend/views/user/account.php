@@ -59,7 +59,7 @@ $this->registerJsFile('/js/account.js');
                                     'options' => ['class' => 'account__input account__input--name'],
                                 ]
                             )
-                                ->dropDownList($cities->getModels(), [
+                                ->dropDownList($cities->allModels, [
                                     'class' => 'multiple-select input multiple-select-big',
                                     'size' => 1
                                 ]); ?>

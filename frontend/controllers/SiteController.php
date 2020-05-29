@@ -2,10 +2,13 @@
 namespace frontend\controllers;
 
 use frontend\models\Task;
+use frontend\models\User;
 use Yii;
 use yii\data\ActiveDataProvider;
 use yii\helpers\Url;
 use yii\filters\AccessControl;
+use yii\web\NotFoundHttpException;
+use yii\web\Response;
 
 /**
  * Site controller
@@ -77,10 +80,22 @@ class SiteController extends SecuredController
     }
 
     /**
-     * @param int $id
+     * @return Response
+     * @throws NotFoundHttpException
      */
-    public function actionCity(int $id): void
+    public function actionSetCity(): Response
     {
-        Yii::$app->session->set('city', $id);
+        if (!Yii::$app->request->isAjax) {
+            throw new NotFoundHttpException();
+        }
+
+        $user = new User();
+        $user->load(Yii::$app->request->post());
+
+        if ($user->city_id) {
+            Yii::$app->session->set('city', $user->city_id);
+        }
+
+        return $this->redirect(Yii::$app->request->referrer);
     }
 }

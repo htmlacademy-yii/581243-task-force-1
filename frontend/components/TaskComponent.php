@@ -138,10 +138,10 @@ class TaskComponent
         }
 
         if ($taskFilter->no_executor) {
-            $taskBuilder->andWhere(['executor_id' => NULL]);
+            $taskBuilder->andWhere(['task_status_id' => Status::STATUS_NEW]);
         }
         if ($taskFilter->no_address) {
-            $taskBuilder->andWhere(['address' => NULL]);
+            $taskBuilder->andWhere(['city_id' => NULL]);
         }
 
         $date = null;

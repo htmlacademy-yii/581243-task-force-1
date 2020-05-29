@@ -22,14 +22,6 @@ if (lightbulb) {
   });
 }
 
-var citiesList = document.querySelector('#selectedCity');
-if (citiesList){
-  citiesList.addEventListener('change', async ({target}) => {
-    await fetch('/site/set-city/' + target.value);
-    window.location.reload();
-  });
-}
-
 function closeModal(event) {
   var modal = event.currentTarget.parentElement;
 
