@@ -98,17 +98,20 @@ class EventComponent
                 case Event::REFUSE:
                 case Event::TAKE_IN_WORK:
                 case Event::DONE:
-                    if ($userSettings->new_messages) {
-                        $send = true;
-                    }
-                case Event::NEW_MESSAGE:
                     if ($userSettings->task_action) {
                         $send = true;
                     }
+                    break;
+                case Event::NEW_MESSAGE:
+                    if ($userSettings->new_messages) {
+                        $send = true;
+                    }
+                    break;
                 case Event::NEW_OPINION:
                     if ($userSettings->new_response) {
                         $send = true;
                     }
+                    break;
             }
         }
 
@@ -122,9 +125,10 @@ class EventComponent
     /**
      * @param int $type
      * @param Task $task
+     * @param Event|null $event
      * @return string|null
      */
-    protected function prepareMessage(int $type, Task $task): ?string
+    protected function prepareMessage(int $type, Task $task, Event $event = null): ?string
     {
         $taskLink = '<a href="' .
             Yii::$app->request->hostInfo . Yii::$app->params['task_view_url'] . $task->id .

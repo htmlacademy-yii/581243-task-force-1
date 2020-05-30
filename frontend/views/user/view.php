@@ -36,7 +36,7 @@ use yii\helpers\Url;
                         <h3 class="content-view__h3">Специализации</h3>
                         <div class="link-specialization">
                             <?php foreach ($user->categories as $category): ?>
-                                <a href="#" class="link-regular"><?= $category->name ?></a>
+                                <a href="<?=Url::to(['/task', 'TaskFilter[categories]' => [$category->id]]); ?>" class="link-regular"><?= $category->name ?></a>
                             <?php endforeach; ?>
                         </div>
                         <?php if (!$hideContacts): ?>
@@ -51,7 +51,7 @@ use yii\helpers\Url;
                     <div class="user__card-photo">
                         <h3 class="content-view__h3">Фото работ</h3>
                         <?php foreach ($user->photos as $image): ?>
-                            <a href="#"><img src="<?= Url::to([$image->getUrl()]); ?>" width="85" height="86" alt="Фото работы"></a>
+                            <a href="<?= Url::to([$image->getUrl()]); ?>" target="_blank"><img src="<?= Url::to([$image->getUrl()]); ?>" width="85" height="86" alt="Фото работы"></a>
                         <?php endforeach; ?>
                     </div>
                 </div>
@@ -61,13 +61,13 @@ use yii\helpers\Url;
                 <div class="content-view__feedback-wrapper reviews-wrapper">
                     <?php foreach ($user->opinions as $opinion): ?>
                         <div class="feedback-card__reviews">
-                        <p class="link-task link">Задание <a href="#" class="link-regular">«<?= htmlspecialchars($opinion->task->name); ?>»</a></p>
+                        <p class="link-task link">Задание <a href="<?= Url::to(['/task/view/' . $opinion->task_id]); ?>" class="link-regular">«<?= htmlspecialchars($opinion->task->name); ?>»</a></p>
                         <div class="card__review">
                             <a href="<?= Url::to(['/users/view/' . $opinion->author->id]); ?>"><img src="<?= $opinion->author->avatar ? Url::to([$opinion->author->avatar->getUrl()]) : '/img/man-glasses.jpg'; ?>" width="55" height="54"></a>
                             <div class="feedback-card__reviews-content">
                                 <p class="link-name link"><a href="<?= Url::to(['/users/view/' . $opinion->author->id]); ?>" class="link-regular"><?= htmlspecialchars($opinion->author->last_name); ?> <?= htmlspecialchars($opinion->author->name); ?></a></p>
                                 <p class="review-text">
-                                    <?= htmlspecialchars($opinion->comment); ?>
+                                    <?= $opinion->comment ? htmlspecialchars($opinion->comment) : 'Без отзыва'; ?>
                                 </p>
                             </div>
                             <div class="card__review-rate">

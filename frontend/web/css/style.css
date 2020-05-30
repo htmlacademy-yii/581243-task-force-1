@@ -646,6 +646,11 @@ footer {
   .input-danger + input + span {
     color: #FF116E; }
 
+.textarea-danger + textarea {
+  border-color: #FF116E; }
+.textarea-danger + textarea + span {
+  color: #FF116E; }
+
 .input-middle {
   padding-top: 14px;
   padding-bottom: 14px;

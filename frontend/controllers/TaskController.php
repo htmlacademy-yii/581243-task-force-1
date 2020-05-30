@@ -39,10 +39,8 @@ class TaskController extends SecuredController
             $taskFilter->categories = [];
         }
 
-        $taskBuilder = Yii::$app->task->filter($taskBuilder, $taskFilter);
-
         $taskProvider = new ActiveDataProvider([
-            'query' => $taskBuilder,
+            'query' => Yii::$app->task->filter($taskBuilder, $taskFilter),
             'pagination' => [
                 'pageSize' => 5,
             ],
@@ -84,6 +82,8 @@ class TaskController extends SecuredController
             $profile = $task->client;
             $viewer = User::ROLE_CLIENT;
         }
+
+        Yii::$app->task->readMessages($task);
 
         return $this->render('view', [
             'task' => $task,
@@ -145,6 +145,19 @@ class TaskController extends SecuredController
             if ($task && $doneTaskForm->validate()) {
                 Yii::$app->task->done($doneTaskForm, $task, $user);
             }
+        }
+
+        return $this->redirect(Url::to(['/task/']));
+    }
+
+    /**
+     * @param int $id
+     * @return Response
+     */
+    public function actionCancel(int $id): Response
+    {
+        if ($task = Task::findOne($id)) {
+            Yii::$app->task->cancel($task);
         }
 
         return $this->redirect(Yii::$app->request->referrer ?? Url::to(['/task/']));

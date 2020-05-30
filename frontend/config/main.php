@@ -84,6 +84,7 @@ return [
                 'users/view/<id:\d+>' => 'user/show',
                 'users/favorite/<id:\d+>' => 'user/favorite',
                 'task/view/<id:\d+>' => 'task/show',
+                'task/cancel/<id:\d+>' => 'task/cancel',
                 'task/my-list/<status:\d+>' => 'task/my-list',
                 'file/download/<id:\d+>' => 'file/download',
                 'reply/reject/<taskId:\d+>/<replyId:\d+>' => 'reply/reject',

@@ -82,35 +82,35 @@ class UserComponent
         $user = Yii::$app->user->identity;
 
         if (!empty($ids = $filter->categories)) {
-            $builder = $builder
+            $builder
                 ->joinWith('categories')
                 ->andWhere(['in', 'categories.id', $ids]);
         }
 
         if ($filter->free) {
             $statuses = [Status::STATUS_IN_WORK];
-            $builder = $builder->joinWith('executorTasks')
+            $builder->joinWith('executorTasks')
                 ->andWhere(['not in', 'tasks.task_status_id', $statuses]);
         }
 
         if ($filter->online) {
-            $date = date('Y-m-d 00:00:00', strtotime('now - 30 minutes'));
-            $builder = $builder->andWhere(['>=', 'last_activity_at', $date]);
+            $date = date('Y-m-d H:i:s', strtotime('now - 30 minutes'));
+            $builder->andWhere(['>=', 'last_activity_at', $date]);
         }
 
         if ($filter->has_rate) {
-            $builder = $builder
+            $builder
                 ->joinWith('opinions')
                 ->groupBy(['users.id'])
                 ->andFilterHaving(['>', 'count(opinions.id)', 0]);
         }
 
         if ($filter->favourite) {
-            $builder = $builder->andWhere(['in', 'users.id', $user->getFavoriteUsers()->select('id')->column()]);
+            $builder->andWhere(['in', 'users.id', $user->getFavoriteUsers()->select('id')->column()]);
         }
 
         if (trim($filter->name)) {
-            $builder = $builder->andWhere(['like', 'users.name', $filter->name]);
+            $builder->andWhere(['like', 'users.name', $filter->name]);
         }
 
         return $builder;
@@ -157,7 +157,7 @@ class UserComponent
 
         $usersBuilder = $this->filter($usersBuilder, $userFilter);
 
-        return $usersBuilder;
+        return $usersBuilder->distinct();
     }
 
     /**
@@ -175,5 +175,17 @@ class UserComponent
         }
 
         return false;
+    }
+
+    /**
+     * @param User $user
+     * @return User
+     */
+    public function view(User $user): User
+    {
+        $user->views++;
+        $user->save();
+
+        return $user;
     }
 }

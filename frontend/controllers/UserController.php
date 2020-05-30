@@ -33,9 +33,8 @@ class UserController extends SecuredController
             $userFilter->categories = [];
         }
 
-        $builder = Yii::$app->userData->getList($userFilter);
         $dataProvider = new ActiveDataProvider([
-            'query' => $builder,
+            'query' => Yii::$app->userData->getList($userFilter),
             'pagination' => [
                 'pageSize' => 5,
             ],
@@ -70,6 +69,8 @@ class UserController extends SecuredController
             ($user->id !== $currentUser->id)) {
             throw new NotFoundHttpException();
         }
+
+        Yii::$app->userData->view($user);
 
         return $this->render('view', [
             'user' => $user,

@@ -7,8 +7,7 @@ use yii\helpers\Html;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 use TaskForce\actions\RejectAction;
-?>
-<?php
+
 $this->registerJsFile('https://api-maps.yandex.ru/2.1/?apikey=<?=' . \Yii::$app->params['apiKey'] . '&lang=ru_RU');
 
 if (in_array($task->task_status_id, [
@@ -16,7 +15,7 @@ if (in_array($task->task_status_id, [
         Status::STATUS_DONE,
         Status::STATUS_FAILED,
         Status::STATUS_EXPIRED,
-    ])) {
+    ]) && in_array($user->id, [$task->executor_id, $task->client_id])) {
     $this->registerJsFile('/js/messenger.js');
 }
 ?>
@@ -78,6 +77,13 @@ if (in_array($task->task_status_id, [
                             <button class="button button__big-color request-button open-modal"
                                     type="button" data-for="complete-form">Завершить</button>
                         <?php endif; ?>
+                        <?php if (in_array(AvailableActions::ACTION_CANCEL, $actions)): ?>
+                            <?= Html::a('Отмена', "/task/cancel/$task->id", [
+                            'class' => 'button button__big-color refusal-button open-modal',
+                            'data-for' => 'canceled-form',
+                            ]); ?>
+
+                        <?php endif; ?>
                     </div>
                 </div>
                 <div class="content-view__feedback">
@@ -113,7 +119,8 @@ if (in_array($task->task_status_id, [
                                         <span><?= $reply->price; ?> ₽</span>
                                     </div>
                                     <div class="feedback-card__actions">
-                                        <?php if (in_array(AvailableActions::ACTION_TAKE_IN_WORK, $actions)): ?>
+                                        <?php if (in_array(AvailableActions::ACTION_TAKE_IN_WORK, $actions) &&
+                                            !$reply->rejected): ?>
                                             <a href="<?=Url::to(['/reply/take-in-work/' . $task->id . '/' . $reply->id]); ?>" class="button__small-color request-button button"
                                                type="button">Подтвердить</a>
                                             <?php if (RejectAction::checkRights($user, $task, $reply)): ?>
@@ -205,7 +212,6 @@ if (in_array($task->task_status_id, [
                 'class' => 'input textarea',
                 'rows' => 4,
                 'placeholder' => 'Place your text',
-                'id' => 'response-comment',
             ])
             ->label('Комментарий', ['class' => 'form-modal-description']); ?>
 
@@ -282,7 +288,6 @@ if (in_array($task->task_status_id, [
                         'class' => 'input textarea',
                         'rows' => 4,
                         'placeholder' => 'Place your text',
-                        'id' => 'response-comment',
                         'tag' => false,
                     ])
                     ->label(null, ['class' => 'form-modal-description']); ?>

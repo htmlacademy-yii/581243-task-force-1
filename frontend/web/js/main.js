@@ -18,13 +18,12 @@ for (var i = 0; i < openModalLinks.length; i++) {
 var lightbulb = document.getElementsByClassName('header__lightbulb_events')[0];
 if (lightbulb) {
   lightbulb.addEventListener('mouseover', function () {
-    console.log('test');
     fetch('/events');
   });
 }
 
 function closeModal(event) {
-  var modal = event.currentTarget.parentElement;
+  var modal = event.currentTarget.closest(`section.form-modal`);
 
   modal.removeAttribute("style");
   overlay.removeAttribute("style");
@@ -36,9 +35,9 @@ for (var j = 0; j < closeModalLinks.length; j++) {
   closeModalLink.addEventListener("click", closeModal);
 }
 
-var closeModal = document.getElementById('close-modal');
-if (closeModal) {
-  closeModal.addEventListener("click", closeModal);
+var closeModalEl = document.getElementById('close-modal');
+if (closeModalEl) {
+  closeModalEl.addEventListener("click", closeModal);
 }
 
 var starRating = document.getElementsByClassName("completion-form-star");

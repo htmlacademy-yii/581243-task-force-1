@@ -86,15 +86,15 @@ use yii\helpers\StringHelper;
                     <p class="new-task_description">
                         <?= StringHelper::truncate(htmlspecialchars($task->description), 150, '...'); ?>
                     </p>
-                    <?php if (in_array($task->task_status_id, [Status::STATUS_DONE, Status::STATUS_FAILED])): ?>
+                    <?php if (in_array($task->task_status_id, [Status::STATUS_DONE, Status::STATUS_FAILED, Status::STATUS_IN_WORK])): ?>
                     <div class="feedback-card__top ">
                         <a href="<?=Url::to(['/users/view/' . $task->executor->id]); ?>"><img src="<?= $task->executor->avatar ? Url::to([$task->executor->avatar->getUrl()]) : '/img/man-glasses.jpg'; ?>" width="36" height="36"></a>
                         <div class="feedback-card__top--name my-list__bottom">
                             <p class="link-name"><a href="<?=Url::to(['/users/view/' . $task->executor->id]); ?>" class="link-regular"><?= htmlspecialchars($task->executor->name); ?></a></p>
-                            <a href="#" class="my-list__bottom-chat  my-list__bottom-chat--new">
+                            <a href="<?= Url::to(['task/view/' . $task->id]); ?>" class="my-list__bottom-chat  my-list__bottom-chat--new">
                                 <b>
                                     <?= $task->getMessages()->where(['!=', 'author_id', Yii::$app->user->id])
-                                        ->andWhere(['read' => false])->count(); ?>
+                                        ->andWhere(['read' => null])->count(); ?>
                                 </b>
                             </a>
                             <?php $rating = $task->executor->getRating(); ?>

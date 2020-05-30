@@ -111,6 +111,9 @@ class AccountForm extends Model
         ];
     }
 
+    /**
+     * @param string $attribute
+     */
     public function validateCity(string $attribute): void
     {
         if (is_null(City::findOne($this->$attribute))) {

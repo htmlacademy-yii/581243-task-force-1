@@ -3,6 +3,7 @@
 namespace frontend\controllers;
 
 use Carbon\Carbon;
+use frontend\models\Event;
 use Yii;
 use yii\db\Exception;
 use yii\db\Query;
@@ -16,7 +17,7 @@ class EventController extends SecuredController
     {
         (new Query)
             ->createCommand()
-            ->update('events', ['view_feed_at' => Carbon::now()], 'view_feed_at IS NUll AND user_id = :id')
+            ->update(Event::tableName(), ['view_feed_at' => Carbon::now()], 'view_feed_at IS NUll AND user_id = :id')
             ->bindValue(':id', Yii::$app->user->id)
             ->execute();
     }

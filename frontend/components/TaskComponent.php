@@ -4,6 +4,7 @@ namespace frontend\components;
 
 use frontend\models\DoneTaskForm;
 use frontend\models\Event;
+use frontend\models\Message;
 use frontend\models\NewTaskForm;
 use frontend\models\Opinion;
 use frontend\models\Status;
@@ -16,6 +17,7 @@ use TaskForce\exceptions\ActionException;
 use TaskForce\exceptions\StatusException;
 use Yii;
 use yii\db\ActiveQuery;
+use yii\db\Query;
 use yii\web\UploadedFile;
 
 class TaskComponent
@@ -33,6 +35,12 @@ class TaskComponent
         $task = new Task();
         $task->attributes = $taskForm->attributes;
         $task->client_id = $user->id;
+        /**
+         * При создании задания, идентификатор города всегда сохраняется
+         * равным выбранным id города из профиля пользователя.
+         */
+        $task->city_id = $user->city_id;
+        $task->address = $task->address ? $task->address : null;
         $task->setCurrentStatus(Status::STATUS_NEW);
 
         $files = $taskForm->upload();
@@ -85,6 +93,15 @@ class TaskComponent
     }
 
     /**
+     * @param Task $task
+     */
+    public function cancel(Task $task): void
+    {
+        $task->task_status_id = Status::STATUS_CANCEL;
+        $task->save();
+    }
+
+    /**
      * @param User $user
      * @param int $status
      * @return ActiveQuery
@@ -127,6 +144,15 @@ class TaskComponent
     {
         $user = Yii::$app->user->identity;
 
+        /**
+         * задания без привязки к адресу,
+         * а также из города пользователя, либо из города, выбранного пользователем в текущей сессии
+         */
+        if (!($taskFilter->my_city  || $taskFilter->no_address)) {
+            $taskBuilder->andWhere(['city_id' => (Yii::$app->session->get('city') ?? $user->city_id)]);
+            $taskBuilder->orWhere(['address' => null]);
+        }
+
         if (!empty($ids = $taskFilter->categories)) {
             $taskBuilder = $taskBuilder->andWhere(['in', 'category_id', $ids]);
         }
@@ -140,11 +166,7 @@ class TaskComponent
         }
 
         if ($taskFilter->no_address) {
-            $taskBuilder->andWhere(['city_id' => NULL]);
-        }
-
-        if (!($taskFilter->my_city  || $taskFilter->no_address)) {
-            $taskBuilder->andWhere(['city_id' => (Yii::$app->session->get('city') ?? $user->city_id)]);
+            $taskBuilder->andWhere(['address' => NULL]);
         }
 
         $date = null;
@@ -172,5 +194,22 @@ class TaskComponent
         }
 
         return $taskBuilder;
+    }
+
+    /**
+     * @param Task $task
+     * @return Task
+     * @throws \yii\db\Exception
+     */
+    public function readMessages(Task $task): Task
+    {
+        (new Query)
+            ->createCommand()
+            ->update(Message::tableName(), ['read' => true], 'task_id = :task_id AND author_id != :user_id')
+            ->bindValue(':task_id', $task->id)
+            ->bindValue(':user_id', Yii::$app->user->id)
+            ->execute();
+
+        return $task;
     }
 }

@@ -54,7 +54,8 @@ class Reply extends ActiveRecord
     {
         return [
             [['task_id', 'executor_id'], 'required'],
-            [['task_id', 'price', 'executor_id'], 'integer'],
+            [['task_id', 'executor_id'], 'integer'],
+            [['price'], 'number', 'min' => 1, 'message' => 'Цена должна быть больше нуля',],
             [['rejected'], 'boolean'],
             [['comment'], 'string'],
             [['created_at', 'updated_at'], 'safe'],
@@ -69,7 +70,7 @@ class Reply extends ActiveRecord
         return [
             'id' => 'ID',
             'task_id' => 'Task ID',
-            'price' => 'Price',
+            'price' => 'Цена',
             'comment' => 'Comment',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',

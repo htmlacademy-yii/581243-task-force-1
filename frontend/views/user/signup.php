@@ -32,10 +32,10 @@ use yii\helpers\Html;
                     <span>Введите валидный адрес электронной почты</span>
 
                 <?= $form->field(
-                    $user,
-                    'name',
-                    ['template' => '{label}{input}{error}', 'options' => ['tag' => false]]
-                )
+                        $user,
+                        'name',
+                        ['template' => '{label}{input}{error}', 'options' => ['tag' => false]]
+                    )
                     ->textarea([
                         'class' => 'input textarea',
                         'rows' => 1,

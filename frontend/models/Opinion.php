@@ -54,7 +54,8 @@ class Opinion extends ActiveRecord
     {
         return [
             [['task_id', 'author_id'], 'required'],
-            [['task_id', 'rate', 'author_id', 'evaluated_user_id'], 'integer'],
+            [['task_id', 'author_id', 'evaluated_user_id'], 'integer'],
+            [['rate'], 'integer', 'min' => 1, 'max' => 5],
             [['comment'], 'string'],
             [['created_at', 'updated_at'], 'safe'],
         ];

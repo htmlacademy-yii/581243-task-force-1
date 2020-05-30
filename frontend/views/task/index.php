@@ -19,7 +19,7 @@ use yii\widgets\LinkPager;
                             <a href="<?=Url::to(['/task/view/' . $task->id]); ?>" class="link-regular">
                                 <h2><?= htmlspecialchars($task['name']); ?></h2>
                             </a>
-                            <a  class="new-task__type link-regular" href="#">
+                            <a  class="new-task__type link-regular" href="<?=Url::to(['/task', 'TaskFilter[categories]' => [$task->category->id]]); ?>">
                                 <p><?= $task->category->name; ?></p>
                             </a>
                         </div>

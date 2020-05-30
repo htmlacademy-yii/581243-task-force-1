@@ -29,7 +29,8 @@ class NewTaskForm extends Model
             [['name', 'address'], 'string', 'max' => 255],
             [['description', 'lat', 'long', 'locality'], 'string'],
             [['files'], 'file', 'maxFiles' => 10],
-            [['category_id', 'budget'], 'integer'],
+            [['category_id'], 'integer'],
+            [['budget'], 'number', 'min' => 1, 'message' => 'Цена должна быть больше нуля',],
             [['expire_at'], 'safe'],
             [['expire_at'], 'date', 'format' => 'php:Y-m-d'],
             ['address', 'validateCity'],
@@ -82,7 +83,7 @@ class NewTaskForm extends Model
     public function upload(): ?array
     {
         if ($this->validate()) {
-            $uploadFiles = File::uploadAttaches($this->files);
+            $uploadFiles = File::uploadAttaches($this->files, Yii::$app->params['web_uploads']);
             if (count($this->files) === count($uploadFiles)) {
                 return $uploadFiles;
             }

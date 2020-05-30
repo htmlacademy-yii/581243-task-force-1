@@ -11,6 +11,9 @@ class TaskIndexAction extends Action
 {
     public $scenario = Model::SCENARIO_DEFAULT;
 
+    /**
+     * @return array
+     */
     public function run(): array
     {
         $user = Yii::$app->user->identity;
@@ -24,7 +27,7 @@ class TaskIndexAction extends Action
             }
 
             $tasks = [];
-            foreach ($user->executorTasks as $task) {
+            foreach (array_merge($user->executorTasks, $user->clientTasks) as $task) {
                 $tasks[] = [
                     'title' => $task->name,
                     'published_at' => $task->created_at,
