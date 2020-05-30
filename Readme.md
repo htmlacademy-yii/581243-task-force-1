@@ -1,3 +1,33 @@
+# Build Setup
+
+### install dependencies
+``` bash
+composer install
+```
+
+### build for development
+``` bash
+php init
+```
+
+### database 
+#### set settings for your database in `common/config/main-local.php`
+#### run `schema.sql`
+#### make migration
+``` bash
+php yii migrate
+```
+#### run `frontend/web/data/sql/categories_INSERT_2019-12-01 01:32:45.sql` and `frontend/web/data/sql/cities_INSERT_2019-12-01 01:32:45.sql`
+
+
+### set `cookieValidationKey` in `frontend/config/main-local.php` if it is not exist
+
+### Run queue
+``` bash
+php yii queue/listen
+```
+
+
 # Личный проект «TaskForce»
 
 * Студент: [Дмитрий Шитиков](https://up.htmlacademy.ru/yii/1/user/581243).

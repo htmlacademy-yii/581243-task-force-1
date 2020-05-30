@@ -38,7 +38,6 @@ return [
             'parsers' => [
                 'application/json' => JsonParser::class,
             ],
-            'cookieValidationKey' => '',
         ],
         'address' => [
             'class' => AddressComponent::class,
