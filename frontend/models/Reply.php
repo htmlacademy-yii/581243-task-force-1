@@ -4,6 +4,7 @@ namespace frontend\models;
 
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 use yii\db\BaseActiveRecord;
 
 /**
@@ -17,12 +18,12 @@ use yii\db\BaseActiveRecord;
  * @property string|null $updated_at
  * @property int $executor_id
  */
-class Reply extends \yii\db\ActiveRecord
+class Reply extends ActiveRecord
 {
     /**
      * @return array
      */
-    public function behaviors()
+    public function behaviors(): array
     {
         return [
             'timestamp' => [
@@ -41,7 +42,7 @@ class Reply extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'replies';
     }
@@ -49,11 +50,12 @@ class Reply extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['task_id', 'executor_id'], 'required'],
-            [['task_id', 'price', 'executor_id'], 'integer'],
+            [['task_id', 'executor_id'], 'integer'],
+            [['price'], 'number', 'min' => 1, 'message' => 'Цена должна быть больше нуля',],
             [['rejected'], 'boolean'],
             [['comment'], 'string'],
             [['created_at', 'updated_at'], 'safe'],
@@ -63,12 +65,12 @@ class Reply extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => 'ID',
             'task_id' => 'Task ID',
-            'price' => 'Price',
+            'price' => 'Цена',
             'comment' => 'Comment',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
@@ -80,7 +82,7 @@ class Reply extends \yii\db\ActiveRecord
     /**
      * @return ActiveQuery
      */
-    public function getTask()
+    public function getTask(): ActiveQuery
     {
         return $this->hasOne(Task::class, ['id' => 'task_id']);
     }
@@ -88,7 +90,7 @@ class Reply extends \yii\db\ActiveRecord
     /**
      * @return ActiveQuery
      */
-    public function getExecutor()
+    public function getExecutor(): ActiveQuery
     {
         return $this->hasOne(User::class, ['id' => 'executor_id']);
     }

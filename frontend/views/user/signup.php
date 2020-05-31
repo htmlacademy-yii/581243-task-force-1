@@ -32,10 +32,10 @@ use yii\helpers\Html;
                     <span>Введите валидный адрес электронной почты</span>
 
                 <?= $form->field(
-                    $user,
-                    'name',
-                    ['template' => '{label}{input}{error}', 'options' => ['tag' => false]]
-                )
+                        $user,
+                        'name',
+                        ['template' => '{label}{input}{error}', 'options' => ['tag' => false]]
+                    )
                     ->textarea([
                         'class' => 'input textarea',
                         'rows' => 1,
@@ -50,7 +50,7 @@ use yii\helpers\Html;
                     'city_id',
                     ['template' => '{label}{input}{error}', 'options' => ['tag' => false]]
                 )
-                    ->dropDownList($cities, [
+                    ->dropDownList($cities->allModels, [
                         'class' => 'multiple-select input town-select registration-town',
                         'size' => 1
                     ])

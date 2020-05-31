@@ -2,6 +2,8 @@
 
 namespace frontend\models;
 
+use yii\db\ActiveRecord;
+
 /**
  * This is the model class for table "user_photo".
  *
@@ -9,12 +11,12 @@ namespace frontend\models;
  * @property int $user_id
  * @property int $file_id
  */
-class UserPhoto extends \yii\db\ActiveRecord
+class UserPhoto extends ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'user_photo';
     }
@@ -22,7 +24,7 @@ class UserPhoto extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['user_id', 'file_id'], 'required'],
@@ -34,7 +36,7 @@ class UserPhoto extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => 'ID',

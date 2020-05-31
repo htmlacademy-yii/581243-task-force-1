@@ -11,20 +11,15 @@ use yii\web\UploadedFile;
 class AccountForm extends Model
 {
     public $avatar;
-
     public $name;
     public $email;
     public $city_id;
     public $birthday_at;
     public $about;
-
     public $categories = [];
-
     public $new_password;
     public $confirm;
-
     public $images;
-
     public $phone;
     public $skype;
     public $messenger;
@@ -43,7 +38,7 @@ class AccountForm extends Model
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'avatar' => 'Сменить аватар',
@@ -71,7 +66,7 @@ class AccountForm extends Model
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['avatar'], 'image', 'extensions' => ['png', 'jpg', 'gif'], 'maxWidth' => 1000, 'maxHeight' => 1000,],
@@ -116,7 +111,10 @@ class AccountForm extends Model
         ];
     }
 
-    public function validateCity($attribute, $params)
+    /**
+     * @param string $attribute
+     */
+    public function validateCity(string $attribute): void
     {
         if (is_null(City::findOne($this->$attribute))) {
             $this->addError($attribute, 'Указанный город не доступен.');
@@ -142,9 +140,10 @@ class AccountForm extends Model
     }
 
     /**
-     * @return mixed
+     * @return array
+     * @throws \Exception
      */
-    public function uploadImages()
+    public function uploadImages(): array
     {
         if (isset($_FILES[static::FILE_NAME])) {
             for ($i = 0; $i < count($_FILES[static::FILE_NAME]['name']); $i++) {

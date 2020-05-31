@@ -22,19 +22,4 @@ class m191221_225514_alter_users_table extends Migration
     {
         $this->alterColumn('users', 'created_at', $this->dateTime()->notNull());
     }
-
-    /*
-    // Use up()/down() to run migration code without a transaction.
-    public function up()
-    {
-
-    }
-
-    public function down()
-    {
-        echo "m191221_225514_alter_users_table cannot be reverted.\n";
-
-        return false;
-    }
-    */
 }

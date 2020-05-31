@@ -2,19 +2,19 @@
 
 namespace frontend\modules\api\actions;
 
-use frontend\models\Task;
-use frontend\models\User;
 use Yii;
 use yii\base\Model;
 use yii\rest\Action;
-use yii\web\Response;
 use yii\web\ServerErrorHttpException;
 
 class TaskIndexAction extends Action
 {
     public $scenario = Model::SCENARIO_DEFAULT;
 
-    public function run()
+    /**
+     * @return array
+     */
+    public function run(): array
     {
         $user = Yii::$app->user->identity;
         try {
@@ -27,7 +27,7 @@ class TaskIndexAction extends Action
             }
 
             $tasks = [];
-            foreach ($user->executorTasks as $task) {
+            foreach (array_merge($user->executorTasks, $user->clientTasks) as $task) {
                 $tasks[] = [
                     'title' => $task->name,
                     'published_at' => $task->created_at,

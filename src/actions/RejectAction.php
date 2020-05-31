@@ -1,8 +1,6 @@
 <?php
 
-
 namespace TaskForce\actions;
-
 
 use frontend\models\Reply;
 use frontend\models\Status;

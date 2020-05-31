@@ -3,6 +3,7 @@
 namespace frontend\models;
 
 use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "statuses".
@@ -10,7 +11,7 @@ use yii\db\ActiveQuery;
  * @property int $id
  * @property string|null $status
  */
-class Status extends \yii\db\ActiveRecord
+class Status extends ActiveRecord
 {
     /**
      * Статусы
@@ -26,7 +27,7 @@ class Status extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'statuses';
     }
@@ -34,7 +35,7 @@ class Status extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['status'], 'string', 'max' => 255],
@@ -45,7 +46,7 @@ class Status extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => 'ID',
@@ -56,7 +57,8 @@ class Status extends \yii\db\ActiveRecord
     /**
      * @return ActiveQuery
      */
-    public function getTasks() {
+    public function getTasks(): ActiveQuery
+    {
         return $this->hasMany(Task::class, ['task_status_id' => 'id'])
             ->inverseOf('status');
     }

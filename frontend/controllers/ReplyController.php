@@ -2,9 +2,9 @@
 
 namespace frontend\controllers;
 
+use frontend\models\Event;
 use frontend\models\Reply;
 use frontend\models\Task;
-use frontend\models\User;
 use TaskForce\actions\RejectAction;
 use TaskForce\actions\RespondAction;
 use TaskForce\actions\TakeInWorkAction;
@@ -21,7 +21,7 @@ class ReplyController extends SecuredController
      * @throws ActionException
      * @throws StatusException
      */
-    public function actionCreate()
+    public function actionCreate(): Response
     {
         $user = Yii::$app->user->identity;
 
@@ -38,13 +38,24 @@ class ReplyController extends SecuredController
                 $nextStatus = $task->getNextStatus(RespondAction::getInnerName());
                 $task->setCurrentStatus($nextStatus);
                 $task->save();
+
+                if ($event = Yii::$app->event->createTaskEvent(Event::NEW_REPLY, $task)) {
+                    Yii::$app->event->send($event);
+                }
             }
         }
 
         return $this->redirect(Yii::$app->request->referrer ?? Url::to(['/task/']));
     }
 
-    public function actionReject($taskId, $replyId)
+    /**
+     * @param int $taskId
+     * @param int $replyId
+     * @return Response
+     * @throws ActionException
+     * @throws StatusException
+     */
+    public function actionReject(int $taskId, int $replyId): Response
     {
         $user = Yii::$app->user->identity;
         $task = Task::findOne($taskId);
@@ -62,13 +73,13 @@ class ReplyController extends SecuredController
     }
 
     /**
-     * @param $taskId
-     * @param $replyId
+     * @param int $taskId
+     * @param int $replyId
      * @return Response
      * @throws ActionException
      * @throws StatusException
      */
-    public function actionTakeInWork($taskId, $replyId)
+    public function actionTakeInWork(int $taskId, int $replyId): Response
     {
         $user = Yii::$app->user->identity;
         $task = Task::findOne($taskId);
@@ -79,6 +90,10 @@ class ReplyController extends SecuredController
             $task->setCurrentStatus($nextStatus);
             $task->executor_id = $reply->executor_id;
             $task->save();
+
+            if ($event = Yii::$app->event->createTaskEvent(Event::TAKE_IN_WORK, $task)) {
+                Yii::$app->event->send($event);
+            }
         }
 
         return $this->redirect(Yii::$app->request->referrer ?? Url::to(['/task/']));

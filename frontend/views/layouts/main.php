@@ -1,14 +1,16 @@
 <?php
 
+use frontend\models\Event;
 use frontend\models\LoginForm;
+use frontend\models\User;
 use yii\authclient\widgets\AuthChoice;
 use yii\helpers\Html;
 use frontend\assets\AppAsset;
-use frontend\models\User;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 
 AppAsset::register($this);
+$user = Yii::$app->user->identity;
 ?>
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
@@ -20,10 +22,7 @@ AppAsset::register($this);
     <?php $this->registerCsrfMetaTags() ?>
     <title><?= Html::encode($this->title) ?></title>
     <?php $this->head() ?>
-    <link rel="stylesheet" href="css/normalize.css">
-    <link rel="stylesheet" href="css/style.css">
 </head>
-<?php $user = User::findOne(\Yii::$app->user->getId()); ?>
 <body class="<?= ($user ? '' : 'landing'); ?>">
 <?php $this->beginBody() ?>
 
@@ -70,35 +69,55 @@ AppAsset::register($this);
                         <li class="site-list__item">
                             <a href="<?= Url::to(['/task/create/']); ?>">Создать задание</a>
                         </li>
-                        <li class="site-list__item site-list__item--active">
-                            <a>Мой профиль</a>
+                        <li class="site-list__item">
+                            <a href="<?= Url::to(['/users/view/' . $user->id]); ?>">Мой профиль</a>
                         </li>
                     </ul>
                 </div>
                 <div class="header__town">
-                    <select class="multiple-select input town-select" size="1" name="town[]">
-                        <option value="Moscow">Москва</option>
-                        <option selected value="SPB">Санкт-Петербург</option>
-                        <option value="Krasnodar">Краснодар</option>
-                        <option value="Irkutsk">Иркутск</option>
-                        <option value="Vladivostok">Владивосток</option>
-                    </select>
+                    <?php
+                    $form = ActiveForm::begin([
+                        'enableAjaxValidation' => true,
+                        'action' => '/site/set-city',
+                        'enableClientValidation' => false,
+                        'validateOnChange' => true,
+                    ]);
+                    ?>
+                    <?= $form->field(
+                        new User(),
+                        'city_id',
+                        ['template' => '{input}', 'options' => ['tag' => false]]
+                    )
+                        ->dropDownList($this->context->cities, [
+                            'class' => 'multiple-select input town-select',
+                            'size' => 1,
+                            'options' =>
+                                [
+                                    $this->context->selectedCity => ['selected' => $this->context->selectedCity]
+                                ],
+                        ]); ?>
+                    <?php ActiveForm::end(); ?>
                 </div>
-                <div class="header__lightbulb"></div>
+                <div class="header__lightbulb <?= empty($this->context->events) ?: 'header__lightbulb_events'; ?>"></div>
                 <div class="lightbulb__pop-up">
                     <h3>Новые события</h3>
-                    <p class="lightbulb__new-task lightbulb__new-task--message">
-                        Новое сообщение в чате
-                        <a href="#" class="link-regular">«Помочь с курсовой»</a>
-                    </p>
-                    <p class="lightbulb__new-task lightbulb__new-task--executor">
-                        Выбран исполнитель для
-                        <a href="#" class="link-regular">«Помочь с курсовой»</a>
-                    </p>
-                    <p class="lightbulb__new-task lightbulb__new-task--close">
-                        Завершено задание
-                        <a href="#" class="link-regular">«Помочь с курсовой»</a>
-                    </p>
+                    <?php foreach ($this->context->events as $event): ?>
+                        <?php
+                        switch ($event->type) {
+                            case Event::NEW_MESSAGE:
+                                $class = 'message';
+                                break;
+                            case Event::DONE:
+                                $class = 'close';
+                                break;
+                            default:
+                                $class = 'executor';
+                        }
+                        ?>
+                        <p class="lightbulb__new-task lightbulb__new-task--<?= $class; ?>">
+                            <?= $event->message; ?>
+                        </p>
+                    <?php endforeach; ?>
                 </div>
                 <div class="header__account">
                     <a class="header__account-photo">
@@ -107,13 +126,13 @@ AppAsset::register($this);
                              alt="Аватар пользователя">
                     </a>
                     <span class="header__account-name">
-                         <?= $user->name; ?>
+                         <?= htmlspecialchars($user->name); ?>
                      </span>
                 </div>
                 <div class="account__pop-up">
                     <ul class="account__pop-up-list">
                         <li>
-                            <a href="<?= Url::to(['/task/mylist']); ?>">Мои задания</a>
+                            <a href="<?= Url::to(['/task/my-list']); ?>">Мои задания</a>
                         </li>
                         <li>
                             <a href="<?= Url::to(['/user/account']); ?>">Настройки</a>
@@ -269,7 +288,6 @@ AppAsset::register($this);
     <?php endif; ?>
 </div>
 <div class="overlay"></div>
-<script src="/js/main.js"></script>
 
 <?php $this->endBody() ?>
 </body>

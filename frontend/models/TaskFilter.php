@@ -10,10 +10,13 @@ class TaskFilter extends Model
     public $my_city;
     public $no_executor;
     public $no_address;
-    public $date ;
+    public $date = Task::ALL;
     public $title;
 
-    public function attributeLabels()
+    /**
+     * @return array
+     */
+    public function attributeLabels(): array
     {
         return [
             'categories' => 'Категории',
@@ -25,7 +28,10 @@ class TaskFilter extends Model
         ];
     }
 
-    public function rules()
+    /**
+     * @return array
+     */
+    public function rules(): array
     {
         return [
             [['categories', 'my_city', 'no_executor', 'no_address', 'date', 'title'], 'safe']

@@ -2,7 +2,6 @@
 
 namespace frontend\controllers;
 
-
 use frontend\models\AccountForm;
 use frontend\models\Category;
 use frontend\models\City;
@@ -12,8 +11,10 @@ use frontend\models\UserFilter;
 use frontend\models\UserSettings;
 use Yii;
 use yii\base\Exception;
-use yii\data\Pagination;
+use yii\data\ActiveDataProvider;
+use yii\data\ArrayDataProvider;
 use yii\helpers\Url;
+use yii\web\NotFoundHttpException;
 use yii\web\Response;
 use yii\widgets\ActiveForm;
 
@@ -22,49 +23,58 @@ class UserController extends SecuredController
     /**
      * @return string
      */
-    public function actionIndex()
+    public function actionIndex(): string
     {
         $userFilter = new UserFilter();
-        $categories = Category::find()->all();
 
-        $usersBuilder = User::find()->where(['user_status' => User::ROLE_EXECUTOR])
-            ->orderBy(['users.created_at' => SORT_ASC]);
-
-        if ($sort = \Yii::$app->request->get('sort_by')) {
-            $usersBuilder = User::sortBy($usersBuilder, $sort);
-        }
-
-        if (\Yii::$app->request->getIsPost()) {
-            $userFilter->load(\Yii::$app->request->post());
-            $usersBuilder = User::filter($usersBuilder, $userFilter);
-        }
+        $userFilter->load(Yii::$app->request->get());
 
         if (!is_array($userFilter->categories)) {
             $userFilter->categories = [];
         }
 
-        $pages = new Pagination(['totalCount' => $usersBuilder->count(), 'pageSize' => 5]);
+        $dataProvider = new ActiveDataProvider([
+            'query' => Yii::$app->userData->getList($userFilter),
+            'pagination' => [
+                'pageSize' => 5,
+            ],
+            'sort' => [
+                'defaultOrder' => [
+                    'created_at' => SORT_DESC,
+                ],
+            ],
+        ]);
 
         return $this->render('index', [
-            'users' => $usersBuilder->offset($pages->offset)
-                ->limit($pages->limit)->all(),
             'userFilter' => $userFilter,
-            'categories' => $categories,
-            'pages' => $pages,
+            'categoriesProvider' => new ActiveDataProvider([
+                'query' => Category::find(),
+            ]),
+            'dataProvider' => $dataProvider,
+            'sortBy' => Yii::$app->request->get('sort_by'),
         ]);
     }
 
     /**
-     * @param $id
+     * @param int $id
      * @return string
+     * @throws NotFoundHttpException
      */
-    public function actionShow($id)
+    public function actionShow(int $id): string
     {
         $user = User::findOne($id);
         $currentUser = Yii::$app->user->identity;
 
+        if (($user->user_status === User::ROLE_CLIENT) &&
+            ($user->id !== $currentUser->id)) {
+            throw new NotFoundHttpException();
+        }
+
+        Yii::$app->userData->view($user);
+
         return $this->render('view', [
             'user' => $user,
+            'hideContacts' => Yii::$app->userData->hideContacts($user),
             'favorite' => $currentUser->getFavoriteUsers()->where(['id' => $id])->one() ? true : false,
         ]);
     }
@@ -73,7 +83,7 @@ class UserController extends SecuredController
      * @param $id
      * @return Response
      */
-    public function actionFavorite($id)
+    public function actionFavorite(int $id): Response
     {
         $user = Yii::$app->user->identity;
         $favouriteUser = User::findOne($id);
@@ -87,7 +97,10 @@ class UserController extends SecuredController
         return $this->redirect(Url::to(['/users/view/' . $id]));
     }
 
-    public function actions()
+    /**
+     * @return array
+     */
+    public function actions(): array
     {
         return [
             'auth' => [
@@ -104,7 +117,6 @@ class UserController extends SecuredController
     public function actionSignup()
     {
         $user = new User();
-        $cities = City::find()->select('city')->indexBy('id')->column();
 
         if (Yii::$app->request->getIsPost()) {
             $user->load(Yii::$app->request->post());
@@ -123,7 +135,9 @@ class UserController extends SecuredController
 
         return $this->render('signup', [
             'user' => $user,
-            'cities' => $cities,
+            'cities'  => new ArrayDataProvider([
+                'allModels' => City::find()->select('city')->indexBy('id')->column(),
+            ]),
             'errors' => $errors ?? [],
         ]);
     }
@@ -152,34 +166,45 @@ class UserController extends SecuredController
     /**
      * @return Response
      */
-    public function actionLogout() {
+    public function actionLogout(): Response
+    {
         Yii::$app->user->logout();
 
         return $this->redirect(Url::to(['/']));
     }
 
     /**
-     * @return string
      * @throws \Exception
      */
-    public function actionAccount()
+    public function actionImages(): void
     {
         $user = Yii::$app->user->identity;
-        $categories = Category::find()->all();
-        $cities = City::find()->select('city')->indexBy('id')->column();
-
         $accountForm = new AccountForm();
-        $userSettings = UserSettings::firstOrCreate($user);
-
-        $accountForm->attributes = $user->attributes;
-        $accountForm->attributes = $userSettings->attributes;
 
         if (Yii::$app->request->getIsPost()) {
             $accountForm->load(Yii::$app->request->post());
 
             if (!empty($images = $accountForm->uploadImages())) {
-                $user->syncImages($images);
+                Yii::$app->userData->syncImages($user, $images);
             }
+        }
+    }
+
+    /**
+     * @return string
+     * @throws \Exception
+     */
+    public function actionAccount(): string
+    {
+        $user = Yii::$app->user->identity;
+
+        $accountForm = new AccountForm();
+        $userSettings = UserSettings::firstOrCreate($user);
+
+        $accountForm->attributes = $user->attributes;
+
+        if (Yii::$app->request->getIsPost()) {
+            $accountForm->load(Yii::$app->request->post());
 
             if ($accountForm->validate()) {
                 $user->attributes = $accountForm->attributes;
@@ -188,7 +213,7 @@ class UserController extends SecuredController
                 $userSettings->attributes = $accountForm->attributes;
                 $userSettings->save();
 
-                $user->syncCategories(is_array($accountForm->categories) ? $accountForm->categories : []);
+                Yii::$app->userData->syncCategories($user, (is_array($accountForm->categories) ? $accountForm->categories : []));
 
                 $avatar = $accountForm->uploadAvatar();
                 if ($avatar) {
@@ -196,12 +221,18 @@ class UserController extends SecuredController
                     $accountForm->avatar = null;
                 }
             }
+        } else {
+            $accountForm->attributes = $userSettings->attributes;
         }
 
         return $this->render('account', [
             'accountForm' => $accountForm,
-            'categories' => $categories,
-            'cities' => $cities,
+            'categoriesProvider' => new ActiveDataProvider([
+                'query' => Category::find(),
+            ]),
+            'cities' => new ArrayDataProvider([
+                'allModels' => City::find()->select('city')->indexBy('id')->column(),
+            ]),
             'user' => $user,
         ]);
     }
@@ -211,7 +242,7 @@ class UserController extends SecuredController
      * @return Response
      * @throws Exception]
      */
-    public function onAuthSuccess($client)
+    public function onAuthSuccess($client): Response
     {
         $attributes = $client->getUserAttributes();
         $user = User::find()->where(['vk_id' => $attributes['id']])->one();

@@ -1,5 +1,9 @@
 <?php
 
+use frontend\components\AddressComponent;
+use frontend\components\EventComponent;
+use frontend\components\TaskComponent;
+use frontend\components\UserComponent;
 use frontend\models\User;
 use frontend\modules\api\Module;
 use yii\authclient\clients\VKontakte;
@@ -17,6 +21,8 @@ $params = array_merge(
 );
 
 return [
+    'language' => 'ru-RU',
+    'timeZone' => 'UTC',
     'id' => 'app-frontend',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
@@ -32,6 +38,18 @@ return [
             'parsers' => [
                 'application/json' => JsonParser::class,
             ],
+        ],
+        'address' => [
+            'class' => AddressComponent::class,
+        ],
+        'task' => [
+            'class' => TaskComponent::class,
+        ],
+        'event' => [
+            'class' => EventComponent::class,
+        ],
+        'userData' => [
+            'class' => UserComponent::class,
         ],
         'user' => [
             'identityClass' => User::class,
@@ -61,10 +79,12 @@ return [
             'rules' => [
                 'signup' => 'user/signup',
                 'users' => 'user/',
+                'events' => 'event/',
                 'users/view/<id:\d+>' => 'user/show',
                 'users/favorite/<id:\d+>' => 'user/favorite',
                 'task/view/<id:\d+>' => 'task/show',
-                'task/mylist/<status:\d+>' => 'task/mylist',
+                'task/cancel/<id:\d+>' => 'task/cancel',
+                'task/my-list/<status:\d+>' => 'task/my-list',
                 'file/download/<id:\d+>' => 'file/download',
                 'reply/reject/<taskId:\d+>/<replyId:\d+>' => 'reply/reject',
                 'reply/take-in-work/<taskId:\d+>/<replyId:\d+>' => 'reply/take-in-work',

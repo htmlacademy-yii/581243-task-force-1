@@ -4,10 +4,16 @@ namespace frontend\modules\api\actions;
 
 use Yii;
 use yii\rest\Action;
+use yii\web\NotFoundHttpException;
 
 class MessageViewAction extends Action
 {
-    public function run($id)
+    /**
+     * @param int $id
+     * @return array
+     * @throws NotFoundHttpException
+     */
+    public function run(int $id): array
     {
         $user = Yii::$app->user->identity;
 

@@ -1,22 +1,14 @@
 <?php
 namespace frontend\controllers;
 
-use frontend\models\ResendVerificationEmailForm;
 use frontend\models\Task;
 use frontend\models\User;
-use frontend\models\VerifyEmailForm;
 use Yii;
-use yii\base\InvalidArgumentException;
+use yii\data\ActiveDataProvider;
 use yii\helpers\Url;
-use yii\web\BadRequestHttpException;
-use yii\web\Controller;
-use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
-use common\models\LoginForm;
-use frontend\models\PasswordResetRequestForm;
-use frontend\models\ResetPasswordForm;
-use frontend\models\SignupForm;
-use frontend\models\ContactForm;
+use yii\web\NotFoundHttpException;
+use yii\web\Response;
 
 /**
  * Site controller
@@ -26,7 +18,7 @@ class SiteController extends SecuredController
     /**
      * {@inheritdoc}
      */
-    public function behaviors()
+    public function behaviors(): array
     {
         return [
             'access' => [
@@ -54,7 +46,7 @@ class SiteController extends SecuredController
     /**
      * {@inheritdoc}
      */
-    public function actions()
+    public function actions(): array
     {
         return [
             'error' => [
@@ -68,15 +60,42 @@ class SiteController extends SecuredController
     }
 
     /**
-     * Displays homepage.
-     *
-     * @return mixed
+     * @return string
      */
-    public function actionIndex()
+    public function actionIndex(): string
     {
-        $tasks = Task::find()->orderBy([
-            'created_at' => SORT_DESC,
-        ])->limit(4)->all();
-        return $this->render('index', ['tasks' => $tasks]);
+        $dataProvider = new ActiveDataProvider([
+            'query' => Task::find(),
+            'pagination' => [
+                'pageSize' => 4,
+            ],
+            'sort' => [
+                'defaultOrder' => [
+                    'created_at' => SORT_DESC,
+                ],
+            ],
+        ]);
+
+        return $this->render('index', ['dataProvider' => $dataProvider]);
+    }
+
+    /**
+     * @return Response
+     * @throws NotFoundHttpException
+     */
+    public function actionSetCity(): Response
+    {
+        if (!Yii::$app->request->isAjax) {
+            throw new NotFoundHttpException();
+        }
+
+        $user = new User();
+        $user->load(Yii::$app->request->post());
+
+        if ($user->city_id) {
+            Yii::$app->session->set('city', $user->city_id);
+        }
+
+        return $this->redirect(Yii::$app->request->referrer);
     }
 }

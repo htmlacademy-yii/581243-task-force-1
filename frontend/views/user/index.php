@@ -14,18 +14,18 @@ use yii\widgets\LinkPager;
             <div class="user__search-link">
                 <p>Сортировать по:</p>
                 <ul class="user__search-list">
-                    <li class="user__search-item user__search-item--current">
+                    <li class="user__search-item <?= (int)$sortBy === User::RATING ? 'user__search-item--current' : ''; ?>">
                         <a href="<?= Url::to(['/users', 'sort_by' => User::RATING]); ?>" class="link-regular">Рейтингу</a>
                     </li>
-                    <li class="user__search-item">
+                    <li class="user__search-item <?= (int)$sortBy === User::ORDERS ? 'user__search-item--current' : ''; ?>">
                         <a href="<?= Url::to(['/users', 'sort_by' => User::ORDERS]); ?>" class="link-regular">Числу заказов</a>
                     </li>
-                    <li class="user__search-item">
+                    <li class="user__search-item <?= (int)$sortBy === User::VIEWS ? 'user__search-item--current' : ''; ?>">
                         <a href="<?= Url::to(['/users', 'sort_by' => User::VIEWS]); ?>" class="link-regular">Популярности</a>
                     </li>
                 </ul>
             </div>
-            <?php foreach ($users as $user): ?>
+            <?php foreach ($dataProvider->models as $user): ?>
                 <div class="content-view__feedback-card user__search-wrapper">
                     <div class="feedback-card__top">
                         <div class="user__search-icon">
@@ -34,14 +34,14 @@ use yii\widgets\LinkPager;
                             <span><?= $user->getOpinions()->count(); ?> отзывов</span>
                         </div>
                         <div class="feedback-card__top--name user__search-card">
-                            <p class="link-name"><a href="<?= Url::to(['/users/view/' . $user->id]); ?>" class="link-regular"><?= $user->last_name; ?> <?= $user->name ?></a></p>
+                            <p class="link-name"><a href="<?= Url::to(['/users/view/' . $user->id]); ?>" class="link-regular"><?= htmlspecialchars($user->last_name); ?> <?= htmlspecialchars($user->name); ?></a></p>
                             <?php $rating = $user->getRating(); ?>
                             <?php for($i = 1; $i <= 5; $i++): ?>
                                 <span class="<?= $i <= $rating ? : 'star-disabled'; ?>"></span>
                             <?php endfor; ?>
                             <b><?= $rating; ?></b>
                             <p class="user__search-content">
-                                <?= $user->about ?>
+                                <?= htmlspecialchars($user->about); ?>
                             </p>
                         </div>
                         <span class="new-task__time">
@@ -50,20 +50,20 @@ use yii\widgets\LinkPager;
                     </div>
                     <div class="link-specialization user__search-link--bottom">
                         <?php foreach ($user->categories as $category): ?>
-                        <a href="#" class="link-regular"><?= $category->name ?></a>
+                        <a href="<?=Url::to(['/users', 'UserFilter[categories]' => [$category->id]]); ?>" class="link-regular"><?= $category->name ?></a>
                         <?php endforeach; ?>
                     </div>
                 </div>
             <?php endforeach; ?>
             <div class="new-task__pagination">
                 <?= LinkPager::widget([
-                    'pagination' => $pages,
+                    'pagination' => $dataProvider->getPagination(),
                     'linkContainerOptions' => ['class' => 'pagination__item'],
                     'options' => [
                         'class' => 'new-task__pagination-list',
                     ],
-                    'prevPageLabel' => '',
-                    'nextPageLabel' => '',
+                    'prevPageLabel' => '&nbsp;',
+                    'nextPageLabel' => '&nbsp;',
                 ]); ?>
         </section>
         <section  class="search-task">
@@ -71,6 +71,7 @@ use yii\widgets\LinkPager;
                 <?php
                 $form = ActiveForm::begin([
                     'id' => 'search-user__form',
+                    'method' => 'get',
                     'options' => [
                         'class' => 'search-task__form',
                         'name' => 'test',
@@ -85,7 +86,7 @@ use yii\widgets\LinkPager;
                         'categories',
                         ['template' => '{input}{label}{error}', 'options' => ['tag' => false]]
                     )->checkboxList(
-                        $categories,
+                        $categoriesProvider->getModels(),
                         ['item' =>  function ($index, $category, $name) use ($userFilter) {
                             return Html::checkbox(
                                     $name,
@@ -107,10 +108,7 @@ use yii\widgets\LinkPager;
                             $userFilter,
                             $attr,
                             ['template' => '{input}{label}{error}']
-                        )->input('checkbox', [
-                            'class' => 'visually-hidden checkbox__input',
-                            'checked' => $userFilter->$attr,
-                        ]);
+                        )->checkbox(['class' => 'visually-hidden checkbox__input'], false);
                     }
                     ?>
                 </fieldset>

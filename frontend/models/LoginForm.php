@@ -8,10 +8,12 @@ class LoginForm extends Model
 {
     public $email;
     public $password;
+    private $user;
 
-    private $_user;
-
-    public function rules()
+    /**
+     * @return array
+     */
+    public function rules(): array
     {
         return [
             [['email', 'password'], 'required'],
@@ -20,7 +22,10 @@ class LoginForm extends Model
         ];
     }
 
-    public function validatePassword($attribute, $params)
+    /**
+     * @param string $attribute
+     */
+    public function validatePassword(string $attribute): void
     {
         if (!$this->hasErrors()) {
             $user = $this->getUser();
@@ -30,12 +35,15 @@ class LoginForm extends Model
         }
     }
 
-    public function getUser()
+    /**
+     * @return User|null
+     */
+    public function getUser(): ?User
     {
-        if ($this->_user === null) {
-            $this->_user = User::findOne(['email' => $this->email]);
+        if (is_null($this->user)) {
+            $this->user = User::findOne(['email' => $this->email]);
         }
 
-        return $this->_user;
+        return $this->user;
     }
 }

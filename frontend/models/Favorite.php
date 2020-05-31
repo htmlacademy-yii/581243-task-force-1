@@ -3,6 +3,7 @@
 namespace frontend\models;
 
 use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveRecord;
 use yii\db\BaseActiveRecord;
 
 /**
@@ -14,12 +15,12 @@ use yii\db\BaseActiveRecord;
  * @property string $created_at
  * @property string|null $updated_at
  */
-class Favorite extends \yii\db\ActiveRecord
+class Favorite extends ActiveRecord
 {
     /**
      * @return array
      */
-    public function behaviors()
+    public function behaviors(): array
     {
         return [
             'timestamp' => [
@@ -38,7 +39,7 @@ class Favorite extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'favorites';
     }
@@ -46,7 +47,7 @@ class Favorite extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['user_id', 'favorite_user_id'], 'required'],
@@ -59,7 +60,7 @@ class Favorite extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => 'ID',

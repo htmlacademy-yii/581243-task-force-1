@@ -1,8 +1,6 @@
 <?php
 
-
 namespace TaskForce\handlers\create_dumps;
-
 
 interface DumpBuilder
 {

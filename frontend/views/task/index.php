@@ -1,6 +1,7 @@
 <?php
 /* @var $model User */
 
+use frontend\models\Task;
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 use yii\helpers\Html;
@@ -12,24 +13,24 @@ use yii\widgets\LinkPager;
         <section class="new-task">
             <div class="new-task__wrapper">
                 <h1>Новые задания</h1>
-                <?php foreach ($tasks as $task): ?>
+                <?php foreach ($taskProvider->getModels() as $task): ?>
                     <div class="new-task__card">
                         <div class="new-task__title">
                             <a href="<?=Url::to(['/task/view/' . $task->id]); ?>" class="link-regular">
-                                <h2><?= $task['name']; ?></h2>
+                                <h2><?= htmlspecialchars($task['name']); ?></h2>
                             </a>
-                            <a  class="new-task__type link-regular" href="#">
+                            <a  class="new-task__type link-regular" href="<?=Url::to(['/task', 'TaskFilter[categories]' => [$task->category->id]]); ?>">
                                 <p><?= $task->category->name; ?></p>
                             </a>
                         </div>
                         <div class="new-task__icon new-task__icon--<?= $task->category->icon;?>"></div>
                         <p class="new-task_description">
-                            <?= $task['description']; ?>
+                            <?= htmlspecialchars($task['description']); ?>
                         </p>
                         <b class="new-task__price new-task__price--translation">
                             <?= $task['budget']; ?><b> ₽</b>
                         </b>
-                        <p class="new-task__place"><?= $task['address']; ?></p>
+                        <p class="new-task__place"><?= htmlspecialchars($task['address']); ?></p>
                         <span class="new-task__time">
                             <?= \Yii::$app->formatter->asRelativeTime(strtotime($task['created_at'])); ?>
                         </span>
@@ -38,13 +39,13 @@ use yii\widgets\LinkPager;
             </div>
             <div class="new-task__pagination">
                 <?= LinkPager::widget([
-                    'pagination' => $pages,
+                    'pagination' => $taskProvider->getPagination(),
                     'linkContainerOptions' => ['class' => 'pagination__item'],
                     'options' => [
                         'class' => 'new-task__pagination-list',
                     ],
-                    'prevPageLabel' => '',
-                    'nextPageLabel' => '',
+                    'prevPageLabel' => '&nbsp;',
+                    'nextPageLabel' => '&nbsp;',
                 ]); ?>
             </div>
         </section>
@@ -54,6 +55,7 @@ use yii\widgets\LinkPager;
                 <?php
                 $form = ActiveForm::begin([
                     'id' => 'search-task__form',
+                    'method' => 'get',
                     'options' => [
                         'class' => 'search-task__form',
                         'name' => 'test',
@@ -67,7 +69,7 @@ use yii\widgets\LinkPager;
                         'categories',
                         ['template' => '{input}{label}{error}', 'options' => ['tag' => false]]
                     )->checkboxList(
-                        $categories,
+                        $categoriesProvider->getModels(),
                         ['item' =>  function ($index, $category, $name) use ($taskFilter) {
                             return Html::checkbox(
                                 $name,
@@ -88,10 +90,7 @@ use yii\widgets\LinkPager;
                             $taskFilter,
                             $attr,
                             ['template' => '{input}{label}{error}']
-                        )->input('checkbox', [
-                            'class' => 'visually-hidden checkbox__input',
-                            'checked' => $taskFilter->$attr,
-                        ]);
+                        )->checkbox(['class' => 'visually-hidden checkbox__input'], false);
                     }
                     ?>
                 </fieldset>
@@ -99,12 +98,7 @@ use yii\widgets\LinkPager;
                     $taskFilter,
                     'date',
                     ['template' => '{label}<br>{input}{error}', 'options' => ['tag' => false]]
-                )->dropDownList([
-                    'day' => 'За день',
-                    'week' => 'За неделю',
-                    'month' => 'За месяц',
-                    'year' => 'За год',
-                ], [
+                )->dropDownList(Task::getPeriods(), [
                     'class' => 'multiple-select input',
                     'size' => 1
                 ])->label('Период', ['class' => 'search-task__name']); ?>

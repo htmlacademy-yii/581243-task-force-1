@@ -20,7 +20,9 @@
         "yiisoft/yii2-authclient": "*",
         "yiisoft/yii2-swiftmailer": "~2.0.0 || ~2.1.0",
         "yiisoft/yii2-redis": "^2.0",
-        "guzzlehttp/guzzle": "~6.0"
+        "guzzlehttp/guzzle": "~6.0",
+        "yiisoft/yii2-queue": "^2.3",
+        "nesbot/carbon": "^2.34"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.1.0",

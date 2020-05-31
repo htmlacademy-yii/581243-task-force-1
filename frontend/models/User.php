@@ -6,9 +6,8 @@ use Yii;
 use yii\base\InvalidConfigException;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 use yii\db\BaseActiveRecord;
-use yii\db\Exception;
-use yii\db\Query;
 use yii\web\IdentityInterface;
 
 /**
@@ -35,7 +34,7 @@ use yii\web\IdentityInterface;
  * @property string|null $updated_at
  * @property int|null $settings_id
  */
-class User extends \yii\db\ActiveRecord implements IdentityInterface
+class User extends ActiveRecord implements IdentityInterface
 {
     const ROLE_CLIENT = 0;
     const ROLE_EXECUTOR = 1;
@@ -46,7 +45,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     /**
      * @return array
      */
-    public function behaviors()
+    public function behaviors(): array
     {
         return [
             'timestamp' => [
@@ -65,15 +64,30 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'users';
     }
 
     /**
+     * @param bool $insert
+     * @return bool
+     */
+    public function beforeSave($insert): bool
+    {
+        if (parent::beforeSave($insert)) {
+            $this->name = strip_tags($this->name);
+            $this->last_name = strip_tags($this->last_name);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['name', 'email', 'password'], 'required'],
@@ -92,22 +106,24 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
         ];
     }
 
-    public function validateCity($attribute, $params)
+    /**
+     * @param string $attribute
+     */
+    public function validateCity(string $attribute): void
     {
         if (is_null(City::findOne($this->$attribute))) {
             $this->addError($attribute, 'Указанный город не доступен.');
         }
     }
 
-
     /**
      * Finds an identity by the given ID.
      * @param string|int $id the ID to be looked for
-     * @return IdentityInterface|null the identity object that matches the given ID.
+     * @return User
      * Null should be returned if such an identity cannot be found
      * or the identity is not in an active state (disabled, deleted, etc.)
      */
-    public static function findIdentity($id)
+    public static function findIdentity($id): self
     {
         return self::findOne($id);
     }
@@ -170,7 +186,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
         // TODO: Implement validateAuthKey() method.
     }
 
-    public function validatePassword($password)
+    public function validatePassword(string $password): string
     {
         return Yii::$app->security->validatePassword($password, $this->password);
     }
@@ -178,7 +194,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => 'ID',
@@ -208,7 +224,8 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
      * Задания заказчика
      * @return ActiveQuery
      */
-    public function getClientTasks() {
+    public function getClientTasks(): ActiveQuery
+    {
         return $this->hasMany(Task::class, ['client_id' => 'id'])
             ->inverseOf('client');
     }
@@ -217,7 +234,8 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
      * Задания исполнителя
      * @return ActiveQuery
      */
-    public function getExecutorTasks() {
+    public function getExecutorTasks(): ActiveQuery
+    {
         return $this->hasMany(Task::class, ['executor_id' => 'id'])
             ->inverseOf('executor');
     }
@@ -225,7 +243,8 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     /**
      * @return ActiveQuery
      */
-    public function getEvents() {
+    public function getEvents(): ActiveQuery
+    {
         return $this->hasMany(Event::class, ['user_id' => 'id'])
             ->inverseOf('user');
     }
@@ -234,7 +253,8 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
      * Свои отзывы
      * @return ActiveQuery
      */
-    public function getSelfOpinions() {
+    public function getSelfOpinions(): ActiveQuery
+    {
         return $this->hasMany(Opinion::class, ['author_id' => 'id'])
             ->inverseOf('author');
     }
@@ -243,7 +263,8 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
      * Отзывы на данного пользователя
      * @return ActiveQuery
      */
-    public function getOpinions() {
+    public function getOpinions(): ActiveQuery
+    {
         return $this->hasMany(Opinion::class, ['evaluated_user_id' => 'id'])
             ->inverseOf('evaluatedUser');
     }
@@ -252,7 +273,8 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
      * Отклики пользователя
      * @return ActiveQuery
      */
-    public function getReplies() {
+    public function getReplies(): ActiveQuery
+    {
         return $this->hasMany(Reply::class, ['executor_id' => 'id'])
             ->inverseOf('executor');
     }
@@ -260,7 +282,8 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     /**
      * @return ActiveQuery
      */
-    public function getMessages() {
+    public function getMessages(): ActiveQuery
+    {
         return $this->hasMany(Message::class, ['author_id' => 'id'])
             ->inverseOf('user');
     }
@@ -270,7 +293,8 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
      * @return ActiveQuery
      * @throws InvalidConfigException
      */
-    public function getFavoriteUsers() {
+    public function getFavoriteUsers(): ActiveQuery
+    {
         return $this->hasMany(User::class, ['id' => 'favorite_user_id'])
             ->viaTable('favorites', ['user_id' => 'id']);
     }
@@ -279,7 +303,8 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
      * @return ActiveQuery
      * @throws InvalidConfigException
      */
-    public function getCategories() {
+    public function getCategories(): ActiveQuery
+    {
         return $this->hasMany(Category::class, ['id' => 'category_id'])
             ->viaTable('user_category', ['user_id' => 'id']);
     }
@@ -289,7 +314,8 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
      * @return ActiveQuery
      * @throws InvalidConfigException
      */
-    public function getPhotos() {
+    public function getPhotos(): ActiveQuery
+    {
         return $this->hasMany(File::class, ['id' => 'file_id'])
             ->viaTable('user_photo', ['user_id' => 'id']);
     }
@@ -297,7 +323,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     /**
      * @return ActiveQuery
      */
-    public function getCity()
+    public function getCity(): ActiveQuery
     {
         return $this->hasOne(City::class, ['id' => 'city_id']);
     }
@@ -305,7 +331,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     /**
      * @return ActiveQuery
      */
-    public function getAvatar()
+    public function getAvatar(): ActiveQuery
     {
         return $this->hasOne(File::class, ['id' => 'avatar_id']);
     }
@@ -313,7 +339,7 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
     /**
      * @return ActiveQuery
      */
-    public function getUserSettings()
+    public function getUserSettings(): ActiveQuery
     {
         return $this->hasOne(UserSettings::class, ['id' => 'settings_id']);
     }
@@ -337,128 +363,5 @@ class User extends \yii\db\ActiveRecord implements IdentityInterface
         $rating = round($rating/count($opinions));
 
         return $rating;
-    }
-
-    /**
-     * @param array $ids
-     * @return array
-     * @throws Exception
-     * @throws InvalidConfigException
-     */
-    public function syncCategories(array $ids): array
-    {
-        (new Query())
-            ->createCommand()
-            ->delete(
-                'user_category',
-                ['AND', ['user_id' => $this->id], ['not in', 'category_id', $ids]]
-            )
-            ->execute();
-        foreach (Category::find()->where(['in', 'id',  $ids])
-                     ->andWhere(['not in', 'id', $this->getCategories()->select('id')->column()])
-                     ->all() as $category) {
-            $this->link('categories', $category);
-        }
-
-        $this->user_status = $this->getCategories()->count() > 0 ? static::ROLE_EXECUTOR : static::ROLE_CLIENT;
-        $this->save();
-
-        return $this->categories;
-    }
-
-    /**
-     * @param array $images
-     * @throws Exception
-     * @throws InvalidConfigException
-     */
-    public function syncImages(array $images): void
-    {
-        /**
-         * Удаляем все старые фотографии пользователя
-         */
-        $oldImages = $this->getPhotos()->select('id')->column();
-        (new Query)
-            ->createCommand()
-            ->delete('user_photo', ['user_id' => $this->id])
-            ->execute();
-
-        (new Query)
-            ->createCommand()
-            ->delete('files', ['in', 'id', $oldImages])
-            ->execute();
-
-        /**
-         * Добавляем новые фотографии (6 штук)
-         */
-        foreach (array_slice($images, 0, 6) as $image) {
-            $this->link('photos', $image);
-        }
-    }
-
-    /**
-     * @param ActiveQuery $builder
-     * @param UserFilter $filter
-     * @return ActiveQuery
-     */
-    public static function filter(ActiveQuery $builder, UserFilter $filter)
-    {
-        $user = Yii::$app->user->identity;
-
-        if (!empty($ids = $filter->categories)) {
-            $builder = $builder
-                ->joinWith('categories')
-                ->andWhere(['in', 'categories.id', $ids]);
-        }
-
-        if ($filter->free) {
-            $statuses = [Status::STATUS_IN_WORK];
-            $builder = $builder->joinWith('executorTasks')
-                ->andWhere(['not in', 'tasks.task_status_id', $statuses]);
-        }
-
-        if ($filter->online) {
-            $date = date('Y-m-d 00:00:00', strtotime('now - 30 minutes'));
-            $builder = $builder->andWhere(['>=', 'last_activity_at', $date]);
-        }
-
-        if ($filter->has_rate) {
-            $builder = $builder
-                ->joinWith('opinions')
-                ->groupBy(['users.id'])
-                ->andFilterHaving(['>', 'count(opinions.id)', 0]);
-        }
-
-        if ($filter->favourite) {
-            $builder = $builder->andWhere(['in', 'users.id', $user->getFavoriteUsers()->select('id')->column()]);
-        }
-
-        if (trim($filter->name)) {
-            $builder = $builder->andWhere(['like', 'users.name', $filter->name]);
-        }
-
-        return $builder;
-    }
-
-    /**
-     * @param ActiveQuery $builder
-     * @param int $type
-     * @return ActiveQuery
-     */
-    public static function sortBy(ActiveQuery $builder, int $type)
-    {
-        switch ($type) {
-            case static::RATING:
-                return $builder
-                    ->joinWith('opinions')
-                    ->groupBy(['users.id'])
-                    ->orderBy(['SUM(opinions.rate) / COUNT(opinions.id)' => SORT_DESC]);
-            case static::ORDERS:
-                return $builder
-                    ->joinWith('executorTasks')
-                    ->groupBy(['users.id'])
-                    ->orderBy(['COUNT(tasks.name)' => SORT_DESC]);
-            case static::VIEWS:
-                return $builder->orderBy(['views' => SORT_DESC]);
-        }
     }
 }

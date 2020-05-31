@@ -1,8 +1,6 @@
 <?php
 
-
 namespace TaskForce\actions;
-
 
 use frontend\models\Task;
 use frontend\models\User;

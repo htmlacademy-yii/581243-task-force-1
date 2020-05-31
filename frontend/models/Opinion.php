@@ -4,6 +4,7 @@ namespace frontend\models;
 
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveQuery;
+use yii\db\ActiveRecord;
 use yii\db\BaseActiveRecord;
 
 /**
@@ -17,12 +18,12 @@ use yii\db\BaseActiveRecord;
  * @property string $created_at
  * @property string|null $updated_at
  */
-class Opinion extends \yii\db\ActiveRecord
+class Opinion extends ActiveRecord
 {
     /**
      * @return array
      */
-    public function behaviors()
+    public function behaviors(): array
     {
         return [
             'timestamp' => [
@@ -41,7 +42,7 @@ class Opinion extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'opinions';
     }
@@ -49,11 +50,12 @@ class Opinion extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['task_id', 'author_id'], 'required'],
-            [['task_id', 'rate', 'author_id', 'evaluated_user_id'], 'integer'],
+            [['task_id', 'author_id', 'evaluated_user_id'], 'integer'],
+            [['rate'], 'integer', 'min' => 1, 'max' => 5],
             [['comment'], 'string'],
             [['created_at', 'updated_at'], 'safe'],
         ];
@@ -62,7 +64,7 @@ class Opinion extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => 'ID',
@@ -79,7 +81,7 @@ class Opinion extends \yii\db\ActiveRecord
     /**
      * @return ActiveQuery
      */
-    public function getTask()
+    public function getTask(): ActiveQuery
     {
         return $this->hasOne(Task::class, ['id' => 'task_id']);
     }
@@ -87,7 +89,7 @@ class Opinion extends \yii\db\ActiveRecord
     /**
      * @return ActiveQuery
      */
-    public function getAuthor()
+    public function getAuthor(): ActiveQuery
     {
         return $this->hasOne(User::class, ['id' => 'author_id']);
     }
@@ -95,7 +97,7 @@ class Opinion extends \yii\db\ActiveRecord
     /**
      * @return ActiveQuery
      */
-    public function getEvaluatedUser()
+    public function getEvaluatedUser(): ActiveQuery
     {
         return $this->hasOne(User::class, ['id' => 'evaluated_user_id']);
     }

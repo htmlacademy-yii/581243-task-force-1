@@ -2,6 +2,8 @@
 
 namespace frontend\models;
 
+use yii\db\ActiveRecord;
+
 /**
  * This is the model class for table "categories".
  *
@@ -9,12 +11,12 @@ namespace frontend\models;
  * @property string|null $name
  * @property string|null $icon
  */
-class Category extends \yii\db\ActiveRecord
+class Category extends ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'categories';
     }
@@ -22,7 +24,7 @@ class Category extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['name'], 'string', 'max' => 255],
@@ -33,7 +35,7 @@ class Category extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => 'ID',

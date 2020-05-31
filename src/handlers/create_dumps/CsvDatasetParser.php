@@ -1,8 +1,6 @@
 <?php
 
-
 namespace TaskForce\handlers\create_dumps;
-
 
 use TaskForce\exceptions\ParserException;
 
@@ -17,14 +15,14 @@ class CsvDatasetParser implements DatasetParser
      * @return array
      * @throws ParserException
      */
-    public static function parse($file): array
+    public static function parse(string $file): array
     {
         if (!is_string($file)) {
-            throw new \TaskForce\exceptions\ParserException('file must be a string');
+            throw new ParserException('file must be a string');
         }
 
         if (!file_exists($file)) {
-            throw new \TaskForce\exceptions\ParserException('file not exist');
+            throw new ParserException('file not exist');
         }
 
         $file = new \SplFileObject($file);

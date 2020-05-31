@@ -15,8 +15,15 @@ for (var i = 0; i < openModalLinks.length; i++) {
   });
 }
 
+var lightbulb = document.getElementsByClassName('header__lightbulb_events')[0];
+if (lightbulb) {
+  lightbulb.addEventListener('mouseover', function () {
+    fetch('/events');
+  });
+}
+
 function closeModal(event) {
-  var modal = event.currentTarget.parentElement;
+  var modal = event.currentTarget.closest(`section.form-modal`);
 
   modal.removeAttribute("style");
   overlay.removeAttribute("style");
@@ -25,10 +32,13 @@ function closeModal(event) {
 for (var j = 0; j < closeModalLinks.length; j++) {
   var closeModalLink = closeModalLinks[j];
 
-  closeModalLink.addEventListener("click", closeModal)
+  closeModalLink.addEventListener("click", closeModal);
 }
 
-document.getElementById('close-modal').addEventListener("click", closeModal);
+var closeModalEl = document.getElementById('close-modal');
+if (closeModalEl) {
+  closeModalEl.addEventListener("click", closeModal);
+}
 
 var starRating = document.getElementsByClassName("completion-form-star");
 

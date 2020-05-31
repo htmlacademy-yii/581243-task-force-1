@@ -20,6 +20,6 @@ class m200228_233200_alter_messages_table extends Migration
      */
     public function safeDown()
     {
-        $this->dropColumn('{{opinions}}', 'read');
+        $this->dropColumn('{{messages}}', 'read');
     }
 }

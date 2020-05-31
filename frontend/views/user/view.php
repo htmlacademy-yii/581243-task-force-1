@@ -11,8 +11,8 @@ use yii\helpers\Url;
                 <div class="user__card">
                     <img src="<?= $user->avatar ? Url::to([$user->avatar->getUrl()]) : '/img/user-photo.png'; ?>" width="120" height="120" alt="Аватар пользователя">
                     <div class="content-view__headline">
-                        <h1><?= $user->last_name; ?> <?= $user->name; ?></h1>
-                        <p><?= $user->address; ?>, <?= $user->age; ?> лет</p>
+                        <h1><?= htmlspecialchars($user->last_name); ?> <?= htmlspecialchars($user->name); ?></h1>
+                        <p><?= htmlspecialchars($user->address); ?>, <?= $user->age; ?> лет</p>
                         <div class="profile-mini__name five-stars__rate">
                             <?php $rating = $user->getRating(); ?>
                             <?php for($i = 1; $i <= 5; $i++): ?>
@@ -29,27 +29,29 @@ use yii\helpers\Url;
                     </div>
                 </div>
                 <div class="content-view__description">
-                    <p><?= $user->about; ?></p>
+                    <p><?= htmlspecialchars($user->about); ?></p>
                 </div>
                 <div class="user__card-general-information">
                     <div class="user__card-info">
                         <h3 class="content-view__h3">Специализации</h3>
                         <div class="link-specialization">
                             <?php foreach ($user->categories as $category): ?>
-                                <a href="#" class="link-regular"><?= $category->name ?></a>
+                                <a href="<?=Url::to(['/task', 'TaskFilter[categories]' => [$category->id]]); ?>" class="link-regular"><?= $category->name ?></a>
                             <?php endforeach; ?>
                         </div>
-                        <h3 class="content-view__h3">Контакты</h3>
-                        <div class="user__card-link">
-                            <a class="user__card-link--tel link-regular" href="#"><?= $user->phone; ?></a>
-                            <a class="user__card-link--email link-regular" href="#"><?= $user->email; ?></a>
-                            <a class="user__card-link--skype link-regular" href="#"><?= $user->skype; ?></a>
-                        </div>
+                        <?php if (!$hideContacts): ?>
+                            <h3 class="content-view__h3">Контакты</h3>
+                            <div class="user__card-link">
+                                <a class="user__card-link--tel link-regular" href="#"><?= $user->phone; ?></a>
+                                <a class="user__card-link--email link-regular" href="#"><?= $user->email; ?></a>
+                                <a class="user__card-link--skype link-regular" href="#"><?= $user->skype; ?></a>
+                            </div>
+                        <?php endif; ?>
                     </div>
                     <div class="user__card-photo">
                         <h3 class="content-view__h3">Фото работ</h3>
                         <?php foreach ($user->photos as $image): ?>
-                            <a href="#"><img src="<?= Url::to([$image->getUrl()]); ?>" width="85" height="86" alt="Фото работы"></a>
+                            <a href="<?= Url::to([$image->getUrl()]); ?>" target="_blank"><img src="<?= Url::to([$image->getUrl()]); ?>" width="85" height="86" alt="Фото работы"></a>
                         <?php endforeach; ?>
                     </div>
                 </div>
@@ -59,13 +61,13 @@ use yii\helpers\Url;
                 <div class="content-view__feedback-wrapper reviews-wrapper">
                     <?php foreach ($user->opinions as $opinion): ?>
                         <div class="feedback-card__reviews">
-                        <p class="link-task link">Задание <a href="#" class="link-regular">«<?= $opinion->task->name; ?>»</a></p>
+                        <p class="link-task link">Задание <a href="<?= Url::to(['/task/view/' . $opinion->task_id]); ?>" class="link-regular">«<?= htmlspecialchars($opinion->task->name); ?>»</a></p>
                         <div class="card__review">
                             <a href="<?= Url::to(['/users/view/' . $opinion->author->id]); ?>"><img src="<?= $opinion->author->avatar ? Url::to([$opinion->author->avatar->getUrl()]) : '/img/man-glasses.jpg'; ?>" width="55" height="54"></a>
                             <div class="feedback-card__reviews-content">
-                                <p class="link-name link"><a href="<?= Url::to(['/users/view/' . $opinion->author->id]); ?>" class="link-regular"><?= $opinion->author->last_name; ?> <?= $opinion->author->name; ?></a></p>
+                                <p class="link-name link"><a href="<?= Url::to(['/users/view/' . $opinion->author->id]); ?>" class="link-regular"><?= htmlspecialchars($opinion->author->last_name); ?> <?= htmlspecialchars($opinion->author->name); ?></a></p>
                                 <p class="review-text">
-                                    <?= $opinion->comment; ?>
+                                    <?= $opinion->comment ? htmlspecialchars($opinion->comment) : 'Без отзыва'; ?>
                                 </p>
                             </div>
                             <div class="card__review-rate">
@@ -82,7 +84,7 @@ use yii\helpers\Url;
                                         break;
                                 }
                                 ?>
-                                <p class="<?= $rateClass; ?> big-rate"><?= $opinion->rate; ?><span></span></p>
+                                <p class="<?= $rateClass ?? ''; ?> big-rate"><?= $opinion->rate; ?><span></span></p>
                             </div>
                         </div>
                     </div>

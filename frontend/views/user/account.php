@@ -3,6 +3,8 @@
 use yii\helpers\Url;
 use yii\widgets\ActiveForm;
 use yii\helpers\Html;
+
+$this->registerJsFile('/js/account.js');
 ?>
 <main class="page-main">
     <div class="main-container page-container">
@@ -57,7 +59,7 @@ use yii\helpers\Html;
                                     'options' => ['class' => 'account__input account__input--name'],
                                 ]
                             )
-                                ->dropDownList($cities, [
+                                ->dropDownList($cities->allModels, [
                                     'class' => 'multiple-select input multiple-select-big',
                                     'size' => 1
                                 ]); ?>
@@ -92,7 +94,7 @@ use yii\helpers\Html;
                             'categories',
                             ['template' => '{input}{label}{error}', 'options' => ['class' => 'search-task__categories account_checkbox--bottom']]
                         )->checkboxList(
-                            $categories,
+                            $categoriesProvider->getModels(),
                             ['item' =>  function ($index, $category, $name) use ($user) {
                                 return Html::checkbox(
                                         $name,
@@ -245,14 +247,3 @@ use yii\helpers\Html;
         </section>
     </div>
 </main>
-<script src="/js/dropzone.js"></script>
-<script>
-  Dropzone.autoDiscover = false;
-
-  var dropzone = new Dropzone(".dropzone", {url: window.location.href, maxFiles: 6, uploadMultiple: true,
-    acceptedFiles: 'image/*', previewTemplate: '<a href="#"><img data-dz-thumbnail alt="Фото работы"></a>',
-    headers: {
-    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-  }, maxFilesize: 2, parallelUploads: 6});
-
-</script>

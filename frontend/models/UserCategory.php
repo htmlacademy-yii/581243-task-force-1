@@ -2,6 +2,8 @@
 
 namespace frontend\models;
 
+use yii\db\ActiveRecord;
+
 /**
  * This is the model class for table "user_category".
  *
@@ -9,12 +11,12 @@ namespace frontend\models;
  * @property int $user_id
  * @property int $category_id
  */
-class UserCategory extends \yii\db\ActiveRecord
+class UserCategory extends ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
-    public static function tableName()
+    public static function tableName(): string
     {
         return 'user_category';
     }
@@ -22,7 +24,7 @@ class UserCategory extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             [['user_id', 'category_id'], 'required'],
@@ -34,7 +36,7 @@ class UserCategory extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    public function attributeLabels(): array
     {
         return [
             'id' => 'ID',
